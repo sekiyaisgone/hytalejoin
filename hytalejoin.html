@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HytaleJoin - Discover the Best Hytale Servers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --accent-gold: #F4B942;
+            --accent-cyan: #3ECFCF;
+            --accent-purple: #9B6DFF;
+            --bg-dark: #0A0E17;
+            --bg-card: #111827;
+            --bg-elevated: #1A2235;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --border-subtle: rgba(255,255,255,0.06);
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .font-display { font-family: 'Bebas Neue', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Mesh gradient background */
+        .mesh-bg {
+            background: 
+                radial-gradient(ellipse 80% 50% at 20% 40%, rgba(155, 109, 255, 0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 60%, rgba(62, 207, 207, 0.1), transparent),
+                radial-gradient(ellipse 50% 30% at 50% 20%, rgba(244, 185, 66, 0.08), transparent),
+                var(--bg-dark);
+        }
+        
+        /* Animated grid pattern */
+        .grid-pattern {
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 20s linear infinite;
+        }
+        
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 60px 60px; }
+        }
+        
+        /* Glow effects */
+        .glow-gold { box-shadow: 0 0 40px -10px rgba(244, 185, 66, 0.5); }
+        .glow-cyan { box-shadow: 0 0 40px -10px rgba(62, 207, 207, 0.5); }
+        .glow-purple { box-shadow: 0 0 40px -10px rgba(155, 109, 255, 0.5); }
+        
+        .text-glow-gold { text-shadow: 0 0 30px rgba(244, 185, 66, 0.5); }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(var(--accent-purple), var(--accent-cyan));
+            border-radius: 4px;
+        }
+        
+        /* Server card hover effects */
+        .server-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border-subtle);
+        }
+        
+        .server-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            border-color: rgba(155, 109, 255, 0.3);
+            box-shadow: 
+                0 20px 40px -15px rgba(0,0,0,0.5),
+                0 0 0 1px rgba(155, 109, 255, 0.1),
+                inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        
+        /* Animated border gradient */
+        .border-animated {
+            position: relative;
+            background: var(--bg-card);
+            border-radius: 16px;
+        }
+        
+        .border-animated::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 17px;
+            padding: 1px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple), var(--accent-cyan));
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .border-animated:hover::before { opacity: 1; }
+        
+        /* Tag pills */
+        .tag {
+            backdrop-filter: blur(8px);
+            transition: all 0.2s;
+        }
+        
+        .tag:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Vote button */
+        .vote-btn {
+            background: linear-gradient(135deg, var(--accent-gold) 0%, #E6A23C 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vote-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255,255,255,0.3) 0%,
+                rgba(255,255,255,0) 50%
+            );
+            transform: rotate(45deg);
+            transition: all 0.5s;
+        }
+        
+        .vote-btn:hover::before {
+            left: 100%;
+        }
+        
+        .vote-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px -10px rgba(244, 185, 66, 0.5);
+        }
+        
+        /* Copy IP button */
+        .copy-ip {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            transition: all 0.2s;
+        }
+        
+        .copy-ip:hover {
+            background: rgba(62, 207, 207, 0.1);
+            border-color: var(--accent-cyan);
+        }
+        
+        /* Status indicator */
+        .status-online {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Hero floating elements */
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .float-delay { animation-delay: -3s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        /* Input focus */
+        .search-input:focus {
+            box-shadow: 0 0 0 3px rgba(155, 109, 255, 0.2);
+        }
+        
+        /* Modal backdrop */
+        .modal-backdrop {
+            backdrop-filter: blur(8px);
+            background: rgba(10, 14, 23, 0.8);
+        }
+        
+        /* Tab indicator */
+        .tab-active {
+            position: relative;
+        }
+        
+        .tab-active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+            border-radius: 2px;
+        }
+        
+        /* Rank badge styles */
+        .rank-1 { background: linear-gradient(135deg, #FFD700, #FFA500); }
+        .rank-2 { background: linear-gradient(135deg, #C0C0C0, #A8A8A8); }
+        .rank-3 { background: linear-gradient(135deg, #CD7F32, #8B4513); }
+        
+        /* Featured server glow */
+        .featured-glow {
+            position: relative;
+        }
+        
+        .featured-glow::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple));
+            border-radius: 18px;
+            opacity: 0.5;
+            filter: blur(10px);
+            z-index: -1;
+        }
+        
+        /* Noise texture overlay */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+        
+        /* Loading skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-elevated) 50%, var(--bg-card) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Staggered entrance animations */
+        .stagger-1 { animation: fadeSlideUp 0.6s 0.1s both; }
+        .stagger-2 { animation: fadeSlideUp 0.6s 0.2s both; }
+        .stagger-3 { animation: fadeSlideUp 0.6s 0.3s both; }
+        .stagger-4 { animation: fadeSlideUp 0.6s 0.4s both; }
+        .stagger-5 { animation: fadeSlideUp 0.6s 0.5s both; }
+        
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Hero text gradient */
+        .text-gradient {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Decorative shapes */
+        .shape-blob {
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        
+        // Mock data for servers
+        const mockServers = [
+            {
+                id: 1,
+                name: "Hyntaria",
+                ip: "play.hyntaria.com",
+                description: "The ultimate free multiplayer Hytale server. Guilds 🏟️ PvP ⚔️ PvE 🗺️ Custom Classes 🧙‍♂️ Player-driven economy 💰 Housing & Hub 🏰",
+                tags: ["PvP", "PvE", "Economy", "RPG"],
+                votes: 2847,
+                players: { online: 342, max: 1000 },
+                status: "online",
+                featured: true,
+                banner: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=800&h=200&fit=crop",
+                logo: "https://api.dicebear.com/7.x/shapes/svg?seed=hyntaria&backgroundColor=9B6DFF",
+                discord: "https://discord.gg/hyntaria",
+                website: "https://hyntaria.com",
+                country: "US"
+            },
+            {
+                id: 2,
+                name: "Horizons SMP",
+                ip: "play.horizonssmp.com",
+                description: "🌿 Refuge (Cozy): Peaceful, no-grief survival. Community towns, collaborative builds, gentle economy, quests, exploration, long-term world.",
+                tags: ["Survival", "PvE", "Vanilla", "Economy"],
+                votes: 2156,
+                players: { online: 189, max: 500 },
+                status: "online",
+                featured: false,
+                banner: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&h=200&fit=crop",
+                logo: "https://api.dicebear.com/7.x/shapes/svg?seed=horizons&backgroundColor=3ECFCF",
+                discord: "https://discord.gg/horizons",
+                website: "https://horizonssmp.com",
+                country: "EU"
+            },
+            {
+                id: 3,
+                name: "Hynetic",
+                ip: "hynetic.net",
+                description: "Modern Hytale minigame network featuring SkyWars, SurvivalGames, and BedWars. Clean gameplay, fair mechanics, and stable performance.",
+                tags: ["Minigames", "PvP", "SkyWars", "BedWars"],
+                votes: 1834,
+                players: { online: 567, max: 2000 },
+                status: "online",
+                featured: true,
+                banner: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=200&fit=crop",
+                logo: "https://api.dicebear.com/7.x/shapes/svg?seed=hynetic&backgroundColor=F4B942",
+                discord: "https://discord.gg/hynetic",
+                website: "https://hynetic.net",
+                country: "DE"
+            },
+            {
+                id: 4,
+                name: "2b2h.org",
+                ip: "2b2h.org",
+                description: "Hytale anarchy server with no rules. No resets. The original anarchy experience in Hytale.",
+                tags: ["Anarchy", "Survival", "PvP", "Vanilla"],
+                votes: 1567,
+                players: { online: 423, max: 1000 },
+                status: "online",
+                featured: false,
+                banner: "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=800&h=200&fit=crop",
+                logo: "https://api.dicebear.com/7.x/shapes/svg?seed=2b2h&backgroundColor=FF6B6B",
+                discord: "https://discord.gg/2b2h",
+                website: "https://2b2h.org",
+                country: "US"
+            },
+            {
+                id: 5,
+                name: "Mythlane",
+                ip: "play.mythlane.com",
+                description: "🚀 Cozy Bilingual Hytale Server (EN/FR). An ambitious-but-cozy RPG server with quests, dungeons, and building.",
+                tags: ["RPG", "PvE", "Economy", "Quests"],
+                votes: 1234,
+                players: { online: 156, max: 400 },
+                status: "online",
+                featured: false,
+                banner: "https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?w=800&h=200&fit=crop",
+                logo: "https://api.dicebear.com/7.x/shapes/svg?seed=mythlane&backgroundColor=6BCB77",
+                discord: "https://discord.gg/mythlane",
+                website: "https://mythlane.com",
+                country: "FR"
+            },
+            {
+                id: 6,
+                name: "Dragonstone",
+                ip: "play.dragonstone.gg",
+                description: "Day-one Exploration / Adventure server that values its players! Custom structures, unique biomes, and legendary creatures await.",
+                tags: ["Adventure", "PvE", "Exploration", "Vanilla"],
+                votes: 1089,
+                players: { online: 98, max: 300 },
+                status: "online",
+                featured: false,
+                banner: "https://images.unsplash.com/photo-1464802686167-b939a6910659?w=800&h=200&fit=crop",
+                logo: "https://api.dicebear.com/7.x/shapes/svg?seed=dragonstone&backgroundColor=FF9F43",
+                discord: "https://discord.gg/dragonstone",
+                website: "https://dragonstone.gg",
+                country: "UK"
+            }
+        ];
+        
+        const allTags = ["PvP", "PvE", "Survival", "Minigames", "RPG", "Economy", "Anarchy", "Creative", "Vanilla", "Factions", "SkyBlock", "Adventure"];
+        
+        // Icons component using Lucide
+        const Icon = ({ name, size = 20, className = "" }) => {
+            const ref = useRef(null);
+            useEffect(() => {
+                if (ref.current) {
+                    ref.current.innerHTML = '';
+                    lucide.createElement(lucide.icons[name]).forEach(el => ref.current.appendChild(el));
+                }
+            }, [name]);
+            return <span ref={ref} className={`inline-flex ${className}`} style={{ width: size, height: size }} />;
+        };
+        
+        // Navigation Component
+        const Navigation = ({ onOpenAuth, onOpenAddServer }) => {
+            const [scrolled, setScrolled] = useState(false);
+            
+            useEffect(() => {
+                const handleScroll = () => setScrolled(window.scrollY > 50);
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+            
+            return (
+                <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#0A0E17]/90 backdrop-blur-xl border-b border-white/5' : ''}`}>
+                    <div className="max-w-7xl mx-auto px-6 py-4">
+                        <div className="flex items-center justify-between">
+                            <a href="/" className="flex items-center gap-3 group">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#F4B942] to-[#9B6DFF] flex items-center justify-center transform group-hover:rotate-12 transition-transform">
+                                    <span className="font-display text-xl text-[#0A0E17]">HJ</span>
+                                </div>
+                                <span className="font-display text-2xl tracking-wide">HYTALEJOIN</span>
+                            </a>
+                            
+                            <div className="hidden md:flex items-center gap-8">
+                                <a href="#servers" className="text-[#94A3B8] hover:text-white transition-colors">Servers</a>
+                                <a href="#trending" className="text-[#94A3B8] hover:text-white transition-colors">Trending</a>
+                                <a href="#categories" className="text-[#94A3B8] hover:text-white transition-colors">Categories</a>
+                            </div>
+                            
+                            <div className="flex items-center gap-3">
+                                <button 
+                                    onClick={onOpenAddServer}
+                                    className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1A2235] hover:bg-[#242D42] border border-white/5 transition-all hover:border-[#9B6DFF]/30"
+                                >
+                                    <Icon name="Plus" size={18} />
+                                    <span>Add Server</span>
+                                </button>
+                                <button 
+                                    onClick={onOpenAuth}
+                                    className="flex items-center gap-2 px-5 py-2 rounded-xl vote-btn text-[#0A0E17] font-semibold"
+                                >
+                                    <Icon name="LogIn" size={18} />
+                                    <span className="hidden sm:inline">Sign In</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            );
+        };
+        
+        // Hero Section
+        const Hero = ({ onSearch }) => {
+            const [searchQuery, setSearchQuery] = useState('');
+            
+            return (
+                <section className="relative min-h-[85vh] flex items-center justify-center mesh-bg grid-pattern overflow-hidden">
+                    {/* Decorative elements */}
+                    <div className="absolute top-20 left-10 w-64 h-64 bg-[#9B6DFF]/20 rounded-full blur-[100px] float" />
+                    <div className="absolute bottom-20 right-10 w-80 h-80 bg-[#3ECFCF]/20 rounded-full blur-[120px] float float-delay" />
+                    <div className="absolute top-1/3 right-1/4 w-40 h-40 bg-[#F4B942]/20 rounded-full blur-[80px] float" />
+                    
+                    {/* Floating cubes decoration */}
+                    <div className="absolute top-32 right-20 w-16 h-16 border border-[#9B6DFF]/30 rotate-45 float opacity-50" />
+                    <div className="absolute bottom-40 left-20 w-12 h-12 border border-[#3ECFCF]/30 rotate-12 float float-delay opacity-50" />
+                    
+                    <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+                        <div className="stagger-1">
+                            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#9B6DFF]/10 border border-[#9B6DFF]/30 text-[#9B6DFF] text-sm font-medium mb-8">
+                                <span className="w-2 h-2 rounded-full bg-[#9B6DFF] status-online" />
+                                1,247 Servers Online Now
+                            </span>
+                        </div>
+                        
+                        <h1 className="font-display text-6xl md:text-8xl lg:text-9xl tracking-tight mb-6 stagger-2">
+                            <span className="block">DISCOVER YOUR</span>
+                            <span className="text-gradient">NEXT ADVENTURE</span>
+                        </h1>
+                        
+                        <p className="text-xl text-[#94A3B8] max-w-2xl mx-auto mb-12 stagger-3">
+                            Find and join the best Hytale servers. Vote for your favorites, 
+                            explore unique game modes, and connect with players worldwide.
+                        </p>
+                        
+                        <div className="relative max-w-2xl mx-auto stagger-4">
+                            <div className="relative flex items-center">
+                                <Icon name="Search" size={22} className="absolute left-5 text-[#94A3B8]" />
+                                <input
+                                    type="text"
+                                    placeholder="Search servers by name, tag, or IP..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full pl-14 pr-40 py-5 rounded-2xl bg-[#111827] border border-white/10 text-lg focus:outline-none search-input transition-all"
+                                />
+                                <button 
+                                    onClick={() => onSearch(searchQuery)}
+                                    className="absolute right-2 px-6 py-3 rounded-xl vote-btn text-[#0A0E17] font-semibold"
+                                >
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div className="flex flex-wrap justify-center gap-3 mt-8 stagger-5">
+                            {['PvP', 'Survival', 'RPG', 'Minigames', 'Economy'].map(tag => (
+                                <button 
+                                    key={tag}
+                                    className="tag px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-[#94A3B8] hover:text-white hover:border-[#9B6DFF]/50"
+                                >
+                                    {tag}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    
+                    {/* Scroll indicator */}
+                    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#94A3B8] opacity-60">
+                        <span className="text-sm">Scroll to explore</span>
+                        <Icon name="ChevronDown" size={20} className="animate-bounce" />
+                    </div>
+                </section>
+            );
+        };
+        
+        // Server Card Component
+        const ServerCard = ({ server, rank, onVote, onCopyIP }) => {
+            const [copied, setCopied] = useState(false);
+            const [imageLoaded, setImageLoaded] = useState(false);
+            
+            const handleCopy = () => {
+                navigator.clipboard.writeText(server.ip);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+                onCopyIP && onCopyIP(server.ip);
+            };
+            
+            const getRankStyle = () => {
+                if (rank === 1) return 'rank-1';
+                if (rank === 2) return 'rank-2';
+                if (rank === 3) return 'rank-3';
+                return 'bg-[#1A2235]';
+            };
+            
+            return (
+                <div className={`server-card border-animated rounded-2xl overflow-hidden ${server.featured ? 'featured-glow' : ''}`}>
+                    {/* Banner */}
+                    <div className="relative h-32 overflow-hidden">
+                        {!imageLoaded && <div className="absolute inset-0 skeleton" />}
+                        <img 
+                            src={server.banner} 
+                            alt={server.name}
+                            className={`w-full h-full object-cover transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                            onLoad={() => setImageLoaded(true)}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-transparent" />
+                        
+                        {/* Rank badge */}
+                        <div className={`absolute top-3 left-3 w-8 h-8 rounded-lg ${getRankStyle()} flex items-center justify-center font-display text-lg ${rank <= 3 ? 'text-[#0A0E17]' : 'text-white'}`}>
+                            {rank}
+                        </div>
+                        
+                        {/* Featured badge */}
+                        {server.featured && (
+                            <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-[#F4B942] text-[#0A0E17] text-xs font-semibold flex items-center gap-1">
+                                <Icon name="Star" size={12} />
+                                Featured
+                            </div>
+                        )}
+                        
+                        {/* Status */}
+                        <div className="absolute bottom-3 right-3 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0A0E17]/80 backdrop-blur-sm text-sm">
+                            <span className={`w-2 h-2 rounded-full ${server.status === 'online' ? 'bg-green-400 status-online' : 'bg-red-400'}`} />
+                            <span className="text-[#94A3B8]">{server.players.online}</span>
+                            <span className="text-[#64748B]">/</span>
+                            <span className="text-[#64748B]">{server.players.max}</span>
+                        </div>
+                    </div>
+                    
+                    {/* Content */}
+                    <div className="p-5">
+                        <div className="flex items-start gap-4 mb-4">
+                            <img 
+                                src={server.logo} 
+                                alt={server.name}
+                                className="w-14 h-14 rounded-xl object-cover border border-white/10"
+                            />
+                            <div className="flex-1 min-w-0">
+                                <h3 className="font-semibold text-lg truncate">{server.name}</h3>
+                                <button 
+                                    onClick={handleCopy}
+                                    className="copy-ip flex items-center gap-2 px-3 py-1.5 rounded-lg font-mono text-sm text-[#3ECFCF] mt-1"
+                                >
+                                    <span className="truncate max-w-[150px]">{server.ip}</span>
+                                    <Icon name={copied ? "Check" : "Copy"} size={14} />
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <p className="text-[#94A3B8] text-sm mb-4 line-clamp-2">{server.description}</p>
+                        
+                        {/* Tags */}
+                        <div className="flex flex-wrap gap-2 mb-5">
+                            {server.tags.slice(0, 4).map(tag => (
+                                <span 
+                                    key={tag}
+                                    className="px-3 py-1 rounded-full bg-[#1A2235] text-xs text-[#94A3B8] border border-white/5"
+                                >
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+                        
+                        {/* Actions */}
+                        <div className="flex items-center gap-3">
+                            <button 
+                                onClick={() => onVote && onVote(server.id)}
+                                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl vote-btn text-[#0A0E17] font-semibold"
+                            >
+                                <Icon name="ThumbsUp" size={18} />
+                                <span>Vote</span>
+                                <span className="ml-1 px-2 py-0.5 rounded-md bg-black/20 text-sm">{server.votes.toLocaleString()}</span>
+                            </button>
+                            
+                            <a 
+                                href={server.discord}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-3 rounded-xl bg-[#5865F2]/10 hover:bg-[#5865F2]/20 text-[#5865F2] transition-colors"
+                            >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                                </svg>
+                            </a>
+                            
+                            <a 
+                                href={server.website}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-3 rounded-xl bg-white/5 hover:bg-white/10 text-[#94A3B8] hover:text-white transition-colors"
+                            >
+                                <Icon name="Globe" size={18} />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
+        // Filter Bar Component
+        const FilterBar = ({ activeTag, onTagChange, sortBy, onSortChange }) => {
+            return (
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+                    <div className="flex flex-wrap gap-2">
+                        <button 
+                            onClick={() => onTagChange(null)}
+                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${!activeTag ? 'bg-[#9B6DFF] text-white' : 'bg-[#1A2235] text-[#94A3B8] hover:text-white'}`}
+                        >
+                            All Servers
+                        </button>
+                        {allTags.slice(0, 6).map(tag => (
+                            <button 
+                                key={tag}
+                                onClick={() => onTagChange(tag)}
+                                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${activeTag === tag ? 'bg-[#9B6DFF] text-white' : 'bg-[#1A2235] text-[#94A3B8] hover:text-white'}`}
+                            >
+                                {tag}
+                            </button>
+                        ))}
+                    </div>
+                    
+                    <select 
+                        value={sortBy}
+                        onChange={(e) => onSortChange(e.target.value)}
+                        className="px-4 py-2 rounded-xl bg-[#1A2235] border border-white/10 text-sm focus:outline-none focus:border-[#9B6DFF]/50 cursor-pointer"
+                    >
+                        <option value="votes">Most Votes</option>
+                        <option value="players">Most Players</option>
+                        <option value="newest">Newest</option>
+                        <option value="name">Alphabetical</option>
+                    </select>
+                </div>
+            );
+        };
+        
+        // Stats Section
+        const Stats = () => {
+            const stats = [
+                { value: "1,247", label: "Active Servers", icon: "Server" },
+                { value: "89,432", label: "Players Online", icon: "Users" },
+                { value: "2.1M", label: "Total Votes", icon: "ThumbsUp" },
+                { value: "156", label: "Countries", icon: "Globe" }
+            ];
+            
+            return (
+                <section className="py-16 border-y border-white/5">
+                    <div className="max-w-7xl mx-auto px-6">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                            {stats.map((stat, i) => (
+                                <div key={i} className="text-center">
+                                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#9B6DFF]/10 mb-4">
+                                        <Icon name={stat.icon} size={24} className="text-[#9B6DFF]" />
+                                    </div>
+                                    <div className="font-display text-4xl md:text-5xl mb-2">{stat.value}</div>
+                                    <div className="text-[#94A3B8]">{stat.label}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+        
+        // Categories Section
+        const Categories = () => {
+            const categories = [
+                { name: "PvP", count: 423, icon: "Swords", color: "#FF6B6B" },
+                { name: "Survival", count: 387, icon: "Tent", color: "#6BCB77" },
+                { name: "RPG", count: 234, icon: "Scroll", color: "#9B6DFF" },
+                { name: "Minigames", count: 189, icon: "Gamepad2", color: "#3ECFCF" },
+                { name: "Economy", count: 156, icon: "Coins", color: "#F4B942" },
+                { name: "Creative", count: 98, icon: "Palette", color: "#FF9F43" }
+            ];
+            
+            return (
+                <section id="categories" className="py-20">
+                    <div className="max-w-7xl mx-auto px-6">
+                        <div className="text-center mb-12">
+                            <h2 className="font-display text-4xl md:text-5xl mb-4">BROWSE BY CATEGORY</h2>
+                            <p className="text-[#94A3B8] max-w-xl mx-auto">Find your perfect server based on your preferred play style</p>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                            {categories.map(cat => (
+                                <button 
+                                    key={cat.name}
+                                    className="group p-6 rounded-2xl bg-[#111827] border border-white/5 hover:border-white/10 transition-all hover:-translate-y-1"
+                                    style={{ '--cat-color': cat.color }}
+                                >
+                                    <div 
+                                        className="w-12 h-12 rounded-xl mb-4 flex items-center justify-center transition-transform group-hover:scale-110"
+                                        style={{ backgroundColor: `${cat.color}20` }}
+                                    >
+                                        <Icon name={cat.icon} size={24} style={{ color: cat.color }} />
+                                    </div>
+                                    <div className="font-semibold mb-1">{cat.name}</div>
+                                    <div className="text-sm text-[#94A3B8]">{cat.count} servers</div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+        
+        // Auth Modal
+        const AuthModal = ({ isOpen, onClose }) => {
+            const [mode, setMode] = useState('login');
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [username, setUsername] = useState('');
+            
+            if (!isOpen) return null;
+            
+            return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center modal-backdrop" onClick={onClose}>
+                    <div 
+                        className="w-full max-w-md p-8 rounded-3xl bg-[#111827] border border-white/10 shadow-2xl"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <div className="flex items-center justify-between mb-8">
+                            <h2 className="font-display text-3xl">{mode === 'login' ? 'WELCOME BACK' : 'JOIN US'}</h2>
+                            <button onClick={onClose} className="p-2 rounded-xl hover:bg-white/5 transition-colors">
+                                <Icon name="X" size={20} />
+                            </button>
+                        </div>
+                        
+                        <div className="flex gap-2 p-1 rounded-xl bg-[#0A0E17] mb-8">
+                            <button 
+                                onClick={() => setMode('login')}
+                                className={`flex-1 py-3 rounded-lg font-medium transition-all ${mode === 'login' ? 'bg-[#9B6DFF] text-white' : 'text-[#94A3B8]'}`}
+                            >
+                                Sign In
+                            </button>
+                            <button 
+                                onClick={() => setMode('register')}
+                                className={`flex-1 py-3 rounded-lg font-medium transition-all ${mode === 'register' ? 'bg-[#9B6DFF] text-white' : 'text-[#94A3B8]'}`}
+                            >
+                                Register
+                            </button>
+                        </div>
+                        
+                        <form className="space-y-4">
+                            {mode === 'register' && (
+                                <div>
+                                    <label className="block text-sm text-[#94A3B8] mb-2">Username</label>
+                                    <input 
+                                        type="text"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        className="w-full px-4 py-3 rounded-xl bg-[#0A0E17] border border-white/10 focus:outline-none focus:border-[#9B6DFF]/50"
+                                        placeholder="Your username"
+                                    />
+                                </div>
+                            )}
+                            <div>
+                                <label className="block text-sm text-[#94A3B8] mb-2">Email</label>
+                                <input 
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className="w-full px-4 py-3 rounded-xl bg-[#0A0E17] border border-white/10 focus:outline-none focus:border-[#9B6DFF]/50"
+                                    placeholder="your@email.com"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm text-[#94A3B8] mb-2">Password</label>
+                                <input 
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full px-4 py-3 rounded-xl bg-[#0A0E17] border border-white/10 focus:outline-none focus:border-[#9B6DFF]/50"
+                                    placeholder="••••••••"
+                                />
+                            </div>
+                            
+                            <button 
+                                type="submit"
+                                className="w-full py-4 rounded-xl vote-btn text-[#0A0E17] font-semibold text-lg"
+                            >
+                                {mode === 'login' ? 'Sign In' : 'Create Account'}
+                            </button>
+                        </form>
+                        
+                        <div className="relative my-8">
+                            <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-white/10" />
+                            </div>
+                            <div className="relative flex justify-center text-sm">
+                                <span className="px-4 bg-[#111827] text-[#94A3B8]">or continue with</span>
+                            </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                            <button className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#0A0E17] border border-white/10 hover:border-[#5865F2]/50 transition-colors">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="#5865F2">
+                                    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                                </svg>
+                                Discord
+                            </button>
+                            <button className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#0A0E17] border border-white/10 hover:border-white/30 transition-colors">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                </svg>
+                                GitHub
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
+        // Add Server Modal
+        const AddServerModal = ({ isOpen, onClose }) => {
+            const [formData, setFormData] = useState({
+                name: '',
+                ip: '',
+                description: '',
+                website: '',
+                discord: '',
+                tags: [],
+                banner: null,
+                logo: null
+            });
+            
+            if (!isOpen) return null;
+            
+            const handleTagToggle = (tag) => {
+                setFormData(prev => ({
+                    ...prev,
+                    tags: prev.tags.includes(tag) 
+                        ? prev.tags.filter(t => t !== tag)
+                        : [...prev.tags, tag]
+                }));
+            };
+            
+            return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center modal-backdrop overflow-y-auto py-8" onClick={onClose}>
+                    <div 
+                        className="w-full max-w-2xl mx-4 p-8 rounded-3xl bg-[#111827] border border-white/10 shadow-2xl"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <div className="flex items-center justify-between mb-8">
+                            <div>
+                                <h2 className="font-display text-3xl">ADD YOUR SERVER</h2>
+                                <p className="text-[#94A3B8] mt-1">Get discovered by thousands of players</p>
+                            </div>
+                            <button onClick={onClose} className="p-2 rounded-xl hover:bg-white/5 transition-colors">
+                                <Icon name="X" size={20} />
+                            </button>
+                        </div>
+                        
+                        <form className="space-y-6">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm text-[#94A3B8] mb-2">Server Name *</label>
+                                    <input 
+                                        type="text"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                                        className="w-full px-4 py-3 rounded-xl bg-[#0A0E17] border border-white/10 focus:outline-none focus:border-[#9B6DFF]/50"
+                                        placeholder="My Awesome Server"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm text-[#94A3B8] mb-2">Server IP *</label>
+                                    <input 
+                                        type="text"
+                                        value={formData.ip}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, ip: e.target.value }))}
+                                        className="w-full px-4 py-3 rounded-xl bg-[#0A0E17] border border-white/10 focus:outline-none focus:border-[#9B6DFF]/50 font-mono"
+                                        placeholder="play.example.com"
+                                    />
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label className="block text-sm text-[#94A3B8] mb-2">Description *</label>
+                                <textarea 
+                                    value={formData.description}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                                    className="w-full px-4 py-3 rounded-xl bg-[#0A0E17] border border-white/10 focus:outline-none focus:border-[#9B6DFF]/50 h-24 resize-none"
+                                    placeholder="Tell players what makes your server special..."
+                                />
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm text-[#94A3B8] mb-2">Website</label>
+                                    <input 
+                                        type="url"
+                                        value={formData.website}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, website: e.target.value }))}
+                                        className="w-full px-4 py-3 rounded-xl bg-[#0A0E17] border border-white/10 focus:outline-none focus:border-[#9B6DFF]/50"
+                                        placeholder="https://myserver.com"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm text-[#94A3B8] mb-2">Discord</label>
+                                    <input 
+                                        type="url"
+                                        value={formData.discord}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, discord: e.target.value }))}
+                                        className="w-full px-4 py-3 rounded-xl bg-[#0A0E17] border border-white/10 focus:outline-none focus:border-[#9B6DFF]/50"
+                                        placeholder="https://discord.gg/invite"
+                                    />
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label className="block text-sm text-[#94A3B8] mb-3">Tags (select up to 5)</label>
+                                <div className="flex flex-wrap gap-2">
+                                    {allTags.map(tag => (
+                                        <button
+                                            key={tag}
+                                            type="button"
+                                            onClick={() => handleTagToggle(tag)}
+                                            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                                                formData.tags.includes(tag) 
+                                                    ? 'bg-[#9B6DFF] text-white' 
+                                                    : 'bg-[#1A2235] text-[#94A3B8] hover:text-white'
+                                            }`}
+                                        >
+                                            {tag}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm text-[#94A3B8] mb-2">Server Banner</label>
+                                    <div className="relative">
+                                        <input type="file" accept="image/*" className="hidden" id="banner-upload" />
+                                        <label 
+                                            htmlFor="banner-upload"
+                                            className="flex items-center justify-center gap-3 py-8 rounded-xl border-2 border-dashed border-white/10 hover:border-[#9B6DFF]/50 cursor-pointer transition-colors"
+                                        >
+                                            <Icon name="Image" size={24} className="text-[#94A3B8]" />
+                                            <span className="text-[#94A3B8]">800 x 200px</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm text-[#94A3B8] mb-2">Server Logo</label>
+                                    <div className="relative">
+                                        <input type="file" accept="image/*" className="hidden" id="logo-upload" />
+                                        <label 
+                                            htmlFor="logo-upload"
+                                            className="flex items-center justify-center gap-3 py-8 rounded-xl border-2 border-dashed border-white/10 hover:border-[#9B6DFF]/50 cursor-pointer transition-colors"
+                                        >
+                                            <Icon name="Upload" size={24} className="text-[#94A3B8]" />
+                                            <span className="text-[#94A3B8]">256 x 256px</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button 
+                                type="submit"
+                                className="w-full py-4 rounded-xl vote-btn text-[#0A0E17] font-semibold text-lg flex items-center justify-center gap-2"
+                            >
+                                <Icon name="Plus" size={20} />
+                                Submit Server
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            );
+        };
+        
+        // Footer
+        const Footer = () => {
+            return (
+                <footer className="py-16 border-t border-white/5">
+                    <div className="max-w-7xl mx-auto px-6">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-12">
+                            <div className="col-span-2 md:col-span-1">
+                                <a href="/" className="flex items-center gap-3 mb-4">
+                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#F4B942] to-[#9B6DFF] flex items-center justify-center">
+                                        <span className="font-display text-xl text-[#0A0E17]">HJ</span>
+                                    </div>
+                                    <span className="font-display text-xl">HYTALEJOIN</span>
+                                </a>
+                                <p className="text-[#94A3B8] text-sm">
+                                    The premier Hytale server listing platform. Find your next adventure.
+                                </p>
+                            </div>
+                            
+                            <div>
+                                <h4 className="font-semibold mb-4">Browse</h4>
+                                <ul className="space-y-2 text-[#94A3B8]">
+                                    <li><a href="#" className="hover:text-white transition-colors">All Servers</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Top Voted</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">New Servers</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Categories</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <h4 className="font-semibold mb-4">Server Owners</h4>
+                                <ul className="space-y-2 text-[#94A3B8]">
+                                    <li><a href="#" className="hover:text-white transition-colors">Add Server</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Premium Listing</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Vote API</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Dashboard</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <h4 className="font-semibold mb-4">Support</h4>
+                                <ul className="space-y-2 text-[#94A3B8]">
+                                    <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
+                                    <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-white/5">
+                            <p className="text-[#64748B] text-sm">
+                                © 2026 HytaleJoin. Not affiliated with Hypixel Studios or Riot Games.
+                            </p>
+                            <div className="flex items-center gap-4">
+                                <a href="#" className="p-2 rounded-lg hover:bg-white/5 text-[#94A3B8] hover:text-white transition-colors">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                                    </svg>
+                                </a>
+                                <a href="#" className="p-2 rounded-lg hover:bg-white/5 text-[#94A3B8] hover:text-white transition-colors">
+                                    <Icon name="Twitter" size={20} />
+                                </a>
+                                <a href="#" className="p-2 rounded-lg hover:bg-white/5 text-[#94A3B8] hover:text-white transition-colors">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            );
+        };
+        
+        // Main App
+        const App = () => {
+            const [servers, setServers] = useState(mockServers);
+            const [activeTag, setActiveTag] = useState(null);
+            const [sortBy, setSortBy] = useState('votes');
+            const [searchQuery, setSearchQuery] = useState('');
+            const [authModalOpen, setAuthModalOpen] = useState(false);
+            const [addServerModalOpen, setAddServerModalOpen] = useState(false);
+            
+            const filteredServers = servers
+                .filter(s => !activeTag || s.tags.includes(activeTag))
+                .filter(s => !searchQuery || 
+                    s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    s.ip.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    s.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
+                )
+                .sort((a, b) => {
+                    if (sortBy === 'votes') return b.votes - a.votes;
+                    if (sortBy === 'players') return b.players.online - a.players.online;
+                    if (sortBy === 'name') return a.name.localeCompare(b.name);
+                    return 0;
+                });
+            
+            const handleVote = (id) => {
+                setServers(prev => prev.map(s => 
+                    s.id === id ? { ...s, votes: s.votes + 1 } : s
+                ));
+            };
+            
+            return (
+                <div className="min-h-screen">
+                    <div className="noise-overlay" />
+                    
+                    <Navigation 
+                        onOpenAuth={() => setAuthModalOpen(true)}
+                        onOpenAddServer={() => setAddServerModalOpen(true)}
+                    />
+                    
+                    <Hero onSearch={setSearchQuery} />
+                    
+                    <Stats />
+                    
+                    <main id="servers" className="py-20">
+                        <div className="max-w-7xl mx-auto px-6">
+                            <div className="flex items-end justify-between mb-8">
+                                <div>
+                                    <h2 className="font-display text-4xl md:text-5xl mb-2">TOP SERVERS</h2>
+                                    <p className="text-[#94A3B8]">Ranked by community votes</p>
+                                </div>
+                            </div>
+                            
+                            <FilterBar 
+                                activeTag={activeTag}
+                                onTagChange={setActiveTag}
+                                sortBy={sortBy}
+                                onSortChange={setSortBy}
+                            />
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {filteredServers.map((server, index) => (
+                                    <ServerCard 
+                                        key={server.id}
+                                        server={server}
+                                        rank={index + 1}
+                                        onVote={handleVote}
+                                    />
+                                ))}
+                            </div>
+                            
+                            {filteredServers.length === 0 && (
+                                <div className="text-center py-20">
+                                    <Icon name="SearchX" size={48} className="mx-auto text-[#94A3B8] mb-4" />
+                                    <h3 className="text-xl font-semibold mb-2">No servers found</h3>
+                                    <p className="text-[#94A3B8]">Try adjusting your filters or search query</p>
+                                </div>
+                            )}
+                            
+                            <div className="flex justify-center mt-12">
+                                <button className="px-8 py-4 rounded-xl bg-[#1A2235] hover:bg-[#242D42] border border-white/5 hover:border-[#9B6DFF]/30 transition-all flex items-center gap-2 font-semibold">
+                                    Load More Servers
+                                    <Icon name="ChevronDown" size={20} />
+                                </button>
+                            </div>
+                        </div>
+                    </main>
+                    
+                    <Categories />
+                    
+                    <Footer />
+                    
+                    <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
+                    <AddServerModal isOpen={addServerModalOpen} onClose={() => setAddServerModalOpen(false)} />
+                </div>
+            );
+        };
+        
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
