@@ -8,7 +8,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <style>
         :root {
             --gold: #D4A853;
@@ -28,6 +30,7 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Outfit', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+        body { font-family: 'Manrope', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
         .page-bg { position: fixed; inset: 0; background: linear-gradient(180deg, rgba(13,17,23,0.3) 0%, rgba(13,17,23,0.7) 40%, rgba(13,17,23,0.95) 70%, var(--bg-primary) 100%), linear-gradient(135deg, #1a3a2f 0%, #0d2818 25%, #0a1f14 50%, var(--bg-primary) 100%); z-index: -2; }
         .page-bg::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 400px; background: radial-gradient(ellipse 100% 100% at 70% 0%, rgba(78,205,196,0.08) 0%, transparent 50%), radial-gradient(ellipse 80% 80% at 30% 10%, rgba(212,168,83,0.06) 0%, transparent 40%); pointer-events: none; }
         ::-webkit-scrollbar { width: 10px; }
@@ -53,128 +56,7 @@
         .btn-ghost:hover { color: var(--text-primary); border-color: var(--gold); background: rgba(212,168,83,0.1); }
         .btn-wood { background: linear-gradient(180deg, #8B5A2B 0%, #6B4423 50%, #5A3A1D 100%); color: var(--gold-bright); border: 2px solid #A0652F; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 10px rgba(0,0,0,0.3); }
         .btn-wood:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 6px 20px rgba(139,90,43,0.4); }
-        .btn-gold { background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 50%, var(--gold-dark) 100%); color: var(--bg-primary); border: 2px solid var(--gold-bright); box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 15px rgba(212,168,83,0.4); }
-        .btn-gold:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 8px 25px rgba(212,168,83,0.5); }
-
-        /* Hero */
-        .hero { padding: 10rem 2rem 4rem; text-align: center; }
-        .hero-content { max-width: 900px; margin: 0 auto; }
-        .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(212,168,83,0.1); border: 1px solid rgba(212,168,83,0.3); border-radius: 50px; color: var(--gold); font-size: 0.85rem; font-weight: 500; margin-bottom: 1.5rem; animation: fadeIn 0.6s ease; }
-        .hero-badge .pulse { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .hero h1 { font-family: 'Cinzel', serif; font-size: clamp(2.5rem, 7vw, 4.5rem); font-weight: 700; line-height: 1.1; margin-bottom: 1.5rem; animation: fadeIn 0.6s 0.1s ease both; }
-        .text-gradient { background: linear-gradient(135deg, var(--gold-bright), var(--gold), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .hero-desc { font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 2.5rem; animation: fadeIn 0.6s 0.2s ease both; }
-
-        /* Search */
-        .search-container { max-width: 700px; margin: 0 auto; animation: fadeIn 0.6s 0.3s ease both; }
-        .search-box { display: flex; gap: 1rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 0.5rem; }
-        .search-input-wrap { flex: 1; position: relative; }
-        .search-input-wrap i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary); }
-        .search-box input { width: 100%; padding: 1rem 1rem 1rem 3rem; background: transparent; border: none; color: var(--text-primary); font-size: 1rem; outline: none; }
-        .search-box input::placeholder { color: var(--text-secondary); }
-
-        /* Stats */
-        .hero-stats { display: flex; justify-content: center; gap: 3rem; margin-top: 3rem; flex-wrap: wrap; }
-        .stat { text-align: center; }
-        .stat-value { font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 700; color: var(--gold); }
-        .stat-label { font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.1em; }
-
-        /* Main */
-        .main-content { max-width: 1400px; margin: 0 auto; padding: 0 2rem 4rem; }
-        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-        .section-title { display: flex; flex-direction: column; }
-        .section-label { font-size: 0.85rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; }
-        .section-name { font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 700; }
-        .section-link { display: flex; align-items: center; gap: 0.5rem; color: var(--gold); text-decoration: none; font-weight: 500; transition: gap 0.3s; }
-        .section-link:hover { gap: 0.75rem; }
-
-        /* Grids */
-        .premium-section, .servers-section, .categories-section { margin-bottom: 4rem; }
-        .premium-grid, .servers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
-
-        /* Server Card */
-        .server-card { position: relative; background: var(--bg-secondary); border-radius: 12px; overflow: visible; transition: transform 0.3s, box-shadow 0.3s; }
-        .server-card::before { content: ''; position: absolute; inset: 0; border: 2px solid transparent; border-radius: 12px; background: linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box, linear-gradient(180deg, rgba(78,139,161,0.5) 0%, rgba(78,139,161,0.2) 50%, rgba(78,139,161,0.5) 100%) border-box; pointer-events: none; z-index: 1; }
-        .server-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-        .server-card.premium::before { background: linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box, linear-gradient(180deg, var(--gold) 0%, var(--gold-dark) 50%, var(--gold) 100%) border-box; }
-        .card-corner { position: absolute; width: 20px; height: 20px; z-index: 5; }
-        .card-corner svg { width: 100%; height: 100%; fill: var(--frame); }
-        .server-card.premium .card-corner svg { fill: var(--gold); }
-        .corner-tl { top: -2px; left: -2px; }
-        .corner-tr { top: -2px; right: -2px; transform: rotate(90deg); }
-        .corner-bl { bottom: -2px; left: -2px; transform: rotate(-90deg); }
-        .corner-br { bottom: -2px; right: -2px; transform: rotate(180deg); }
-        .card-diamond { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); width: 16px; height: 16px; z-index: 6; }
-        .card-diamond svg { fill: var(--frame); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
-        .server-card.premium .card-diamond svg { fill: var(--gold); }
-        .server-banner { position: relative; height: 140px; overflow: hidden; border-radius: 10px 10px 0 0; }
-        .server-banner img { width: 100%; height: 100%; object-fit: cover; }
-        .server-banner::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(transparent, var(--bg-secondary)); }
-        .server-content { padding: 1rem 1.25rem 1.25rem; position: relative; z-index: 2; }
-        .server-name { font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem; }
-        .server-votes { display: flex; align-items: center; gap: 0.35rem; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem; }
-        .server-votes i { color: var(--red); font-size: 0.8rem; }
-        .copy-ip-btn { width: 100%; padding: 0.75rem 1rem; background: linear-gradient(180deg, #8B5A2B 0%, #6B4423 50%, #5A3A1D 100%); border: 2px solid #A0652F; border-radius: 6px; color: var(--gold-bright); font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.3); }
-        .copy-ip-btn:hover { background: linear-gradient(180deg, #9B6A3B 0%, #7B5433 50%, #6A4A2D 100%); transform: translateY(-1px); }
-        .copy-ip-btn.copied { background: linear-gradient(180deg, #2D6B4A 0%, #1D5A3A 50%, #0D4A2A 100%); border-color: var(--green); }
-
-        /* Filters */
-        .filters-section { margin-bottom: 2rem; }
-        .filters-bar { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; padding: 1.5rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; }
-        .filter-group { flex: 1; min-width: 150px; }
-        .filter-group label { display: block; font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
-        .filter-select, .filter-input { width: 100%; padding: 0.75rem 1rem; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 0.95rem; cursor: pointer; outline: none; transition: border-color 0.2s; }
-        .filter-select:focus, .filter-input:focus { border-color: var(--gold); }
-        .filter-input::placeholder { color: var(--text-secondary); }
-        .btn-reset { padding: 0.75rem 1.5rem; background: transparent; border: 2px solid var(--border); border-radius: 8px; color: var(--text-secondary); font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
-        .btn-reset:hover { border-color: var(--gold); color: var(--gold); }
-        .total-servers { text-align: right; }
-        .total-servers span { font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 700; color: var(--gold); }
-
-        /* Categories */
-        .categories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
-        .category-card { padding: 1.5rem 1rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s; }
-        .category-card:hover { border-color: var(--gold); transform: translateY(-2px); }
-        .category-card i { font-size: 2rem; margin-bottom: 0.75rem; color: var(--gold); display: block; }
-        .category-card h3 { font-family: 'Cinzel', serif; font-size: 1rem; margin-bottom: 0.25rem; }
-        .category-card span { font-size: 0.85rem; color: var(--text-secondary); }
-
-        /* Info */
-        .info-section { margin-bottom: 4rem; }
-        .info-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 16px; padding: 3rem; }
-        .info-box h2 { font-family: 'Cinzel', serif; font-size: 1.75rem; color: var(--gold); margin-bottom: 1.5rem; text-align: center; }
-        .info-box p { color: var(--text-secondary); font-size: 1rem; line-height: 1.8; margin-bottom: 1rem; max-width: 900px; margin-left: auto; margin-right: auto; text-align: center; }
-        .info-box strong { color: var(--text-primary); }
-        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem; }
-        .info-card { padding: 2rem; background: var(--bg-tertiary); border-radius: 12px; }
-        .info-card h3 { font-family: 'Cinzel', serif; font-size: 1.25rem; color: var(--gold); margin-bottom: 1rem; }
-        .info-card p { font-size: 0.95rem; margin-bottom: 0; text-align: left; }
-
-        /* Footer */
-        .footer { background: var(--bg-secondary); border-top: 1px solid var(--border); padding: 4rem 2rem 2rem; }
-        .footer-inner { max-width: 1400px; margin: 0 auto; }
-        .footer-grid { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 3rem; margin-bottom: 3rem; }
-        .footer-brand p { color: var(--text-secondary); margin-top: 1rem; max-width: 300px; }
-        .footer-section h4 { font-family: 'Cinzel', serif; font-size: 1rem; margin-bottom: 1rem; color: var(--gold); }
-        .footer-section ul { list-style: none; }
-        .footer-section li { margin-bottom: 0.5rem; }
-        .footer-section a { color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
-        .footer-section a:hover { color: var(--text-primary); }
-        .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 2rem; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 1rem; }
-        .footer-bottom p { color: var(--text-secondary); font-size: 0.9rem; }
-        .footer-socials { display: flex; gap: 1rem; }
-        .footer-socials a { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--bg-tertiary); border-radius: 8px; color: var(--text-secondary); text-decoration: none; transition: all 0.2s; }
-        .footer-socials a:hover { background: var(--gold); color: var(--bg-primary); }
-
-        /* Modals */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 2rem; }
-        .modal-overlay.active { display: flex; }
-        .modal { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; animation: modalIn 0.3s ease; }
-        .modal.wide { max-width: 700px; }
-        @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        .modal-header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+@@ -178,50 +179,53 @@
         .modal-header h2 { font-family: 'Cinzel', serif; font-size: 1.5rem; }
         .modal-close { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--bg-tertiary); border: none; border-radius: 8px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; }
         .modal-close:hover { background: var(--red); color: white; }
@@ -200,6 +82,9 @@
         .oauth-buttons { display: flex; gap: 1rem; }
         .btn-oauth { flex: 1; padding: 0.875rem; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s; }
         .btn-oauth:hover { border-color: var(--gold); background: var(--bg-card); }
+        .auth-note { margin-top: 1rem; font-size: 0.85rem; color: var(--text-secondary); text-align: center; }
+        .auth-note strong { color: var(--text-primary); }
+        .search-note { margin-top: 0.75rem; color: var(--text-secondary); font-size: 0.95rem; }
         .auth-footer { text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-secondary); }
         .auth-footer a { color: var(--gold); text-decoration: none; }
         .auth-footer a:hover { text-decoration: underline; }
@@ -225,35 +110,7 @@
         .alert-content i { color: var(--gold); font-size: 1.25rem; }
         .alert-content strong { color: var(--gold); }
         .my-server-item { display: flex; align-items: center; gap: 1.5rem; padding: 1.25rem 1.5rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1rem; flex-wrap: wrap; }
-        .my-server-logo { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; background: var(--bg-tertiary); }
-        .my-server-info { flex: 1; min-width: 200px; }
-        .my-server-name { font-family: 'Cinzel', serif; font-size: 1.25rem; margin-bottom: 0.25rem; }
-        .my-server-meta { display: flex; align-items: center; gap: 1.5rem; font-size: 0.9rem; color: var(--text-secondary); flex-wrap: wrap; }
-        .my-server-meta span { display: flex; align-items: center; gap: 0.35rem; }
-        .my-server-status { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.75rem; background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3); border-radius: 50px; color: var(--green); font-size: 0.85rem; }
-        .my-server-status .dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; }
-        .my-server-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-        .server-action-btn { padding: 0.5rem 1rem; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-secondary); font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; transition: all 0.2s; }
-        .server-action-btn:hover { border-color: var(--gold); color: var(--gold); }
-        .server-action-btn.delete:hover { border-color: var(--red); color: var(--red); }
-        .servers-count { color: var(--text-secondary); font-size: 0.95rem; margin-top: 1rem; }
-        .empty-state { text-align: center; padding: 4rem 2rem; }
-        .empty-state i { font-size: 4rem; color: var(--text-secondary); margin-bottom: 1rem; opacity: 0.5; }
-        .empty-state h3 { font-family: 'Cinzel', serif; font-size: 1.5rem; margin-bottom: 0.5rem; }
-        .empty-state p { color: var(--text-secondary); margin-bottom: 1.5rem; }
-        .partners-content { text-align: center; padding: 2rem 0; }
-        .partners-content h2 { font-family: 'Cinzel', serif; font-size: 2.5rem; margin-bottom: 1rem; }
-        .partners-content > p { color: var(--text-secondary); font-size: 1.1rem; max-width: 700px; margin: 0 auto 2rem; }
-        .partners-cta { font-size: 1.25rem; margin-bottom: 2rem; }
-        .partners-cta a { color: var(--gold); text-decoration: none; }
-        .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); padding: 1rem 1.5rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; gap: 0.75rem; z-index: 3000; transition: transform 0.3s ease; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
-        .toast.show { transform: translateX(-50%) translateY(0); }
-        .toast i { color: var(--green); font-size: 1.25rem; }
-        .home-page { display: block; }
-        .home-page.hidden { display: none; }
-
-        @media (max-width: 1024px) {
-            .dashboard-layout { grid-template-columns: 1fr; }
+@@ -257,74 +261,75 @@
             .sidebar { position: static; }
             .footer-grid { grid-template-columns: 1fr 1fr; }
         }
@@ -280,6 +137,7 @@
             <div class="nav-links">
                 <a href="#" onclick="showPage('home')">Home</a>
                 <a href="#servers">Servers</a>
+                <a href="#servers" onclick="goToServers(event)">Servers</a>
                 <a href="#" onclick="showPage('partners')">Partners</a>
                 <a href="#" id="dashboardLink" style="display:none;" onclick="showPage('dashboard')">Dashboard</a>
             </div>
@@ -303,6 +161,11 @@
                         <div class="search-input-wrap"><i class="fas fa-search"></i><input type="text" id="heroSearch" placeholder="Search servers..." onkeypress="if(event.key==='Enter')searchServers()"></div>
                         <button class="btn btn-gold" onclick="searchServers()"><i class="fas fa-search"></i> Search</button>
                     </div>
+                <div class="search-box">
+                    <div class="search-input-wrap"><i class="fas fa-search"></i><input type="text" id="heroSearch" placeholder="Search servers, modes, or IP..." onkeypress="if(event.key==='Enter')searchServers()"></div>
+                    <button class="btn btn-gold" onclick="searchServers()"><i class="fas fa-search"></i> Search</button>
+                </div>
+                <div class="search-note">Filter by category, country, or sorting to browse when you don't have a server name in mind.</div>
                 </div>
                 <div class="hero-stats">
                     <div class="stat"><div class="stat-value">847</div><div class="stat-label">Total Servers</div></div>
@@ -328,54 +191,7 @@
                     <div class="filter-group"><label>Mods</label><select class="filter-select" id="filterMods" onchange="applyFilters()"><option value="">All</option><option value="vanilla">Vanilla</option><option value="modded">Modded</option></select></div>
                     <button class="btn-reset" onclick="resetFilters()"><i class="fas fa-redo"></i> Reset</button>
                     <div class="total-servers"><div style="font-size:0.75rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;">Total</div><span id="filteredCount">847</span></div>
-                </div>
-            </section>
-
-            <section class="servers-section"><div class="servers-grid" id="serverGrid"></div></section>
-
-            <section class="categories-section">
-                <div class="section-header"><div class="section-title"><span class="section-label">Browse by Category</span><h2 class="section-name">Server Types</h2></div></div>
-                <div class="categories-grid">
-                    <div class="category-card" onclick="filterByCategory('pvp')"><i class="fas fa-shield-halved"></i><h3>PvP</h3><span>234 servers</span></div>
-                    <div class="category-card" onclick="filterByCategory('survival')"><i class="fas fa-campground"></i><h3>Survival</h3><span>189 servers</span></div>
-                    <div class="category-card" onclick="filterByCategory('rpg')"><i class="fas fa-hat-wizard"></i><h3>RPG</h3><span>156 servers</span></div>
-                    <div class="category-card" onclick="filterByCategory('minigames')"><i class="fas fa-gamepad"></i><h3>Minigames</h3><span>98 servers</span></div>
-                    <div class="category-card" onclick="filterByCategory('creative')"><i class="fas fa-paint-brush"></i><h3>Creative</h3><span>87 servers</span></div>
-                    <div class="category-card" onclick="filterByCategory('economy')"><i class="fas fa-coins"></i><h3>Economy</h3><span>112 servers</span></div>
-                </div>
-            </section>
-
-            <section class="info-section">
-                <div class="info-box">
-                    <h2>What Are Hytale Servers?</h2>
-                    <p><strong>Hytale servers</strong> are community-run multiplayer servers that allow players to experience Hytale in different ways. Each server offers unique gameplay, including survival worlds, RPG experiences, minigames, creative modes, and custom adventures.</p>
-                    <p>Using our <strong>Hytale server list</strong>, players can explore the best Hytale servers all in one place. Servers are ranked using real activity, popularity, and player engagement.</p>
-                    <p>By voting for your favourite Hytale servers, you directly support server owners and strengthen the wider Hytale community.</p>
-                    <div class="info-grid">
-                        <div class="info-card"><h3>The Best Hytale Server List</h3><p>HytaleJoin.com provides a modern and regularly updated Hytale server list designed to make server discovery fair, simple, and enjoyable for all players.</p></div>
-                        <div class="info-card"><h3>Find Your Perfect Server</h3><p>Whether you are looking for competitive minigames, relaxed creative servers, or immersive RPG worlds, our Hytale server list helps you find the right server quickly.</p></div>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <div class="dashboard-page" id="dashboardPage">
-        <div class="dashboard-layout">
-            <aside class="sidebar">
-                <div class="sidebar-profile"><div class="sidebar-avatar" id="userAvatar">T</div><div class="sidebar-name" id="userName">Username</div><div class="sidebar-email" id="userEmail">user@email.com</div></div>
-                <nav class="sidebar-nav">
-                    <button class="sidebar-link active" onclick="showDashboardTab('myservers',this)"><i class="fas fa-server"></i> My Servers</button>
-                    <button class="sidebar-link" onclick="openModal('addServerModal')"><i class="fas fa-plus"></i> Add Server</button>
-                    <button class="sidebar-link" onclick="showDashboardTab('sponsored',this)"><i class="fas fa-star"></i> Sponsored</button>
-                    <button class="sidebar-link" onclick="showDashboardTab('settings',this)"><i class="fas fa-cog"></i> Settings</button>
-                </nav>
-            </aside>
-            <div class="dashboard-content">
-                <div class="dashboard-tab" id="tab-myservers">
-                    <div class="dashboard-header"><h1 class="dashboard-title">My Servers</h1><button class="btn btn-gold" onclick="openModal('addServerModal')"><i class="fas fa-plus"></i> Add Server</button></div>
-                    <div class="alert-box"><div class="alert-content"><i class="fas fa-star"></i><div><strong>Sponsored Slots are now LIVE</strong><p style="margin:0;color:var(--text-secondary);font-size:0.9rem;">Secure your slot for featured placement.</p></div></div><button class="btn btn-wood">Secure a Slot</button></div>
-                    <div id="myServersList"></div>
+@@ -379,115 +384,117 @@
                 </div>
                 <div class="dashboard-tab" id="tab-sponsored" style="display:none;"><div class="dashboard-header"><h1 class="dashboard-title">Sponsored Slots</h1></div><div class="info-box"><h2>Get Featured on HytaleJoin</h2><p>Sponsored slots give your server premium placement at the top of our server list.</p><div style="text-align:center;margin-top:2rem;"><button class="btn btn-gold">Contact for Sponsorship</button></div></div></div>
                 <div class="dashboard-tab" id="tab-settings" style="display:none;"><div class="dashboard-header"><h1 class="dashboard-title">Account Settings</h1></div><div class="info-box"><h2>Change Password</h2><form style="max-width:400px;margin:0 auto;"><div class="form-group"><label>Current Password</label><input type="password" class="form-input" placeholder="Current password"></div><div class="form-group"><label>New Password</label><input type="password" class="form-input" placeholder="New password"></div><button type="button" class="btn btn-gold" style="width:100%;">Update Password</button></form></div></div>
@@ -402,12 +218,14 @@
             <div class="modal-header"><h2>Welcome Back</h2><button class="modal-close" onclick="closeModal('loginModal')"><i class="fas fa-times"></i></button></div>
             <div class="modal-body">
                 <div class="oauth-buttons"><button class="btn-oauth"><i class="fab fa-discord"></i> Discord</button><button class="btn-oauth"><i class="fab fa-github"></i> GitHub</button></div>
+                <div class="oauth-buttons"><button class="btn-oauth" onclick="handleOAuth('Discord')"><i class="fab fa-discord"></i> Discord</button><button class="btn-oauth" onclick="handleOAuth('Google')"><i class="fab fa-google"></i> Google</button></div>
                 <div class="auth-divider"><span>or continue with email</span></div>
                 <form onsubmit="handleLogin(event)">
                     <div class="form-group"><label>Email <span>*</span></label><input type="email" class="form-input" id="loginEmail" placeholder="Enter your email" required></div>
                     <div class="form-group"><label>Password <span>*</span></label><input type="password" class="form-input" id="loginPassword" placeholder="Enter your password" required></div>
                     <button type="submit" class="btn btn-gold" style="width:100%;"><i class="fas fa-sign-in-alt"></i> Sign In</button>
                 </form>
+                <div class="auth-note"><strong>Demo only:</strong> accounts are stored in-memory and reset on refresh.</div>
                 <div class="auth-footer">Don't have an account? <a href="#" onclick="closeModal('loginModal');openModal('registerModal');">Sign up</a></div>
             </div>
         </div>
@@ -418,6 +236,7 @@
             <div class="modal-header"><h2>Create Account</h2><button class="modal-close" onclick="closeModal('registerModal')"><i class="fas fa-times"></i></button></div>
             <div class="modal-body">
                 <div class="oauth-buttons"><button class="btn-oauth"><i class="fab fa-discord"></i> Discord</button><button class="btn-oauth"><i class="fab fa-github"></i> GitHub</button></div>
+                <div class="oauth-buttons"><button class="btn-oauth" onclick="handleOAuth('Discord')"><i class="fab fa-discord"></i> Discord</button><button class="btn-oauth" onclick="handleOAuth('Google')"><i class="fab fa-google"></i> Google</button></div>
                 <div class="auth-divider"><span>or register with email</span></div>
                 <form onsubmit="handleRegister(event)">
                     <div class="form-group"><label>Username <span>*</span></label><input type="text" class="form-input" id="regUsername" placeholder="Choose a username" required></div>
@@ -426,6 +245,7 @@
                     <div class="form-group"><label>Confirm Password <span>*</span></label><input type="password" class="form-input" id="regConfirmPassword" placeholder="Confirm password" required></div>
                     <button type="submit" class="btn btn-gold" style="width:100%;"><i class="fas fa-user-plus"></i> Create Account</button>
                 </form>
+                <div class="auth-note"><strong>Demo only:</strong> accounts are stored in-memory and reset on refresh.</div>
                 <div class="auth-footer">Already have an account? <a href="#" onclick="closeModal('registerModal');openModal('loginModal');">Sign in</a></div>
             </div>
         </div>
@@ -466,6 +286,7 @@
             <div class="footer-grid">
                 <div class="footer-brand"><a href="#" class="logo"><div class="logo-icon">HJ</div><span class="logo-text">HYTALEJOIN</span></a><p>The premier Hytale server listing platform. Find your next adventure today.</p></div>
                 <div class="footer-section"><h4>Browse</h4><ul><li><a href="#servers">All Servers</a></li><li><a href="#">Top Voted</a></li><li><a href="#">New Servers</a></li></ul></div>
+                <div class="footer-section"><h4>Browse</h4><ul><li><a href="#servers" onclick="goToServers(event)">All Servers</a></li><li><a href="#">Top Voted</a></li><li><a href="#">New Servers</a></li></ul></div>
                 <div class="footer-section"><h4>Server Owners</h4><ul><li><a href="#" onclick="checkLoginAndOpenAddServer()">Add Server</a></li><li><a href="#">Premium Listing</a></li><li><a href="#">Vote API</a></li></ul></div>
                 <div class="footer-section"><h4>Support</h4><ul><li><a href="#">Help Center</a></li><li><a href="#">Contact Us</a></li><li><a href="#">Terms of Service</a></li></ul></div>
             </div>
@@ -491,21 +312,7 @@
 
         let currentUser = null, votedServers = [];
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderPremiumServers();
-            renderServers();
-            updateNavState();
-            window.addEventListener('scroll', () => document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50));
-        });
-
-        function renderPremiumServers() { document.getElementById('premiumGrid').innerHTML = servers.filter(s => s.premium).slice(0, 5).map(s => createServerCard(s, true)).join(''); }
-        function renderServers() { let f = getFilteredServers(); document.getElementById('filteredCount').textContent = f.length; document.getElementById('serverGrid').innerHTML = f.map(s => createServerCard(s, false)).join(''); }
-
-        function getFilteredServers() {
-            let f = [...servers];
-            const search = document.getElementById('filterSearch').value.toLowerCase();
-            const country = document.getElementById('filterCountry').value;
-            const sort = document.getElementById('filterSort').value;
+@@ -509,86 +516,129 @@
             const category = document.getElementById('filterCategory').value;
             if (search) f = f.filter(s => s.name.toLowerCase().includes(search) || s.ip.toLowerCase().includes(search));
             if (country) f = f.filter(s => s.country === country || (country === 'eu' && ['de', 'fr', 'eu'].includes(s.country)));
@@ -532,6 +339,43 @@
         function searchServers() { document.getElementById('filterSearch').value = document.getElementById('heroSearch').value; applyFilters(); document.getElementById('servers').scrollIntoView({ behavior: 'smooth' }); }
 
         function copyIP(ip, btn) { navigator.clipboard.writeText(ip).then(() => { btn.classList.add('copied'); btn.innerHTML = '<i class="fas fa-check"></i> Copied!'; showToast('IP copied to clipboard!'); setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = '<i class="fas fa-copy"></i> Copy IP'; }, 2000); }); }
+        function copyIP(ip, btn) {
+            const done = () => {
+                btn.classList.add('copied');
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                showToast('IP copied to clipboard!');
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = '<i class="fas fa-copy"></i> Copy IP';
+                }, 2000);
+            };
+            if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(ip).then(done).catch(() => fallbackCopy(ip, done));
+            } else {
+                fallbackCopy(ip, done);
+            }
+        }
+
+        function fallbackCopy(ip, onSuccess) {
+            const temp = document.createElement('textarea');
+            temp.value = ip;
+            temp.style.position = 'fixed';
+            temp.style.opacity = '0';
+            document.body.appendChild(temp);
+            temp.select();
+            try {
+                const ok = document.execCommand('copy');
+                document.body.removeChild(temp);
+                if (ok) {
+                    onSuccess();
+                } else {
+                    showToast('Copy failed. Please copy manually.');
+                }
+            } catch (e) {
+                document.body.removeChild(temp);
+                showToast('Copy failed. Please copy manually.');
+            }
+        }
 
         function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow = 'hidden'; }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow = ''; }
@@ -540,6 +384,7 @@
         function handleLogin(e) { e.preventDefault(); const email = document.getElementById('loginEmail').value; currentUser = { username: email.split('@')[0], email, avatar: email.split('@')[0].charAt(0).toUpperCase() }; closeModal('loginModal'); updateNavState(); showToast('Welcome back, ' + currentUser.username + '!'); document.getElementById('loginEmail').value = ''; document.getElementById('loginPassword').value = ''; }
         function handleRegister(e) { e.preventDefault(); const username = document.getElementById('regUsername').value; const email = document.getElementById('regEmail').value; if (document.getElementById('regPassword').value !== document.getElementById('regConfirmPassword').value) { showToast('Passwords do not match!'); return; } currentUser = { username, email, avatar: username.charAt(0).toUpperCase() }; closeModal('registerModal'); updateNavState(); showToast('Account created! Welcome, ' + currentUser.username + '!'); }
         function logout() { currentUser = null; votedServers = []; updateNavState(); showPage('home'); showToast('You have been logged out.'); }
+        function handleOAuth(provider) { showToast(`${provider} login is coming soon.`); }
 
         function updateNavState() {
             const l = !!currentUser;
@@ -586,9 +431,16 @@
             window.scrollTo(0, 0);
         }
 
+        function goToServers(event) {
+            if (event) event.preventDefault();
+            showPage('home');
+            setTimeout(() => document.getElementById('servers').scrollIntoView({ behavior: 'smooth' }), 0);
+        }
+
         function showToast(m) { const t = document.getElementById('toast'); document.getElementById('toastMessage').textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
 
         refreshCaptcha();
     </script>
 </body>
+</html>
 </html>
