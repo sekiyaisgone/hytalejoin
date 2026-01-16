@@ -7,8 +7,9 @@
     <meta name="description" content="Discover and join the best Hytale servers. Browse PvP, Survival, RPG, Minigames and more.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <style>
         :root {
             --gold: #D4A853;
@@ -27,7 +28,7 @@
             --frame: #5A8A9A;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Outfit', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+        body { font-family: 'Manrope', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
         .page-bg { position: fixed; inset: 0; background: linear-gradient(180deg, rgba(13,17,23,0.3) 0%, rgba(13,17,23,0.7) 40%, rgba(13,17,23,0.95) 70%, var(--bg-primary) 100%), linear-gradient(135deg, #1a3a2f 0%, #0d2818 25%, #0a1f14 50%, var(--bg-primary) 100%); z-index: -2; }
         .page-bg::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 400px; background: radial-gradient(ellipse 100% 100% at 70% 0%, rgba(78,205,196,0.08) 0%, transparent 50%), radial-gradient(ellipse 80% 80% at 30% 10%, rgba(212,168,83,0.06) 0%, transparent 40%); pointer-events: none; }
         ::-webkit-scrollbar { width: 10px; }
@@ -200,6 +201,9 @@
         .oauth-buttons { display: flex; gap: 1rem; }
         .btn-oauth { flex: 1; padding: 0.875rem; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s; }
         .btn-oauth:hover { border-color: var(--gold); background: var(--bg-card); }
+        .auth-note { margin-top: 1rem; font-size: 0.85rem; color: var(--text-secondary); text-align: center; }
+        .auth-note strong { color: var(--text-primary); }
+        .search-note { margin-top: 0.75rem; color: var(--text-secondary); font-size: 0.95rem; }
         .auth-footer { text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-secondary); }
         .auth-footer a { color: var(--gold); text-decoration: none; }
         .auth-footer a:hover { text-decoration: underline; }
@@ -279,7 +283,7 @@
             <a href="#" class="logo" onclick="showPage('home')"><div class="logo-icon">HJ</div><span class="logo-text">HYTALEJOIN</span></a>
             <div class="nav-links">
                 <a href="#" onclick="showPage('home')">Home</a>
-                <a href="#servers">Servers</a>
+                <a href="#servers" onclick="goToServers(event)">Servers</a>
                 <a href="#" onclick="showPage('partners')">Partners</a>
                 <a href="#" id="dashboardLink" style="display:none;" onclick="showPage('dashboard')">Dashboard</a>
             </div>
@@ -299,10 +303,11 @@
                 <h1>Find Your Next <span class="text-gradient">Hytale Adventure</span></h1>
                 <p class="hero-desc">Discover and join the best Hytale servers. Browse thousands of communities, vote for your favorites, and start playing today.</p>
                 <div class="search-container">
-                    <div class="search-box">
-                        <div class="search-input-wrap"><i class="fas fa-search"></i><input type="text" id="heroSearch" placeholder="Search servers..." onkeypress="if(event.key==='Enter')searchServers()"></div>
-                        <button class="btn btn-gold" onclick="searchServers()"><i class="fas fa-search"></i> Search</button>
-                    </div>
+                <div class="search-box">
+                    <div class="search-input-wrap"><i class="fas fa-search"></i><input type="text" id="heroSearch" placeholder="Search servers, modes, or IP..." onkeypress="if(event.key==='Enter')searchServers()"></div>
+                    <button class="btn btn-gold" onclick="searchServers()"><i class="fas fa-search"></i> Search</button>
+                </div>
+                <div class="search-note">Filter by category, country, or sorting to browse when you don't have a server name in mind.</div>
                 </div>
                 <div class="hero-stats">
                     <div class="stat"><div class="stat-value">847</div><div class="stat-label">Total Servers</div></div>
@@ -401,13 +406,14 @@
         <div class="modal">
             <div class="modal-header"><h2>Welcome Back</h2><button class="modal-close" onclick="closeModal('loginModal')"><i class="fas fa-times"></i></button></div>
             <div class="modal-body">
-                <div class="oauth-buttons"><button class="btn-oauth"><i class="fab fa-discord"></i> Discord</button><button class="btn-oauth"><i class="fab fa-github"></i> GitHub</button></div>
+                <div class="oauth-buttons"><button class="btn-oauth" onclick="handleOAuth('Discord')"><i class="fab fa-discord"></i> Discord</button><button class="btn-oauth" onclick="handleOAuth('Google')"><i class="fab fa-google"></i> Google</button></div>
                 <div class="auth-divider"><span>or continue with email</span></div>
                 <form onsubmit="handleLogin(event)">
                     <div class="form-group"><label>Email <span>*</span></label><input type="email" class="form-input" id="loginEmail" placeholder="Enter your email" required></div>
                     <div class="form-group"><label>Password <span>*</span></label><input type="password" class="form-input" id="loginPassword" placeholder="Enter your password" required></div>
                     <button type="submit" class="btn btn-gold" style="width:100%;"><i class="fas fa-sign-in-alt"></i> Sign In</button>
                 </form>
+                <div class="auth-note"><strong>Demo only:</strong> accounts are stored in-memory and reset on refresh.</div>
                 <div class="auth-footer">Don't have an account? <a href="#" onclick="closeModal('loginModal');openModal('registerModal');">Sign up</a></div>
             </div>
         </div>
@@ -417,7 +423,7 @@
         <div class="modal">
             <div class="modal-header"><h2>Create Account</h2><button class="modal-close" onclick="closeModal('registerModal')"><i class="fas fa-times"></i></button></div>
             <div class="modal-body">
-                <div class="oauth-buttons"><button class="btn-oauth"><i class="fab fa-discord"></i> Discord</button><button class="btn-oauth"><i class="fab fa-github"></i> GitHub</button></div>
+                <div class="oauth-buttons"><button class="btn-oauth" onclick="handleOAuth('Discord')"><i class="fab fa-discord"></i> Discord</button><button class="btn-oauth" onclick="handleOAuth('Google')"><i class="fab fa-google"></i> Google</button></div>
                 <div class="auth-divider"><span>or register with email</span></div>
                 <form onsubmit="handleRegister(event)">
                     <div class="form-group"><label>Username <span>*</span></label><input type="text" class="form-input" id="regUsername" placeholder="Choose a username" required></div>
@@ -426,6 +432,7 @@
                     <div class="form-group"><label>Confirm Password <span>*</span></label><input type="password" class="form-input" id="regConfirmPassword" placeholder="Confirm password" required></div>
                     <button type="submit" class="btn btn-gold" style="width:100%;"><i class="fas fa-user-plus"></i> Create Account</button>
                 </form>
+                <div class="auth-note"><strong>Demo only:</strong> accounts are stored in-memory and reset on refresh.</div>
                 <div class="auth-footer">Already have an account? <a href="#" onclick="closeModal('registerModal');openModal('loginModal');">Sign in</a></div>
             </div>
         </div>
@@ -465,7 +472,7 @@
         <div class="footer-inner">
             <div class="footer-grid">
                 <div class="footer-brand"><a href="#" class="logo"><div class="logo-icon">HJ</div><span class="logo-text">HYTALEJOIN</span></a><p>The premier Hytale server listing platform. Find your next adventure today.</p></div>
-                <div class="footer-section"><h4>Browse</h4><ul><li><a href="#servers">All Servers</a></li><li><a href="#">Top Voted</a></li><li><a href="#">New Servers</a></li></ul></div>
+                <div class="footer-section"><h4>Browse</h4><ul><li><a href="#servers" onclick="goToServers(event)">All Servers</a></li><li><a href="#">Top Voted</a></li><li><a href="#">New Servers</a></li></ul></div>
                 <div class="footer-section"><h4>Server Owners</h4><ul><li><a href="#" onclick="checkLoginAndOpenAddServer()">Add Server</a></li><li><a href="#">Premium Listing</a></li><li><a href="#">Vote API</a></li></ul></div>
                 <div class="footer-section"><h4>Support</h4><ul><li><a href="#">Help Center</a></li><li><a href="#">Contact Us</a></li><li><a href="#">Terms of Service</a></li></ul></div>
             </div>
@@ -531,7 +538,43 @@
         function filterByCategory(c) { document.getElementById('filterCategory').value = c; applyFilters(); document.getElementById('servers').scrollIntoView({ behavior: 'smooth' }); }
         function searchServers() { document.getElementById('filterSearch').value = document.getElementById('heroSearch').value; applyFilters(); document.getElementById('servers').scrollIntoView({ behavior: 'smooth' }); }
 
-        function copyIP(ip, btn) { navigator.clipboard.writeText(ip).then(() => { btn.classList.add('copied'); btn.innerHTML = '<i class="fas fa-check"></i> Copied!'; showToast('IP copied to clipboard!'); setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = '<i class="fas fa-copy"></i> Copy IP'; }, 2000); }); }
+        function copyIP(ip, btn) {
+            const done = () => {
+                btn.classList.add('copied');
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                showToast('IP copied to clipboard!');
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = '<i class="fas fa-copy"></i> Copy IP';
+                }, 2000);
+            };
+            if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(ip).then(done).catch(() => fallbackCopy(ip, done));
+            } else {
+                fallbackCopy(ip, done);
+            }
+        }
+
+        function fallbackCopy(ip, onSuccess) {
+            const temp = document.createElement('textarea');
+            temp.value = ip;
+            temp.style.position = 'fixed';
+            temp.style.opacity = '0';
+            document.body.appendChild(temp);
+            temp.select();
+            try {
+                const ok = document.execCommand('copy');
+                document.body.removeChild(temp);
+                if (ok) {
+                    onSuccess();
+                } else {
+                    showToast('Copy failed. Please copy manually.');
+                }
+            } catch (e) {
+                document.body.removeChild(temp);
+                showToast('Copy failed. Please copy manually.');
+            }
+        }
 
         function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow = 'hidden'; }
         function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow = ''; }
@@ -540,6 +583,7 @@
         function handleLogin(e) { e.preventDefault(); const email = document.getElementById('loginEmail').value; currentUser = { username: email.split('@')[0], email, avatar: email.split('@')[0].charAt(0).toUpperCase() }; closeModal('loginModal'); updateNavState(); showToast('Welcome back, ' + currentUser.username + '!'); document.getElementById('loginEmail').value = ''; document.getElementById('loginPassword').value = ''; }
         function handleRegister(e) { e.preventDefault(); const username = document.getElementById('regUsername').value; const email = document.getElementById('regEmail').value; if (document.getElementById('regPassword').value !== document.getElementById('regConfirmPassword').value) { showToast('Passwords do not match!'); return; } currentUser = { username, email, avatar: username.charAt(0).toUpperCase() }; closeModal('registerModal'); updateNavState(); showToast('Account created! Welcome, ' + currentUser.username + '!'); }
         function logout() { currentUser = null; votedServers = []; updateNavState(); showPage('home'); showToast('You have been logged out.'); }
+        function handleOAuth(provider) { showToast(`${provider} login is coming soon.`); }
 
         function updateNavState() {
             const l = !!currentUser;
@@ -584,6 +628,12 @@
                 case 'partners': document.getElementById('partnersPage').style.display = 'block'; break;
             }
             window.scrollTo(0, 0);
+        }
+
+        function goToServers(event) {
+            if (event) event.preventDefault();
+            showPage('home');
+            setTimeout(() => document.getElementById('servers').scrollIntoView({ behavior: 'smooth' }), 0);
         }
 
         function showToast(m) { const t = document.getElementById('toast'); document.getElementById('toastMessage').textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
