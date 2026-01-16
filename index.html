@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HytaleJoin - Find the Best Hytale Servers</title>
+    <meta name="description" content="Discover and join the best Hytale servers. Browse PvP, Survival, RPG, Minigames and more.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --gold: #D4A853;
+            --gold-bright: #F4C863;
+            --gold-dark: #A07830;
+            --cyan: #4ECDC4;
+            --bg-primary: #0D1117;
+            --bg-secondary: #161B22;
+            --bg-tertiary: #1C2128;
+            --bg-card: #21262D;
+            --text-primary: #E6EDF3;
+            --text-secondary: #8B949E;
+            --border: rgba(255,255,255,0.08);
+            --green: #3FB950;
+            --red: #F85149;
+            --frame: #5A8A9A;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Outfit', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+        .page-bg { position: fixed; inset: 0; background: linear-gradient(180deg, rgba(13,17,23,0.3) 0%, rgba(13,17,23,0.7) 40%, rgba(13,17,23,0.95) 70%, var(--bg-primary) 100%), linear-gradient(135deg, #1a3a2f 0%, #0d2818 25%, #0a1f14 50%, var(--bg-primary) 100%); z-index: -2; }
+        .page-bg::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 400px; background: radial-gradient(ellipse 100% 100% at 70% 0%, rgba(78,205,196,0.08) 0%, transparent 50%), radial-gradient(ellipse 80% 80% at 30% 10%, rgba(212,168,83,0.06) 0%, transparent 40%); pointer-events: none; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(var(--gold-dark), var(--gold)); border-radius: 5px; }
+
+        /* Nav */
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0.75rem 2rem; transition: all 0.3s; }
+        .nav.scrolled { background: rgba(13,17,23,0.95); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+        .nav-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit; }
+        .logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.1rem; color: var(--bg-primary); box-shadow: 0 4px 15px rgba(212,168,83,0.3); transition: transform 0.3s; }
+        .logo:hover .logo-icon { transform: scale(1.05); }
+        .logo-text { font-family: 'Cinzel', serif; font-size: 1.4rem; font-weight: 600; letter-spacing: 0.1em; }
+        .nav-links { display: flex; align-items: center; gap: 2.5rem; }
+        .nav-links a { font-family: 'Cinzel', serif; font-size: 0.9rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--gold); }
+        .nav-buttons { display: flex; align-items: center; gap: 1rem; }
+
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border-radius: 8px; font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; border: none; cursor: pointer; transition: all 0.3s; }
+        .btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+        .btn-ghost:hover { color: var(--text-primary); border-color: var(--gold); background: rgba(212,168,83,0.1); }
+        .btn-wood { background: linear-gradient(180deg, #8B5A2B 0%, #6B4423 50%, #5A3A1D 100%); color: var(--gold-bright); border: 2px solid #A0652F; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 10px rgba(0,0,0,0.3); }
+        .btn-wood:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 6px 20px rgba(139,90,43,0.4); }
+        .btn-gold { background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold) 50%, var(--gold-dark) 100%); color: var(--bg-primary); border: 2px solid var(--gold-bright); box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 15px rgba(212,168,83,0.4); }
+        .btn-gold:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 8px 25px rgba(212,168,83,0.5); }
+
+        /* Hero */
+        .hero { padding: 10rem 2rem 4rem; text-align: center; }
+        .hero-content { max-width: 900px; margin: 0 auto; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(212,168,83,0.1); border: 1px solid rgba(212,168,83,0.3); border-radius: 50px; color: var(--gold); font-size: 0.85rem; font-weight: 500; margin-bottom: 1.5rem; animation: fadeIn 0.6s ease; }
+        .hero-badge .pulse { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .hero h1 { font-family: 'Cinzel', serif; font-size: clamp(2.5rem, 7vw, 4.5rem); font-weight: 700; line-height: 1.1; margin-bottom: 1.5rem; animation: fadeIn 0.6s 0.1s ease both; }
+        .text-gradient { background: linear-gradient(135deg, var(--gold-bright), var(--gold), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-desc { font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto 2.5rem; animation: fadeIn 0.6s 0.2s ease both; }
+
+        /* Search */
+        .search-container { max-width: 700px; margin: 0 auto; animation: fadeIn 0.6s 0.3s ease both; }
+        .search-box { display: flex; gap: 1rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 0.5rem; }
+        .search-input-wrap { flex: 1; position: relative; }
+        .search-input-wrap i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary); }
+        .search-box input { width: 100%; padding: 1rem 1rem 1rem 3rem; background: transparent; border: none; color: var(--text-primary); font-size: 1rem; outline: none; }
+        .search-box input::placeholder { color: var(--text-secondary); }
+
+        /* Stats */
+        .hero-stats { display: flex; justify-content: center; gap: 3rem; margin-top: 3rem; flex-wrap: wrap; }
+        .stat { text-align: center; }
+        .stat-value { font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 700; color: var(--gold); }
+        .stat-label { font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.1em; }
+
+        /* Main */
+        .main-content { max-width: 1400px; margin: 0 auto; padding: 0 2rem 4rem; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .section-title { display: flex; flex-direction: column; }
+        .section-label { font-size: 0.85rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; }
+        .section-name { font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 700; }
+        .section-link { display: flex; align-items: center; gap: 0.5rem; color: var(--gold); text-decoration: none; font-weight: 500; transition: gap 0.3s; }
+        .section-link:hover { gap: 0.75rem; }
+
+        /* Grids */
+        .premium-section, .servers-section, .categories-section { margin-bottom: 4rem; }
+        .premium-grid, .servers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+
+        /* Server Card */
+        .server-card { position: relative; background: var(--bg-secondary); border-radius: 12px; overflow: visible; transition: transform 0.3s, box-shadow 0.3s; }
+        .server-card::before { content: ''; position: absolute; inset: 0; border: 2px solid transparent; border-radius: 12px; background: linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box, linear-gradient(180deg, rgba(78,139,161,0.5) 0%, rgba(78,139,161,0.2) 50%, rgba(78,139,161,0.5) 100%) border-box; pointer-events: none; z-index: 1; }
+        .server-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .server-card.premium::before { background: linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box, linear-gradient(180deg, var(--gold) 0%, var(--gold-dark) 50%, var(--gold) 100%) border-box; }
+        .card-corner { position: absolute; width: 20px; height: 20px; z-index: 5; }
+        .card-corner svg { width: 100%; height: 100%; fill: var(--frame); }
+        .server-card.premium .card-corner svg { fill: var(--gold); }
+        .corner-tl { top: -2px; left: -2px; }
+        .corner-tr { top: -2px; right: -2px; transform: rotate(90deg); }
+        .corner-bl { bottom: -2px; left: -2px; transform: rotate(-90deg); }
+        .corner-br { bottom: -2px; right: -2px; transform: rotate(180deg); }
+        .card-diamond { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); width: 16px; height: 16px; z-index: 6; }
+        .card-diamond svg { fill: var(--frame); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+        .server-card.premium .card-diamond svg { fill: var(--gold); }
+        .server-banner { position: relative; height: 140px; overflow: hidden; border-radius: 10px 10px 0 0; }
+        .server-banner img { width: 100%; height: 100%; object-fit: cover; }
+        .server-banner::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(transparent, var(--bg-secondary)); }
+        .server-content { padding: 1rem 1.25rem 1.25rem; position: relative; z-index: 2; }
+        .server-name { font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .server-votes { display: flex; align-items: center; gap: 0.35rem; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem; }
+        .server-votes i { color: var(--red); font-size: 0.8rem; }
+        .copy-ip-btn { width: 100%; padding: 0.75rem 1rem; background: linear-gradient(180deg, #8B5A2B 0%, #6B4423 50%, #5A3A1D 100%); border: 2px solid #A0652F; border-radius: 6px; color: var(--gold-bright); font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.3); }
+        .copy-ip-btn:hover { background: linear-gradient(180deg, #9B6A3B 0%, #7B5433 50%, #6A4A2D 100%); transform: translateY(-1px); }
+        .copy-ip-btn.copied { background: linear-gradient(180deg, #2D6B4A 0%, #1D5A3A 50%, #0D4A2A 100%); border-color: var(--green); }
+
+        /* Filters */
+        .filters-section { margin-bottom: 2rem; }
+        .filters-bar { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; padding: 1.5rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; }
+        .filter-group { flex: 1; min-width: 150px; }
+        .filter-group label { display: block; font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+        .filter-select, .filter-input { width: 100%; padding: 0.75rem 1rem; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 0.95rem; cursor: pointer; outline: none; transition: border-color 0.2s; }
+        .filter-select:focus, .filter-input:focus { border-color: var(--gold); }
+        .filter-input::placeholder { color: var(--text-secondary); }
+        .btn-reset { padding: 0.75rem 1.5rem; background: transparent; border: 2px solid var(--border); border-radius: 8px; color: var(--text-secondary); font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s; }
+        .btn-reset:hover { border-color: var(--gold); color: var(--gold); }
+        .total-servers { text-align: right; }
+        .total-servers span { font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 700; color: var(--gold); }
+
+        /* Categories */
+        .categories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
+        .category-card { padding: 1.5rem 1rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .category-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+        .category-card i { font-size: 2rem; margin-bottom: 0.75rem; color: var(--gold); display: block; }
+        .category-card h3 { font-family: 'Cinzel', serif; font-size: 1rem; margin-bottom: 0.25rem; }
+        .category-card span { font-size: 0.85rem; color: var(--text-secondary); }
+
+        /* Info */
+        .info-section { margin-bottom: 4rem; }
+        .info-box { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 16px; padding: 3rem; }
+        .info-box h2 { font-family: 'Cinzel', serif; font-size: 1.75rem; color: var(--gold); margin-bottom: 1.5rem; text-align: center; }
+        .info-box p { color: var(--text-secondary); font-size: 1rem; line-height: 1.8; margin-bottom: 1rem; max-width: 900px; margin-left: auto; margin-right: auto; text-align: center; }
+        .info-box strong { color: var(--text-primary); }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem; }
+        .info-card { padding: 2rem; background: var(--bg-tertiary); border-radius: 12px; }
+        .info-card h3 { font-family: 'Cinzel', serif; font-size: 1.25rem; color: var(--gold); margin-bottom: 1rem; }
+        .info-card p { font-size: 0.95rem; margin-bottom: 0; text-align: left; }
+
+        /* Footer */
+        .footer { background: var(--bg-secondary); border-top: 1px solid var(--border); padding: 4rem 2rem 2rem; }
+        .footer-inner { max-width: 1400px; margin: 0 auto; }
+        .footer-grid { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 3rem; margin-bottom: 3rem; }
+        .footer-brand p { color: var(--text-secondary); margin-top: 1rem; max-width: 300px; }
+        .footer-section h4 { font-family: 'Cinzel', serif; font-size: 1rem; margin-bottom: 1rem; color: var(--gold); }
+        .footer-section ul { list-style: none; }
+        .footer-section li { margin-bottom: 0.5rem; }
+        .footer-section a { color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+        .footer-section a:hover { color: var(--text-primary); }
+        .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 2rem; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 1rem; }
+        .footer-bottom p { color: var(--text-secondary); font-size: 0.9rem; }
+        .footer-socials { display: flex; gap: 1rem; }
+        .footer-socials a { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--bg-tertiary); border-radius: 8px; color: var(--text-secondary); text-decoration: none; transition: all 0.2s; }
+        .footer-socials a:hover { background: var(--gold); color: var(--bg-primary); }
+
+        /* Modals */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 2rem; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; animation: modalIn 0.3s ease; }
+        .modal.wide { max-width: 700px; }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .modal-header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .modal-header h2 { font-family: 'Cinzel', serif; font-size: 1.5rem; }
+        .modal-close { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--bg-tertiary); border: none; border-radius: 8px; color: var(--text-secondary); cursor: pointer; transition: all 0.2s; }
+        .modal-close:hover { background: var(--red); color: white; }
+        .modal-body { padding: 2rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-size: 0.9rem; font-weight: 500; margin-bottom: 0.5rem; }
+        .form-group label span { color: var(--red); }
+        .form-input { width: 100%; padding: 0.875rem 1rem; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 1rem; outline: none; transition: border-color 0.2s; }
+        .form-input:focus { border-color: var(--gold); }
+        .form-input::placeholder { color: var(--text-secondary); }
+        .form-textarea { min-height: 100px; resize: vertical; }
+        .form-hint { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.35rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .file-upload { border: 2px dashed var(--border); border-radius: 12px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .file-upload:hover { border-color: var(--gold); background: rgba(212,168,83,0.05); }
+        .file-upload i { font-size: 2rem; color: var(--text-secondary); margin-bottom: 0.75rem; display: block; }
+        .file-upload p { color: var(--text-secondary); font-size: 0.9rem; margin: 0; }
+        .file-upload input { display: none; }
+        .file-upload.has-file { border-color: var(--green); background: rgba(63,185,80,0.1); }
+        .auth-divider { display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0; }
+        .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+        .auth-divider span { color: var(--text-secondary); font-size: 0.85rem; }
+        .oauth-buttons { display: flex; gap: 1rem; }
+        .btn-oauth { flex: 1; padding: 0.875rem; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s; }
+        .btn-oauth:hover { border-color: var(--gold); background: var(--bg-card); }
+        .auth-footer { text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-secondary); }
+        .auth-footer a { color: var(--gold); text-decoration: none; }
+        .auth-footer a:hover { text-decoration: underline; }
+
+        /* Dashboard */
+        .dashboard-page { display: none; padding-top: 6rem; }
+        .dashboard-layout { display: grid; grid-template-columns: 280px 1fr; gap: 2rem; max-width: 1400px; margin: 0 auto; padding: 0 2rem 4rem; }
+        .sidebar { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; height: fit-content; position: sticky; top: 6rem; }
+        .sidebar-profile { text-align: center; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+        .sidebar-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; font-size: 2rem; font-weight: 700; color: var(--bg-primary); margin: 0 auto 1rem; }
+        .sidebar-name { font-family: 'Cinzel', serif; font-size: 1.25rem; color: var(--gold); margin-bottom: 0.25rem; }
+        .sidebar-email { font-size: 0.85rem; color: var(--text-secondary); }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 0.5rem; }
+        .sidebar-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1rem; background: transparent; border: none; border-radius: 8px; color: var(--text-secondary); font-size: 0.95rem; cursor: pointer; transition: all 0.2s; text-align: left; width: 100%; }
+        .sidebar-link:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .sidebar-link.active { background: linear-gradient(180deg, #8B5A2B 0%, #6B4423 50%, #5A3A1D 100%); color: var(--gold-bright); border: 1px solid #A0652F; }
+        .sidebar-link i { width: 20px; }
+        .dashboard-content { min-height: 60vh; }
+        .dashboard-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .dashboard-title { font-family: 'Cinzel', serif; font-size: 2rem; }
+        .alert-box { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; background: rgba(212,168,83,0.1); border: 1px solid rgba(212,168,83,0.3); border-radius: 12px; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .alert-content { display: flex; align-items: center; gap: 0.75rem; }
+        .alert-content i { color: var(--gold); font-size: 1.25rem; }
+        .alert-content strong { color: var(--gold); }
+        .my-server-item { display: flex; align-items: center; gap: 1.5rem; padding: 1.25rem 1.5rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1rem; flex-wrap: wrap; }
+        .my-server-logo { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; background: var(--bg-tertiary); }
+        .my-server-info { flex: 1; min-width: 200px; }
+        .my-server-name { font-family: 'Cinzel', serif; font-size: 1.25rem; margin-bottom: 0.25rem; }
+        .my-server-meta { display: flex; align-items: center; gap: 1.5rem; font-size: 0.9rem; color: var(--text-secondary); flex-wrap: wrap; }
+        .my-server-meta span { display: flex; align-items: center; gap: 0.35rem; }
+        .my-server-status { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.75rem; background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3); border-radius: 50px; color: var(--green); font-size: 0.85rem; }
+        .my-server-status .dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; }
+        .my-server-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .server-action-btn { padding: 0.5rem 1rem; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-secondary); font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; transition: all 0.2s; }
+        .server-action-btn:hover { border-color: var(--gold); color: var(--gold); }
+        .server-action-btn.delete:hover { border-color: var(--red); color: var(--red); }
+        .servers-count { color: var(--text-secondary); font-size: 0.95rem; margin-top: 1rem; }
+        .empty-state { text-align: center; padding: 4rem 2rem; }
+        .empty-state i { font-size: 4rem; color: var(--text-secondary); margin-bottom: 1rem; opacity: 0.5; }
+        .empty-state h3 { font-family: 'Cinzel', serif; font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .empty-state p { color: var(--text-secondary); margin-bottom: 1.5rem; }
+        .partners-content { text-align: center; padding: 2rem 0; }
+        .partners-content h2 { font-family: 'Cinzel', serif; font-size: 2.5rem; margin-bottom: 1rem; }
+        .partners-content > p { color: var(--text-secondary); font-size: 1.1rem; max-width: 700px; margin: 0 auto 2rem; }
+        .partners-cta { font-size: 1.25rem; margin-bottom: 2rem; }
+        .partners-cta a { color: var(--gold); text-decoration: none; }
+        .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); padding: 1rem 1.5rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; gap: 0.75rem; z-index: 3000; transition: transform 0.3s ease; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast i { color: var(--green); font-size: 1.25rem; }
+        .home-page { display: block; }
+        .home-page.hidden { display: none; }
+
+        @media (max-width: 1024px) {
+            .dashboard-layout { grid-template-columns: 1fr; }
+            .sidebar { position: static; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero { padding: 8rem 1.5rem 3rem; }
+            .filters-bar { flex-direction: column; }
+            .filter-group { width: 100%; }
+            .total-servers { text-align: left; width: 100%; }
+            .form-row { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; text-align: center; }
+            .my-server-item { flex-direction: column; text-align: center; }
+            .my-server-actions { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-bg"></div>
+
+    <nav class="nav" id="nav">
+        <div class="nav-inner">
+            <a href="#" class="logo" onclick="showPage('home')"><div class="logo-icon">HJ</div><span class="logo-text">HYTALEJOIN</span></a>
+            <div class="nav-links">
+                <a href="#" onclick="showPage('home')">Home</a>
+                <a href="#servers">Servers</a>
+                <a href="#" onclick="showPage('partners')">Partners</a>
+                <a href="#" id="dashboardLink" style="display:none;" onclick="showPage('dashboard')">Dashboard</a>
+            </div>
+            <div class="nav-buttons">
+                <button class="btn btn-ghost" id="loginBtn" onclick="openModal('loginModal')"><i class="fas fa-sign-in-alt"></i> Login</button>
+                <button class="btn btn-wood" id="registerBtn" onclick="openModal('registerModal')"><i class="fas fa-user-plus"></i> Register</button>
+                <button class="btn btn-ghost" id="dashboardBtn" style="display:none;" onclick="showPage('dashboard')"><i class="fas fa-th-large"></i> Dashboard</button>
+                <button class="btn btn-wood" id="logoutBtn" style="display:none;" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="home-page" id="homePage">
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-badge"><span class="pulse"></span><span>Live Server Discovery</span></div>
+                <h1>Find Your Next <span class="text-gradient">Hytale Adventure</span></h1>
+                <p class="hero-desc">Discover and join the best Hytale servers. Browse thousands of communities, vote for your favorites, and start playing today.</p>
+                <div class="search-container">
+                    <div class="search-box">
+                        <div class="search-input-wrap"><i class="fas fa-search"></i><input type="text" id="heroSearch" placeholder="Search servers..." onkeypress="if(event.key==='Enter')searchServers()"></div>
+                        <button class="btn btn-gold" onclick="searchServers()"><i class="fas fa-search"></i> Search</button>
+                    </div>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat"><div class="stat-value">847</div><div class="stat-label">Total Servers</div></div>
+                    <div class="stat"><div class="stat-value">12,453</div><div class="stat-label">Players Online</div></div>
+                    <div class="stat"><div class="stat-value">89,234</div><div class="stat-label">Votes Cast</div></div>
+                </div>
+            </div>
+        </section>
+
+        <main class="main-content">
+            <section class="premium-section">
+                <div class="section-header"><div class="section-title"><span class="section-label">Premium Hytale Servers</span><h2 class="section-name">Premium</h2></div><a href="#" class="section-link">Sponsor Your Server <i class="fas fa-chevron-right"></i></a></div>
+                <div class="premium-grid" id="premiumGrid"></div>
+            </section>
+
+            <section class="filters-section" id="servers">
+                <div class="section-header"><div class="section-title"><span class="section-label">Explore Hytale Servers</span><h2 class="section-name">All Hytale Servers</h2></div></div>
+                <div class="filters-bar">
+                    <div class="filter-group"><label>Search</label><input type="text" class="filter-input" id="filterSearch" placeholder="Search..." oninput="applyFilters()"></div>
+                    <div class="filter-group"><label>Country</label><select class="filter-select" id="filterCountry" onchange="applyFilters()"><option value="">All Countries</option><option value="us">United States</option><option value="eu">Europe</option><option value="uk">United Kingdom</option><option value="au">Australia</option></select></div>
+                    <div class="filter-group"><label>Sort By</label><select class="filter-select" id="filterSort" onchange="applyFilters()"><option value="popular">Most Popular</option><option value="newest">Newest</option><option value="players">Most Players</option><option value="name">Name (A-Z)</option></select></div>
+                    <div class="filter-group"><label>Categories</label><select class="filter-select" id="filterCategory" onchange="applyFilters()"><option value="">All Categories</option><option value="pvp">PvP</option><option value="survival">Survival</option><option value="rpg">RPG</option><option value="minigames">Minigames</option><option value="creative">Creative</option><option value="anarchy">Anarchy</option><option value="economy">Economy</option></select></div>
+                    <div class="filter-group"><label>Mods</label><select class="filter-select" id="filterMods" onchange="applyFilters()"><option value="">All</option><option value="vanilla">Vanilla</option><option value="modded">Modded</option></select></div>
+                    <button class="btn-reset" onclick="resetFilters()"><i class="fas fa-redo"></i> Reset</button>
+                    <div class="total-servers"><div style="font-size:0.75rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;">Total</div><span id="filteredCount">847</span></div>
+                </div>
+            </section>
+
+            <section class="servers-section"><div class="servers-grid" id="serverGrid"></div></section>
+
+            <section class="categories-section">
+                <div class="section-header"><div class="section-title"><span class="section-label">Browse by Category</span><h2 class="section-name">Server Types</h2></div></div>
+                <div class="categories-grid">
+                    <div class="category-card" onclick="filterByCategory('pvp')"><i class="fas fa-shield-halved"></i><h3>PvP</h3><span>234 servers</span></div>
+                    <div class="category-card" onclick="filterByCategory('survival')"><i class="fas fa-campground"></i><h3>Survival</h3><span>189 servers</span></div>
+                    <div class="category-card" onclick="filterByCategory('rpg')"><i class="fas fa-hat-wizard"></i><h3>RPG</h3><span>156 servers</span></div>
+                    <div class="category-card" onclick="filterByCategory('minigames')"><i class="fas fa-gamepad"></i><h3>Minigames</h3><span>98 servers</span></div>
+                    <div class="category-card" onclick="filterByCategory('creative')"><i class="fas fa-paint-brush"></i><h3>Creative</h3><span>87 servers</span></div>
+                    <div class="category-card" onclick="filterByCategory('economy')"><i class="fas fa-coins"></i><h3>Economy</h3><span>112 servers</span></div>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <div class="info-box">
+                    <h2>What Are Hytale Servers?</h2>
+                    <p><strong>Hytale servers</strong> are community-run multiplayer servers that allow players to experience Hytale in different ways. Each server offers unique gameplay, including survival worlds, RPG experiences, minigames, creative modes, and custom adventures.</p>
+                    <p>Using our <strong>Hytale server list</strong>, players can explore the best Hytale servers all in one place. Servers are ranked using real activity, popularity, and player engagement.</p>
+                    <p>By voting for your favourite Hytale servers, you directly support server owners and strengthen the wider Hytale community.</p>
+                    <div class="info-grid">
+                        <div class="info-card"><h3>The Best Hytale Server List</h3><p>HytaleJoin.com provides a modern and regularly updated Hytale server list designed to make server discovery fair, simple, and enjoyable for all players.</p></div>
+                        <div class="info-card"><h3>Find Your Perfect Server</h3><p>Whether you are looking for competitive minigames, relaxed creative servers, or immersive RPG worlds, our Hytale server list helps you find the right server quickly.</p></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="dashboard-page" id="dashboardPage">
+        <div class="dashboard-layout">
+            <aside class="sidebar">
+                <div class="sidebar-profile"><div class="sidebar-avatar" id="userAvatar">T</div><div class="sidebar-name" id="userName">Username</div><div class="sidebar-email" id="userEmail">user@email.com</div></div>
+                <nav class="sidebar-nav">
+                    <button class="sidebar-link active" onclick="showDashboardTab('myservers',this)"><i class="fas fa-server"></i> My Servers</button>
+                    <button class="sidebar-link" onclick="openModal('addServerModal')"><i class="fas fa-plus"></i> Add Server</button>
+                    <button class="sidebar-link" onclick="showDashboardTab('sponsored',this)"><i class="fas fa-star"></i> Sponsored</button>
+                    <button class="sidebar-link" onclick="showDashboardTab('settings',this)"><i class="fas fa-cog"></i> Settings</button>
+                </nav>
+            </aside>
+            <div class="dashboard-content">
+                <div class="dashboard-tab" id="tab-myservers">
+                    <div class="dashboard-header"><h1 class="dashboard-title">My Servers</h1><button class="btn btn-gold" onclick="openModal('addServerModal')"><i class="fas fa-plus"></i> Add Server</button></div>
+                    <div class="alert-box"><div class="alert-content"><i class="fas fa-star"></i><div><strong>Sponsored Slots are now LIVE</strong><p style="margin:0;color:var(--text-secondary);font-size:0.9rem;">Secure your slot for featured placement.</p></div></div><button class="btn btn-wood">Secure a Slot</button></div>
+                    <div id="myServersList"></div>
+                </div>
+                <div class="dashboard-tab" id="tab-sponsored" style="display:none;"><div class="dashboard-header"><h1 class="dashboard-title">Sponsored Slots</h1></div><div class="info-box"><h2>Get Featured on HytaleJoin</h2><p>Sponsored slots give your server premium placement at the top of our server list.</p><div style="text-align:center;margin-top:2rem;"><button class="btn btn-gold">Contact for Sponsorship</button></div></div></div>
+                <div class="dashboard-tab" id="tab-settings" style="display:none;"><div class="dashboard-header"><h1 class="dashboard-title">Account Settings</h1></div><div class="info-box"><h2>Change Password</h2><form style="max-width:400px;margin:0 auto;"><div class="form-group"><label>Current Password</label><input type="password" class="form-input" placeholder="Current password"></div><div class="form-group"><label>New Password</label><input type="password" class="form-input" placeholder="New password"></div><button type="button" class="btn btn-gold" style="width:100%;">Update Password</button></form></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-page" id="partnersPage">
+        <div class="main-content" style="padding-top:6rem;">
+            <div class="partners-content">
+                <h2>Our Partners</h2>
+                <p>We are a Hytale server list and we are excited to bring all the Hytale servers together into one! Becoming our partner will be very beneficial for your product/service/brand.</p>
+                <p class="partners-cta">To apply for a partnership, please <a href="#">contact us</a>!</p>
+                <div class="info-grid" style="max-width:800px;margin:0 auto;">
+                    <div class="info-card" style="text-align:center;"><i class="fas fa-handshake" style="font-size:3rem;color:var(--gold);margin-bottom:1rem;display:block;"></i><h3>Become a Partner</h3><p>Partner with HytaleJoin to gain exposure to thousands of Hytale players.</p></div>
+                    <div class="info-card" style="text-align:center;"><i class="fas fa-chart-line" style="font-size:3rem;color:var(--gold);margin-bottom:1rem;display:block;"></i><h3>Grow Together</h3><p>Our partners benefit from featured placement and cross-promotion.</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <div class="modal-header"><h2>Welcome Back</h2><button class="modal-close" onclick="closeModal('loginModal')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <div class="oauth-buttons"><button class="btn-oauth"><i class="fab fa-discord"></i> Discord</button><button class="btn-oauth"><i class="fab fa-github"></i> GitHub</button></div>
+                <div class="auth-divider"><span>or continue with email</span></div>
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group"><label>Email <span>*</span></label><input type="email" class="form-input" id="loginEmail" placeholder="Enter your email" required></div>
+                    <div class="form-group"><label>Password <span>*</span></label><input type="password" class="form-input" id="loginPassword" placeholder="Enter your password" required></div>
+                    <button type="submit" class="btn btn-gold" style="width:100%;"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+                </form>
+                <div class="auth-footer">Don't have an account? <a href="#" onclick="closeModal('loginModal');openModal('registerModal');">Sign up</a></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="registerModal">
+        <div class="modal">
+            <div class="modal-header"><h2>Create Account</h2><button class="modal-close" onclick="closeModal('registerModal')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <div class="oauth-buttons"><button class="btn-oauth"><i class="fab fa-discord"></i> Discord</button><button class="btn-oauth"><i class="fab fa-github"></i> GitHub</button></div>
+                <div class="auth-divider"><span>or register with email</span></div>
+                <form onsubmit="handleRegister(event)">
+                    <div class="form-group"><label>Username <span>*</span></label><input type="text" class="form-input" id="regUsername" placeholder="Choose a username" required></div>
+                    <div class="form-group"><label>Email <span>*</span></label><input type="email" class="form-input" id="regEmail" placeholder="Enter your email" required></div>
+                    <div class="form-group"><label>Password <span>*</span></label><input type="password" class="form-input" id="regPassword" placeholder="Create a password" required></div>
+                    <div class="form-group"><label>Confirm Password <span>*</span></label><input type="password" class="form-input" id="regConfirmPassword" placeholder="Confirm password" required></div>
+                    <button type="submit" class="btn btn-gold" style="width:100%;"><i class="fas fa-user-plus"></i> Create Account</button>
+                </form>
+                <div class="auth-footer">Already have an account? <a href="#" onclick="closeModal('registerModal');openModal('loginModal');">Sign in</a></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="addServerModal">
+        <div class="modal wide">
+            <div class="modal-header"><h2>Add Server</h2><button class="modal-close" onclick="closeModal('addServerModal')"><i class="fas fa-times"></i></button></div>
+            <div class="modal-body">
+                <form onsubmit="handleAddServer(event)">
+                    <div class="form-group"><label>Server Name <span>*</span></label><input type="text" class="form-input" id="serverName" placeholder="Enter server name" required><p class="form-hint">Only enter the server name</p></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Connection IP <span>*</span></label><input type="text" class="form-input" id="serverIP" placeholder="play.yourserver.com" required></div>
+                        <div class="form-group"><label>Query Port</label><input type="text" class="form-input" id="serverPort" placeholder="Optional"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Country <span>*</span></label><select class="form-input" id="serverCountry" required><option value="">Select Country</option><option value="us">United States</option><option value="uk">United Kingdom</option><option value="eu">Europe</option><option value="au">Australia</option></select></div>
+                        <div class="form-group"><label>Website</label><input type="url" class="form-input" id="serverWebsite" placeholder="https://yourserver.com"><p class="form-hint">Must start with https://</p></div>
+                    </div>
+                    <div class="form-group"><label>Discord</label><input type="url" class="form-input" id="serverDiscord" placeholder="https://discord.gg/XXXXXX"></div>
+                    <div class="form-group"><label>Banner Image</label><div class="file-upload" id="bannerUpload" onclick="document.getElementById('bannerFile').click()"><i class="fas fa-cloud-upload-alt"></i><p>Click to upload banner (480x280px)</p><input type="file" id="bannerFile" accept="image/*" onchange="handleFileUpload(this,'bannerUpload')"></div></div>
+                    <div class="form-group"><label>Description <span>*</span></label><textarea class="form-input form-textarea" id="serverDescription" placeholder="Describe your server..." required></textarea></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Server Type <span>*</span></label><select class="form-input" id="serverTypes" required><option value="">Select type</option><option value="pvp">PvP</option><option value="survival">Survival</option><option value="rpg">RPG</option><option value="minigames">Minigames</option><option value="creative">Creative</option><option value="anarchy">Anarchy</option><option value="economy">Economy</option></select></div>
+                        <div class="form-group"><label>Mods</label><select class="form-input" id="serverMods"><option value="">Select</option><option value="vanilla">Vanilla</option><option value="modded">Modded</option></select></div>
+                    </div>
+                    <div class="form-group"><label>Captcha</label><div style="display:flex;align-items:center;gap:1rem;"><div style="padding:0.75rem 1.5rem;background:var(--bg-tertiary);border-radius:8px;font-size:1.25rem;font-weight:600;" id="captchaQuestion">6 + 7</div><span>=</span><input type="text" class="form-input" id="captchaAnswer" placeholder="Answer" style="width:120px;" required><button type="button" class="btn btn-ghost" onclick="refreshCaptcha()" style="padding:0.5rem;"><i class="fas fa-sync-alt"></i></button></div></div>
+                    <div style="display:flex;gap:1rem;margin-top:1.5rem;"><button type="submit" class="btn btn-gold" style="flex:1;"><i class="fas fa-plus"></i> Submit</button><button type="button" class="btn btn-ghost" onclick="closeModal('addServerModal')">Cancel</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMessage">Success!</span></div>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-grid">
+                <div class="footer-brand"><a href="#" class="logo"><div class="logo-icon">HJ</div><span class="logo-text">HYTALEJOIN</span></a><p>The premier Hytale server listing platform. Find your next adventure today.</p></div>
+                <div class="footer-section"><h4>Browse</h4><ul><li><a href="#servers">All Servers</a></li><li><a href="#">Top Voted</a></li><li><a href="#">New Servers</a></li></ul></div>
+                <div class="footer-section"><h4>Server Owners</h4><ul><li><a href="#" onclick="checkLoginAndOpenAddServer()">Add Server</a></li><li><a href="#">Premium Listing</a></li><li><a href="#">Vote API</a></li></ul></div>
+                <div class="footer-section"><h4>Support</h4><ul><li><a href="#">Help Center</a></li><li><a href="#">Contact Us</a></li><li><a href="#">Terms of Service</a></li></ul></div>
+            </div>
+            <div class="footer-bottom"><p>© 2026 HytaleJoin. Not affiliated with Hypixel Studios or Riot Games.</p><div class="footer-socials"><a href="#"><i class="fab fa-discord"></i></a><a href="#"><i class="fab fa-twitter"></i></a><a href="#"><i class="fab fa-github"></i></a></div></div>
+        </div>
+    </footer>
+
+    <script>
+        const servers = [
+            { id: 1, name: "HYRIVALS", ip: "play.hyrivals.com", tags: ["PvP", "Minigames"], votes: 143, players: { online: 234, max: 1000 }, premium: true, banner: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?w=800&h=200&fit=crop", country: "us", createdAt: Date.now() - 86400000 * 30 },
+            { id: 2, name: "HYTOWN", ip: "hytown.org", tags: ["Economy", "Survival"], votes: 106, players: { online: 189, max: 500 }, premium: true, banner: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&h=200&fit=crop", country: "eu", createdAt: Date.now() - 86400000 * 60 },
+            { id: 3, name: "HYPVP", ip: "hypvp.net", tags: ["PvP"], votes: 12, players: { online: 89, max: 300 }, premium: true, banner: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=200&fit=crop", country: "us", createdAt: Date.now() - 86400000 * 15 },
+            { id: 4, name: "ROHAK (EU)", ip: "rohak.eu", tags: ["Survival", "PvE"], votes: 28, players: { online: 67, max: 200 }, premium: true, banner: "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=800&h=200&fit=crop", country: "eu", createdAt: Date.now() - 86400000 * 45 },
+            { id: 5, name: "CRIMSONPVP", ip: "play.crimsonpvp.net", tags: ["PvP", "Factions"], votes: 47, players: { online: 156, max: 400 }, premium: true, banner: "https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?w=800&h=200&fit=crop", country: "us", createdAt: Date.now() - 86400000 * 20 },
+            { id: 6, name: "ELITEHYTALE", ip: "elitehytale.com", tags: ["PvP", "Minigames"], votes: 53, players: { online: 203, max: 600 }, premium: false, banner: "https://images.unsplash.com/photo-1464802686167-b939a6910659?w=800&h=200&fit=crop", country: "us", createdAt: Date.now() - 86400000 * 5 },
+            { id: 7, name: "ANARCHY HQ", ip: "hytaleserverhq.com", tags: ["Anarchy", "PvP"], votes: 46, players: { online: 312, max: 1000 }, premium: false, banner: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=800&h=200&fit=crop", country: "us", createdAt: Date.now() - 86400000 * 90 },
+            { id: 8, name: "LOSTOUTLANDS", ip: "play.lostoutlands.com", tags: ["Survival", "RPG"], votes: 89, players: { online: 145, max: 350 }, premium: false, banner: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=800&h=200&fit=crop", country: "eu", createdAt: Date.now() - 86400000 * 10 },
+            { id: 9, name: "SKYBLOCK LEGENDS", ip: "skylegends.net", tags: ["Minigames", "Economy"], votes: 234, players: { online: 456, max: 800 }, premium: false, banner: "https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?w=800&h=200&fit=crop", country: "us", createdAt: Date.now() - 86400000 * 3 },
+            { id: 10, name: "CREATIVE REALM", ip: "creative.realm.gg", tags: ["Creative"], votes: 67, players: { online: 89, max: 200 }, premium: false, banner: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&h=200&fit=crop", country: "uk", createdAt: Date.now() - 86400000 * 25 },
+            { id: 11, name: "DUNGEON MASTERS", ip: "dungeonmasters.io", tags: ["RPG"], votes: 178, players: { online: 267, max: 500 }, premium: false, banner: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&h=200&fit=crop", country: "us", createdAt: Date.now() - 86400000 * 7 },
+            { id: 12, name: "PEACEFUL PLAINS", ip: "peaceful.plains.net", tags: ["Survival"], votes: 92, players: { online: 78, max: 150 }, premium: false, banner: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&h=200&fit=crop", country: "au", createdAt: Date.now() - 86400000 * 40 }
+        ];
+
+        let currentUser = null, votedServers = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPremiumServers();
+            renderServers();
+            updateNavState();
+            window.addEventListener('scroll', () => document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50));
+        });
+
+        function renderPremiumServers() { document.getElementById('premiumGrid').innerHTML = servers.filter(s => s.premium).slice(0, 5).map(s => createServerCard(s, true)).join(''); }
+        function renderServers() { let f = getFilteredServers(); document.getElementById('filteredCount').textContent = f.length; document.getElementById('serverGrid').innerHTML = f.map(s => createServerCard(s, false)).join(''); }
+
+        function getFilteredServers() {
+            let f = [...servers];
+            const search = document.getElementById('filterSearch').value.toLowerCase();
+            const country = document.getElementById('filterCountry').value;
+            const sort = document.getElementById('filterSort').value;
+            const category = document.getElementById('filterCategory').value;
+            if (search) f = f.filter(s => s.name.toLowerCase().includes(search) || s.ip.toLowerCase().includes(search));
+            if (country) f = f.filter(s => s.country === country || (country === 'eu' && ['de', 'fr', 'eu'].includes(s.country)));
+            if (category) f = f.filter(s => s.tags.some(t => t.toLowerCase() === category));
+            switch(sort) { case 'popular': f.sort((a,b) => b.votes - a.votes); break; case 'newest': f.sort((a,b) => b.createdAt - a.createdAt); break; case 'players': f.sort((a,b) => b.players.online - a.players.online); break; case 'name': f.sort((a,b) => a.name.localeCompare(b.name)); break; }
+            return f;
+        }
+
+        function createServerCard(s, isPremium) {
+            return `<div class="server-card ${isPremium ? 'premium' : ''}">
+                <div class="card-corner corner-tl"><svg viewBox="0 0 24 24"><path d="M0 0h24v4h-4v16h-4V4H4V0z"/></svg></div>
+                <div class="card-corner corner-tr"><svg viewBox="0 0 24 24"><path d="M0 0h24v4h-4v16h-4V4H4V0z"/></svg></div>
+                <div class="card-corner corner-bl"><svg viewBox="0 0 24 24"><path d="M0 0h24v4h-4v16h-4V4H4V0z"/></svg></div>
+                <div class="card-corner corner-br"><svg viewBox="0 0 24 24"><path d="M0 0h24v4h-4v16h-4V4H4V0z"/></svg></div>
+                <div class="card-diamond"><svg viewBox="0 0 16 16"><path d="M8 0l8 8-8 8-8-8z"/></svg></div>
+                <div class="server-banner"><img src="${s.banner}" alt="${s.name}" loading="lazy"></div>
+                <div class="server-content"><h3 class="server-name">${s.name}</h3><div class="server-votes"><i class="fas fa-heart"></i> ${s.votes}</div><button class="copy-ip-btn" onclick="copyIP('${s.ip}',this)"><i class="fas fa-copy"></i> Copy IP</button></div>
+            </div>`;
+        }
+
+        function applyFilters() { renderServers(); }
+        function resetFilters() { document.getElementById('filterSearch').value = ''; document.getElementById('filterCountry').value = ''; document.getElementById('filterSort').value = 'popular'; document.getElementById('filterCategory').value = ''; document.getElementById('filterMods').value = ''; renderServers(); }
+        function filterByCategory(c) { document.getElementById('filterCategory').value = c; applyFilters(); document.getElementById('servers').scrollIntoView({ behavior: 'smooth' }); }
+        function searchServers() { document.getElementById('filterSearch').value = document.getElementById('heroSearch').value; applyFilters(); document.getElementById('servers').scrollIntoView({ behavior: 'smooth' }); }
+
+        function copyIP(ip, btn) { navigator.clipboard.writeText(ip).then(() => { btn.classList.add('copied'); btn.innerHTML = '<i class="fas fa-check"></i> Copied!'; showToast('IP copied to clipboard!'); setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = '<i class="fas fa-copy"></i> Copy IP'; }, 2000); }); }
+
+        function openModal(id) { document.getElementById(id).classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow = ''; }
+        document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) { o.classList.remove('active'); document.body.style.overflow = ''; } }));
+
+        function handleLogin(e) { e.preventDefault(); const email = document.getElementById('loginEmail').value; currentUser = { username: email.split('@')[0], email, avatar: email.split('@')[0].charAt(0).toUpperCase() }; closeModal('loginModal'); updateNavState(); showToast('Welcome back, ' + currentUser.username + '!'); document.getElementById('loginEmail').value = ''; document.getElementById('loginPassword').value = ''; }
+        function handleRegister(e) { e.preventDefault(); const username = document.getElementById('regUsername').value; const email = document.getElementById('regEmail').value; if (document.getElementById('regPassword').value !== document.getElementById('regConfirmPassword').value) { showToast('Passwords do not match!'); return; } currentUser = { username, email, avatar: username.charAt(0).toUpperCase() }; closeModal('registerModal'); updateNavState(); showToast('Account created! Welcome, ' + currentUser.username + '!'); }
+        function logout() { currentUser = null; votedServers = []; updateNavState(); showPage('home'); showToast('You have been logged out.'); }
+
+        function updateNavState() {
+            const l = !!currentUser;
+            document.getElementById('loginBtn').style.display = l ? 'none' : 'flex';
+            document.getElementById('registerBtn').style.display = l ? 'none' : 'flex';
+            document.getElementById('dashboardBtn').style.display = l ? 'flex' : 'none';
+            document.getElementById('logoutBtn').style.display = l ? 'flex' : 'none';
+            document.getElementById('dashboardLink').style.display = l ? 'block' : 'none';
+            if (currentUser) { document.getElementById('userAvatar').textContent = currentUser.avatar; document.getElementById('userName').textContent = currentUser.username; document.getElementById('userEmail').textContent = currentUser.email; }
+        }
+
+        function checkLoginAndOpenAddServer() { if (!currentUser) { showToast('Please login to add a server!'); openModal('loginModal'); } else openModal('addServerModal'); }
+
+        let captchaAnswer = 13;
+        function refreshCaptcha() { const a = Math.floor(Math.random() * 10) + 1, b = Math.floor(Math.random() * 10) + 1; captchaAnswer = a + b; document.getElementById('captchaQuestion').textContent = `${a} + ${b}`; document.getElementById('captchaAnswer').value = ''; }
+
+        function handleAddServer(e) {
+            e.preventDefault();
+            if (parseInt(document.getElementById('captchaAnswer').value) !== captchaAnswer) { showToast('Incorrect captcha!'); refreshCaptcha(); return; }
+            servers.unshift({ id: servers.length + 1, name: document.getElementById('serverName').value, ip: document.getElementById('serverIP').value, tags: [document.getElementById('serverTypes').value], votes: 0, players: { online: 0, max: 100 }, premium: false, banner: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=800&h=200&fit=crop', country: document.getElementById('serverCountry').value, createdAt: Date.now(), ownerId: currentUser?.username });
+            closeModal('addServerModal'); renderServers(); renderMyServers(); showToast('Server added successfully!'); e.target.reset(); refreshCaptcha();
+        }
+
+        function handleFileUpload(i, u) { const el = document.getElementById(u); if (i.files && i.files[0]) { el.classList.add('has-file'); el.querySelector('p').textContent = i.files[0].name; } }
+
+        function renderMyServers() {
+            const list = document.getElementById('myServersList');
+            const mine = servers.filter(s => s.ownerId === currentUser?.username);
+            if (mine.length === 0) { list.innerHTML = `<div class="empty-state"><i class="fas fa-server"></i><h3>No Servers Yet</h3><p>You haven't added any servers yet.</p><button class="btn btn-gold" onclick="openModal('addServerModal')"><i class="fas fa-plus"></i> Add Server</button></div>`; }
+            else { list.innerHTML = mine.map(s => `<div class="my-server-item"><img src="${s.banner}" class="my-server-logo"><div class="my-server-info"><h3 class="my-server-name">${s.name}</h3><div class="my-server-meta"><span><i class="fas fa-globe"></i> ${s.ip}</span><span><i class="fas fa-heart"></i> ${s.votes}</span></div></div><div class="my-server-status"><span class="dot"></span> Online</div><div class="my-server-actions"><button class="server-action-btn"><i class="fas fa-eye"></i> View</button><button class="server-action-btn"><i class="fas fa-edit"></i> Edit</button><button class="server-action-btn delete"><i class="fas fa-trash"></i> Delete</button></div></div>`).join('') + `<p class="servers-count">Your Servers: ${mine.length}</p>`; }
+        }
+
+        function showDashboardTab(t, btn) { document.querySelectorAll('.dashboard-tab').forEach(el => el.style.display = 'none'); const tab = document.getElementById('tab-' + t); if (tab) tab.style.display = 'block'; if (btn) { document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active')); btn.classList.add('active'); } if (t === 'myservers') renderMyServers(); }
+
+        function showPage(p) {
+            document.getElementById('homePage').classList.add('hidden');
+            document.getElementById('dashboardPage').style.display = 'none';
+            document.getElementById('partnersPage').style.display = 'none';
+            switch(p) {
+                case 'home': document.getElementById('homePage').classList.remove('hidden'); break;
+                case 'dashboard': if (!currentUser) { showToast('Please login first!'); openModal('loginModal'); return; } document.getElementById('dashboardPage').style.display = 'block'; showDashboardTab('myservers'); break;
+                case 'partners': document.getElementById('partnersPage').style.display = 'block'; break;
+            }
+            window.scrollTo(0, 0);
+        }
+
+        function showToast(m) { const t = document.getElementById('toast'); document.getElementById('toastMessage').textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+
+        refreshCaptcha();
+    </script>
+</body>
+</html>
