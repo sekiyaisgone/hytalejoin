@@ -602,10 +602,10 @@ body {
   overflow: hidden;
 }
 
-/* Responsive container */
+/* Responsive container - wider for desktop */
 .container-wide {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 0 1rem;
 }
@@ -619,5 +619,11 @@ body {
 @media (min-width: 1024px) {
   .container-wide {
     padding: 0 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-wide {
+    padding: 0 3rem;
   }
 }

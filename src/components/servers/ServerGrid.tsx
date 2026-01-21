@@ -20,12 +20,12 @@ export default function ServerGrid({
 }: ServerGridProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 lg:gap-6">
         {Array.from({ length: skeletonCount }).map((_, i) => (
           <div
             key={i}
             className="animate-fade-in"
-            style={{ animationDelay: `${i * 100}ms` }}
+            style={{ animationDelay: `${i * 75}ms` }}
           >
             <ServerCardSkeleton />
           </div>
@@ -39,12 +39,12 @@ export default function ServerGrid({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 lg:gap-6">
       {servers.map((server, index) => (
         <div
           key={server.id}
           className="animate-fade-in"
-          style={{ animationDelay: `${index * 75}ms` }}
+          style={{ animationDelay: `${index * 50}ms` }}
         >
           <ServerCard server={server} />
         </div>

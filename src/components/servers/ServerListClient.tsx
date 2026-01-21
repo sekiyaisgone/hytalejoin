@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Server, GameMode, Region, SortOption } from '@/types';
 import ServerFilters, { FilterState } from './ServerFilters';
 import ServerGrid from './ServerGrid';
 import { createClient } from '@/lib/supabase/client';
+import { mockServers } from '@/lib/mockServers';
 import Button from '@/components/ui/Button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -12,12 +13,14 @@ interface ServerListClientProps {
   initialServers: Server[];
   initialCount: number;
   initialTotalPages: number;
+  useMockFallback?: boolean;
 }
 
 export default function ServerListClient({
   initialServers,
   initialCount,
   initialTotalPages,
+  useMockFallback = false,
 }: ServerListClientProps) {
   const [servers, setServers] = useState<Server[]>(initialServers);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,6 +37,61 @@ export default function ServerListClient({
 
   const supabase = createClient();
   const pageSize = 12;
+
+  // Filter mock servers locally when using mock fallback
+  const filteredMockServers = useMemo(() => {
+    if (!useMockFallback) return [];
+
+    let result = [...mockServers];
+
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(
+        (s) =>
+          s.name.toLowerCase().includes(query) ||
+          s.description?.toLowerCase().includes(query)
+      );
+    }
+
+    // Game mode filter
+    if (filters.gameModes.length > 0) {
+      result = result.filter((s) =>
+        s.game_modes.some((mode) => filters.gameModes.includes(mode))
+      );
+    }
+
+    // Region filter
+    if (filters.regions.length > 0) {
+      result = result.filter((s) => filters.regions.includes(s.region));
+    }
+
+    // Online only filter
+    if (filters.onlineOnly) {
+      result = result.filter((s) => s.is_online);
+    }
+
+    // Sorting
+    switch (sort) {
+      case 'popular':
+        result.sort((a, b) => b.views - a.views);
+        break;
+      case 'players':
+        result.sort((a, b) => (b.current_players || 0) - (a.current_players || 0));
+        break;
+      case 'newest':
+        result.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        break;
+      case 'votes':
+        result.sort((a, b) => b.votes - a.votes);
+        break;
+      case 'alphabetical':
+        result.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+    }
+
+    return result;
+  }, [useMockFallback, searchQuery, filters, sort]);
 
   const fetchServers = useCallback(async () => {
     setIsLoading(true);
@@ -118,6 +176,14 @@ export default function ServerListClient({
   }, [supabase, searchQuery, filters, sort, page]);
 
   useEffect(() => {
+    // If using mock data, update with filtered results
+    if (useMockFallback) {
+      setServers(filteredMockServers);
+      setTotalCount(filteredMockServers.length);
+      setTotalPages(1);
+      return;
+    }
+
     // Skip initial fetch since we have initial data
     if (
       page === 1 &&
@@ -130,7 +196,7 @@ export default function ServerListClient({
       return;
     }
     fetchServers();
-  }, [fetchServers, page, searchQuery, filters, sort]);
+  }, [fetchServers, page, searchQuery, filters, sort, useMockFallback, filteredMockServers]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);

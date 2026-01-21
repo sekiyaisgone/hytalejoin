@@ -21,7 +21,7 @@ export default function FeaturedServers({ servers }: FeaturedServersProps) {
           {/* Gold glow effect for featured servers */}
           <div className="absolute -inset-[1px] bg-gradient-to-r from-[#d4a033] via-[#f0c35a] to-[#d4a033] rounded-2xl opacity-30 blur-sm" />
           <div className="relative">
-            <ServerCard server={server} featured />
+            <ServerCard server={server} />
           </div>
         </div>
       ))}

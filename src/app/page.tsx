@@ -3,125 +3,9 @@ import { getServers, getFeaturedServers } from '@/lib/servers';
 import FeaturedServers from '@/components/servers/FeaturedServers';
 import ServerListClient from '@/components/servers/ServerListClient';
 import { ServerCardSkeleton } from '@/components/ui/Skeleton';
-import { Search, Sparkles, Server, Users, Globe } from 'lucide-react';
+import { mockServers } from '@/lib/mockServers';
 
 export const revalidate = 60; // Revalidate every minute
-
-// Stats component
-function StatsBar() {
-  return (
-    <div className="flex flex-wrap justify-center gap-8 md:gap-16 mb-12">
-      {[
-        { icon: Server, label: 'Servers', value: '150+' },
-        { icon: Users, label: 'Players', value: '10K+' },
-        { icon: Globe, label: 'Regions', value: '6' },
-      ].map((stat) => (
-        <div key={stat.label} className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#d4a033]/10 flex items-center justify-center">
-            <stat.icon className="w-5 h-5 text-[#d4a033]" />
-          </div>
-          <div>
-            <div className="text-xl font-bold text-[#f0f4f8]">{stat.value}</div>
-            <div className="text-xs text-[#7a8fa6] uppercase tracking-wide">{stat.label}</div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// Hero section component
-function HeroSection() {
-  return (
-    <section className="relative text-center pt-8 pb-12 mb-8">
-      {/* Background glow effects */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#d4a033]/10 rounded-full blur-[120px] -translate-y-1/2" />
-        <div className="absolute top-1/2 left-1/4 w-[300px] h-[300px] bg-[#38bdf8]/5 rounded-full blur-[100px]" />
-        <div className="absolute top-1/3 right-1/4 w-[250px] h-[250px] bg-[#d4a033]/5 rounded-full blur-[80px]" />
-      </div>
-
-      {/* Content */}
-      <div className="relative z-10">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-[#d4a033]/10 border border-[#d4a033]/20 text-[#f0c35a] text-sm font-medium">
-          <Sparkles className="w-4 h-4" />
-          Discover the Best Hytale Servers
-        </div>
-
-        {/* Title */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#f0f4f8] mb-6 tracking-tight">
-          Find Your Perfect{' '}
-          <span className="gradient-text">Hytale Server</span>
-        </h1>
-
-        {/* Subtitle */}
-        <p className="text-lg md:text-xl text-[#7a8fa6] max-w-2xl mx-auto mb-10 leading-relaxed">
-          Browse through our curated collection of Hytale servers and find
-          communities that match your playstyle.
-        </p>
-
-        {/* Glass Search Bar (decorative - actual search is in filters) */}
-        <div className="max-w-2xl mx-auto mb-10">
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-[#d4a033]/20 via-[#38bdf8]/10 to-[#d4a033]/20 rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
-            <div className="relative flex items-center bg-[rgba(15,23,32,0.8)] backdrop-blur-xl border border-[rgba(255,255,255,0.1)] rounded-2xl px-6 py-4 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-              <Search className="w-5 h-5 text-[#7a8fa6] mr-4" />
-              <span className="text-[#4a5d73] text-base">Search servers by name, gamemode, or region...</span>
-              <div className="ml-auto flex items-center gap-2">
-                <kbd className="hidden sm:inline-flex items-center px-2 py-1 text-xs font-medium text-[#7a8fa6] bg-[#1a2942] rounded-md border border-[rgba(255,255,255,0.06)]">
-                  Ctrl K
-                </kbd>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Filter Pills */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {['PVP', 'Survival', 'Creative', 'Mini-Games', 'RPG', 'Adventure'].map((mode) => (
-            <button
-              key={mode}
-              className="px-4 py-2 text-sm font-medium rounded-full bg-[#1a2942] text-[#7a8fa6] border border-[rgba(255,255,255,0.06)] hover:text-[#f0f4f8] hover:border-[rgba(255,255,255,0.1)] hover:bg-[#1a2942]/80 transition-all duration-200"
-            >
-              {mode}
-            </button>
-          ))}
-        </div>
-
-        {/* Stats */}
-        <StatsBar />
-      </div>
-    </section>
-  );
-}
-
-// Section header component
-function SectionHeader({
-  title,
-  subtitle,
-  icon: Icon,
-}: {
-  title: string;
-  subtitle?: string;
-  icon?: React.ElementType;
-}) {
-  return (
-    <div className="flex items-center gap-3 mb-8">
-      {Icon && (
-        <div className="w-10 h-10 rounded-xl bg-[#d4a033]/10 flex items-center justify-center">
-          <Icon className="w-5 h-5 text-[#d4a033]" />
-        </div>
-      )}
-      <div>
-        <h2 className="text-2xl font-bold text-[#f0f4f8]">{title}</h2>
-        {subtitle && (
-          <p className="text-sm text-[#7a8fa6] mt-0.5">{subtitle}</p>
-        )}
-      </div>
-    </div>
-  );
-}
 
 export default async function HomePage() {
   const [featuredServers, { data: servers, count, totalPages }] = await Promise.all([
@@ -129,40 +13,60 @@ export default async function HomePage() {
     getServers({ page: 1, pageSize: 12 }),
   ]);
 
+  // Use mock servers if no real servers exist
+  const displayServers = servers.length > 0 ? servers : mockServers;
+  const displayCount = servers.length > 0 ? count : mockServers.length;
+  const displayTotalPages = servers.length > 0 ? totalPages : 1;
+  const isMockData = servers.length === 0;
+
   return (
     <div className="min-h-screen">
-      <div className="container-wide py-8">
-        {/* Hero Section */}
-        <HeroSection />
+      <div className="container-wide py-6 lg:py-10">
+        {/* Page Header - Simple and Clean */}
+        <header className="mb-8 lg:mb-12">
+          <h1 className="text-3xl lg:text-4xl font-bold text-white mb-3">
+            List of Hytale Servers
+          </h1>
+          <p className="text-[#8899aa] text-base lg:text-lg max-w-2xl">
+            Find the best Hytale servers to play on. Browse by game mode, vote for your favorites, and join the community.
+          </p>
+          {isMockData && (
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-400 text-sm">
+              <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+              Showing example servers — Real servers coming soon!
+            </div>
+          )}
+        </header>
 
-        {/* Featured Servers */}
+        {/* Featured Servers Section */}
         {featuredServers.length > 0 && (
-          <section className="mb-16">
-            <SectionHeader
-              title="Featured Servers"
-              subtitle="Hand-picked servers with the best experiences"
-              icon={Sparkles}
-            />
+          <section className="mb-12 lg:mb-16">
+            <div className="flex items-center gap-3 mb-6">
+              <h2 className="text-xl lg:text-2xl font-bold text-white">Featured Servers</h2>
+              <span className="px-2 py-0.5 text-xs font-semibold bg-amber-500/20 text-amber-400 rounded">
+                PROMOTED
+              </span>
+            </div>
             <FeaturedServers servers={featuredServers} />
           </section>
         )}
 
-        {/* All Servers */}
+        {/* All Servers Section */}
         <section>
-          <SectionHeader
-            title="All Servers"
-            subtitle={`${count || 0} servers available`}
-            icon={Server}
-          />
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl lg:text-2xl font-bold text-white">
+              All Servers
+              <span className="ml-3 text-base font-normal text-[#8899aa]">
+                {displayCount} {displayCount === 1 ? 'server' : 'servers'}
+              </span>
+            </h2>
+          </div>
+
           <Suspense
             fallback={
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="animate-fade-in"
-                    style={{ animationDelay: `${i * 100}ms` }}
-                  >
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 lg:gap-6">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="animate-fade-in" style={{ animationDelay: `${i * 75}ms` }}>
                     <ServerCardSkeleton />
                   </div>
                 ))}
@@ -170,9 +74,10 @@ export default async function HomePage() {
             }
           >
             <ServerListClient
-              initialServers={servers}
-              initialCount={count}
-              initialTotalPages={totalPages}
+              initialServers={displayServers}
+              initialCount={displayCount}
+              initialTotalPages={displayTotalPages}
+              useMockFallback={isMockData}
             />
           </Suspense>
         </section>
