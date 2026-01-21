@@ -19,9 +19,9 @@ export default async function HomePage() {
   const isMockData = servers.length === 0;
 
   return (
-    <main className="min-h-screen">
+    <>
       {/* Hero */}
-      <div className="max-w-7xl mx-auto px-6 pt-10 pb-6">
+      <div className="pt-10 pb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">
           Hytale Server List
         </h1>
@@ -37,7 +37,7 @@ export default async function HomePage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 pb-12">
+      <div className="pb-12">
         {/* Featured */}
         {featuredServers.length > 0 && (
           <section className="py-4">
@@ -76,6 +76,6 @@ export default async function HomePage() {
           </Suspense>
         </section>
       </div>
-    </main>
+    </>
   );
 }
