@@ -69,19 +69,19 @@ export default function ServerCard({ server }: ServerCardProps) {
 
   return (
     <Link href={`/servers/${server.id}`} className="block group">
-      <article className="relative overflow-hidden rounded-lg bg-[#1a2235] border border-[#2a3548] hover:border-[#3d4f6a] transition-all duration-200 hover:shadow-lg">
+      <article className="relative overflow-hidden rounded-xl bg-[#131a24] border border-[#2a3548] transition-all duration-300 ease-out hover:border-[#4a5f7a] hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
         {/* Banner Image with Server Name Overlay */}
-        <div className={`relative h-44 bg-gradient-to-br ${gradient} overflow-hidden`}>
+        <div className={`relative h-40 bg-gradient-to-br ${gradient} overflow-hidden`}>
           {server.banner_image_url && !imageError ? (
             <Image
               src={server.banner_image_url}
               alt={server.name}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
               onError={() => setImageError(true)}
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center transition-transform duration-500 ease-out group-hover:scale-110">
               <span className="text-6xl font-bold text-white/20 select-none">
                 {server.name.charAt(0).toUpperCase()}
               </span>
@@ -97,76 +97,83 @@ export default function ServerCard({ server }: ServerCardProps) {
               {server.name}
             </h3>
           </div>
+
+          {/* Copy IP button (shown on hover) */}
+          <button
+            onClick={copyIP}
+            className={`absolute top-3 right-3 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+              copied
+                ? 'bg-green-500 text-white scale-105'
+                : 'bg-black/70 text-white opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 hover:bg-black/90'
+            }`}
+          >
+            {copied ? (
+              <span className="flex items-center gap-1.5">
+                <Check className="w-3.5 h-3.5" /> Copied!
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5">
+                <Copy className="w-3.5 h-3.5" /> Copy IP
+              </span>
+            )}
+          </button>
         </div>
 
         {/* Content */}
-        <div className="p-3">
+        <div className="p-4">
           {/* Description */}
-          <p className="text-sm text-[#8899aa] line-clamp-3 mb-3 min-h-[60px]">
+          <p className="text-sm text-[#8899aa] line-clamp-2 mb-3 min-h-[40px] leading-relaxed">
             {server.short_description || server.description || 'No description available'}
           </p>
 
           {/* Game mode tags */}
-          <div className="flex flex-wrap gap-1 mb-3">
-            {server.game_modes.slice(0, 4).map((mode) => {
+          <div className="flex flex-wrap gap-1.5 mb-4">
+            {server.game_modes.slice(0, 3).map((mode) => {
               const style = gameModeStyles[mode];
               return (
                 <span
                   key={mode}
-                  className={`${style.bg} ${style.text} px-2 py-0.5 rounded text-[10px] font-bold uppercase`}
+                  className={`${style.bg} ${style.text} px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide`}
                 >
                   {style.label}
                 </span>
               );
             })}
+            {server.game_modes.length > 3 && (
+              <span className="bg-[#2a3548] text-[#8899aa] px-2 py-0.5 rounded text-[10px] font-bold">
+                +{server.game_modes.length - 3}
+              </span>
+            )}
           </div>
 
           {/* Footer: Status and Votes */}
-          <div className="flex items-center justify-between pt-2 border-t border-[#2a3548]">
+          <div className="flex items-center justify-between pt-3 border-t border-[#2a3548]">
             {/* Online status */}
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <span
-                className={`w-2 h-2 rounded-full ${
-                  server.is_online ? 'bg-green-500 animate-pulse' : 'bg-yellow-500'
+                className={`w-2.5 h-2.5 rounded-full ${
+                  server.is_online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-yellow-500'
                 }`}
               />
-              <span className={`text-xs font-semibold uppercase ${
-                server.is_online ? 'text-green-500' : 'text-yellow-500'
+              <span className={`text-xs font-semibold uppercase tracking-wide ${
+                server.is_online ? 'text-green-400' : 'text-yellow-400'
               }`}>
                 {server.is_online ? 'Online' : 'Soon'}
               </span>
+              {server.is_online && server.current_players !== null && (
+                <span className="text-xs text-[#6b7c93]">
+                  {server.current_players} players
+                </span>
+              )}
             </div>
 
             {/* Vote count */}
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-[#8899aa] uppercase">Vote</span>
-              <div className="flex items-center gap-1">
-                <Heart className="w-4 h-4 text-red-500 fill-red-500" />
-                <span className="text-sm font-bold text-white">{server.votes}</span>
-              </div>
+            <div className="flex items-center gap-1.5 transition-transform duration-200 group-hover:scale-110">
+              <Heart className="w-4 h-4 text-red-500 fill-red-500" />
+              <span className="text-sm font-bold text-white">{server.votes}</span>
             </div>
           </div>
         </div>
-
-        {/* Copy IP button (shown on hover) */}
-        <button
-          onClick={copyIP}
-          className={`absolute top-2 right-2 px-2 py-1 rounded text-xs font-semibold transition-all duration-200 ${
-            copied
-              ? 'bg-green-500 text-white'
-              : 'bg-black/60 text-white opacity-0 group-hover:opacity-100 hover:bg-black/80'
-          }`}
-        >
-          {copied ? (
-            <span className="flex items-center gap-1">
-              <Check className="w-3 h-3" /> Copied
-            </span>
-          ) : (
-            <span className="flex items-center gap-1">
-              <Copy className="w-3 h-3" /> Copy IP
-            </span>
-          )}
-        </button>
       </article>
     </Link>
   );
