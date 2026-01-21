@@ -74,6 +74,14 @@ export default function Footer() {
                   About Us
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/partners"
+                  className="text-sm text-[#7a8fa6] hover:text-[#d4a033] transition-colors"
+                >
+                  Partners
+                </Link>
+              </li>
             </ul>
           </div>
 

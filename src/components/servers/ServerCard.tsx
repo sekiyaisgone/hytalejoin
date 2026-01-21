@@ -10,20 +10,20 @@ interface ServerCardProps {
   server: Server;
 }
 
-// Colorful game mode styles matching reference
-const gameModeStyles: Record<GameMode, { bg: string; text: string; label: string }> = {
-  pvp: { bg: 'bg-green-500', text: 'text-white', label: 'PVP' },
-  survival: { bg: 'bg-orange-500', text: 'text-white', label: 'SURVIVAL' },
-  creative: { bg: 'bg-blue-500', text: 'text-white', label: 'CREATIVE' },
-  'mini-games': { bg: 'bg-purple-500', text: 'text-white', label: 'MINI-GAMES' },
-  rpg: { bg: 'bg-red-500', text: 'text-white', label: 'RPG' },
-  adventure: { bg: 'bg-teal-500', text: 'text-white', label: 'ADVENTURE' },
-  roleplay: { bg: 'bg-pink-500', text: 'text-white', label: 'RP' },
-  faction: { bg: 'bg-amber-600', text: 'text-white', label: 'FACTION' },
-  skyblock: { bg: 'bg-cyan-500', text: 'text-white', label: 'SKYBLOCK' },
-  vanilla: { bg: 'bg-lime-600', text: 'text-white', label: 'VANILLA' },
-  pve: { bg: 'bg-emerald-600', text: 'text-white', label: 'PVE' },
-  'multi-server': { bg: 'bg-indigo-500', text: 'text-white', label: 'MULTI-SERV' },
+// Modern pill-style game mode badges
+const gameModeStyles: Record<GameMode, { bg: string; border: string; text: string; label: string }> = {
+  pvp: { bg: 'bg-red-500/20', border: 'border-red-500/50', text: 'text-red-400', label: 'PvP' },
+  survival: { bg: 'bg-orange-500/20', border: 'border-orange-500/50', text: 'text-orange-400', label: 'Survival' },
+  creative: { bg: 'bg-blue-500/20', border: 'border-blue-500/50', text: 'text-blue-400', label: 'Creative' },
+  'mini-games': { bg: 'bg-purple-500/20', border: 'border-purple-500/50', text: 'text-purple-400', label: 'Minigames' },
+  rpg: { bg: 'bg-amber-500/20', border: 'border-amber-500/50', text: 'text-amber-400', label: 'RPG' },
+  adventure: { bg: 'bg-teal-500/20', border: 'border-teal-500/50', text: 'text-teal-400', label: 'Adventure' },
+  roleplay: { bg: 'bg-pink-500/20', border: 'border-pink-500/50', text: 'text-pink-400', label: 'Roleplay' },
+  faction: { bg: 'bg-yellow-500/20', border: 'border-yellow-500/50', text: 'text-yellow-400', label: 'Faction' },
+  skyblock: { bg: 'bg-cyan-500/20', border: 'border-cyan-500/50', text: 'text-cyan-400', label: 'Skyblock' },
+  vanilla: { bg: 'bg-lime-500/20', border: 'border-lime-500/50', text: 'text-lime-400', label: 'Vanilla' },
+  pve: { bg: 'bg-emerald-500/20', border: 'border-emerald-500/50', text: 'text-emerald-400', label: 'PvE' },
+  'multi-server': { bg: 'bg-indigo-500/20', border: 'border-indigo-500/50', text: 'text-indigo-400', label: 'Network' },
 };
 
 // Generate consistent gradient based on server name
@@ -126,21 +126,21 @@ export default function ServerCard({ server }: ServerCardProps) {
             {server.short_description || server.description || 'No description available'}
           </p>
 
-          {/* Game mode tags */}
-          <div className="flex flex-wrap gap-1.5 mb-4">
+          {/* Game mode tags - modern pill style */}
+          <div className="flex flex-wrap gap-2 mb-4">
             {server.game_modes.slice(0, 3).map((mode) => {
               const style = gameModeStyles[mode];
               return (
                 <span
                   key={mode}
-                  className={`${style.bg} ${style.text} px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide`}
+                  className={`${style.bg} ${style.border} ${style.text} px-3 py-1 rounded-full border text-xs font-medium`}
                 >
                   {style.label}
                 </span>
               );
             })}
             {server.game_modes.length > 3 && (
-              <span className="bg-[#2a3548] text-[#8899aa] px-2 py-0.5 rounded text-[10px] font-bold">
+              <span className="bg-slate-500/20 border border-slate-500/50 text-slate-400 px-3 py-1 rounded-full text-xs font-medium">
                 +{server.game_modes.length - 3}
               </span>
             )}
