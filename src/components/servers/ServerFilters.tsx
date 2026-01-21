@@ -275,13 +275,13 @@ export default function ServerFilters({
       )}
 
       {/* Quick filter pills (always visible) */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5">
         {gameModes.slice(0, 6).map((mode) => (
           <button
             key={mode.value}
             onClick={() => toggleGameMode(mode.value)}
             className={`
-              px-4 py-2 text-xs font-semibold uppercase tracking-wide rounded-full transition-all duration-200
+              px-3 py-1.5 text-xs font-medium uppercase tracking-wide rounded-full transition-all duration-200
               ${currentFilters.gameModes.includes(mode.value)
                 ? 'bg-gradient-to-r from-[#d4a033] to-[#a67c20] text-white shadow-[0_2px_8px_rgba(212,160,51,0.3)]'
                 : 'bg-[#1a2942] text-[#7a8fa6] border border-[rgba(255,255,255,0.06)] hover:text-[#f0f4f8] hover:border-[rgba(255,255,255,0.1)]'

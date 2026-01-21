@@ -71,7 +71,7 @@ export default function ServerCard({ server }: ServerCardProps) {
     <Link href={`/servers/${server.id}`} className="block group">
       <article className="relative overflow-hidden rounded-xl bg-[#131a24] border border-[#2a3548] transition-all duration-300 ease-out hover:border-[#4a5f7a] hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
         {/* Banner Image with Server Name Overlay */}
-        <div className={`relative h-40 bg-gradient-to-br ${gradient} overflow-hidden`}>
+        <div className={`relative h-28 bg-gradient-to-br ${gradient} overflow-hidden`}>
           {server.banner_image_url && !imageError ? (
             <Image
               src={server.banner_image_url}
@@ -82,7 +82,7 @@ export default function ServerCard({ server }: ServerCardProps) {
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center transition-transform duration-500 ease-out group-hover:scale-110">
-              <span className="text-6xl font-bold text-white/20 select-none">
+              <span className="text-5xl font-bold text-white/15 select-none">
                 {server.name.charAt(0).toUpperCase()}
               </span>
             </div>

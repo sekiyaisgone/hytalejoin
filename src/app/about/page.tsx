@@ -35,10 +35,10 @@ export default function AboutPage() {
   ];
 
   return (
-    <div style={{ minHeight: '100vh', padding: '48px 24px' }}>
+    <div style={{ minHeight: '100vh', padding: '40px 24px' }}>
       <div style={{ maxWidth: '900px', margin: '0 auto', width: '100%' }}>
         {/* Hero */}
-        <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
           <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'white', marginBottom: '16px' }}>
             About <span style={{ color: '#d4a033' }}>HytaleJoin</span>
           </h1>
@@ -49,7 +49,7 @@ export default function AboutPage() {
         </div>
 
         {/* Features Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '64px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '48px' }}>
           {features.map((feature, index) => (
             <div
               key={index}
@@ -92,8 +92,8 @@ export default function AboutPage() {
           background: '#131a24',
           border: '1px solid #2a3548',
           borderRadius: '12px',
-          padding: '32px',
-          marginBottom: '64px',
+          padding: '24px',
+          marginBottom: '48px',
         }}>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white', marginBottom: '16px' }}>Our Mission</h2>
           <div style={{ color: '#8899aa', fontSize: '1rem', lineHeight: '1.7' }}>

@@ -74,13 +74,13 @@ export default function Header() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#d4a033] to-[#a67c20] flex items-center justify-center shadow-[0_2px_8px_rgba(212,160,51,0.3)] transition-shadow group-hover:shadow-[0_4px_16px_rgba(212,160,51,0.4)]">
-              <Server className="w-5 h-5 text-white" />
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#d4a033] to-[#a67c20] flex items-center justify-center shadow-[0_2px_6px_rgba(212,160,51,0.3)] transition-shadow group-hover:shadow-[0_4px_12px_rgba(212,160,51,0.4)]">
+              <Server className="w-4 h-4 text-white" />
             </div>
-            <span className="text-xl font-bold text-[#f0f4f8] group-hover:text-white transition-colors">
+            <span className="text-lg font-bold text-[#f0f4f8] group-hover:text-white transition-colors">
               Hytale<span className="text-[#d4a033]">Join</span>
             </span>
           </Link>
