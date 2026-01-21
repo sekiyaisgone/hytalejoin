@@ -19,9 +19,9 @@ export default async function HomePage() {
   const isMockData = servers.length === 0;
 
   return (
-    <main className="min-h-screen">
+    <>
       {/* Hero */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-4">
+      <div className="pt-10 pb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">
           Hytale Server List
         </h1>
@@ -37,10 +37,10 @@ export default async function HomePage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-12">
+      <div className="pb-12">
         {/* Featured */}
         {featuredServers.length > 0 && (
-          <section className="mb-8">
+          <section className="py-4">
             <div className="flex items-center gap-2 mb-4">
               <h2 className="text-sm font-semibold text-white">Featured</h2>
               <span className="px-1.5 py-0.5 text-[9px] font-semibold bg-[#d4a033]/20 text-[#d4a033] rounded uppercase">
@@ -52,7 +52,7 @@ export default async function HomePage() {
         )}
 
         {/* All Servers */}
-        <section>
+        <section className="py-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-white">All Servers</h2>
             <span className="text-xs text-[#7d8590]">{displayCount} servers</span>
@@ -60,7 +60,7 @@ export default async function HomePage() {
 
           <Suspense
             fallback={
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <ServerCardSkeleton key={i} />
                 ))}
@@ -76,6 +76,6 @@ export default async function HomePage() {
           </Suspense>
         </section>
       </div>
-    </main>
+    </>
   );
 }
