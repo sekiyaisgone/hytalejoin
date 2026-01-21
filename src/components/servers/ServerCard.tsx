@@ -10,20 +10,20 @@ interface ServerCardProps {
   server: Server;
 }
 
-// Modern pill-style game mode badges
+// Modern pill-style game mode badges with inline styles for reliability
 const gameModeStyles: Record<GameMode, { bg: string; border: string; text: string; label: string }> = {
-  pvp: { bg: 'bg-red-500/20', border: 'border-red-500/50', text: 'text-red-400', label: 'PvP' },
-  survival: { bg: 'bg-orange-500/20', border: 'border-orange-500/50', text: 'text-orange-400', label: 'Survival' },
-  creative: { bg: 'bg-blue-500/20', border: 'border-blue-500/50', text: 'text-blue-400', label: 'Creative' },
-  'mini-games': { bg: 'bg-purple-500/20', border: 'border-purple-500/50', text: 'text-purple-400', label: 'Minigames' },
-  rpg: { bg: 'bg-amber-500/20', border: 'border-amber-500/50', text: 'text-amber-400', label: 'RPG' },
-  adventure: { bg: 'bg-teal-500/20', border: 'border-teal-500/50', text: 'text-teal-400', label: 'Adventure' },
-  roleplay: { bg: 'bg-pink-500/20', border: 'border-pink-500/50', text: 'text-pink-400', label: 'Roleplay' },
-  faction: { bg: 'bg-yellow-500/20', border: 'border-yellow-500/50', text: 'text-yellow-400', label: 'Faction' },
-  skyblock: { bg: 'bg-cyan-500/20', border: 'border-cyan-500/50', text: 'text-cyan-400', label: 'Skyblock' },
-  vanilla: { bg: 'bg-lime-500/20', border: 'border-lime-500/50', text: 'text-lime-400', label: 'Vanilla' },
-  pve: { bg: 'bg-emerald-500/20', border: 'border-emerald-500/50', text: 'text-emerald-400', label: 'PvE' },
-  'multi-server': { bg: 'bg-indigo-500/20', border: 'border-indigo-500/50', text: 'text-indigo-400', label: 'Network' },
+  pvp: { bg: 'rgba(239,68,68,0.2)', border: 'rgba(239,68,68,0.5)', text: '#f87171', label: 'PvP' },
+  survival: { bg: 'rgba(249,115,22,0.2)', border: 'rgba(249,115,22,0.5)', text: '#fb923c', label: 'Survival' },
+  creative: { bg: 'rgba(59,130,246,0.2)', border: 'rgba(59,130,246,0.5)', text: '#60a5fa', label: 'Creative' },
+  'mini-games': { bg: 'rgba(168,85,247,0.2)', border: 'rgba(168,85,247,0.5)', text: '#c084fc', label: 'Minigames' },
+  rpg: { bg: 'rgba(245,158,11,0.2)', border: 'rgba(245,158,11,0.5)', text: '#fbbf24', label: 'RPG' },
+  adventure: { bg: 'rgba(20,184,166,0.2)', border: 'rgba(20,184,166,0.5)', text: '#2dd4bf', label: 'Adventure' },
+  roleplay: { bg: 'rgba(236,72,153,0.2)', border: 'rgba(236,72,153,0.5)', text: '#f472b6', label: 'Roleplay' },
+  faction: { bg: 'rgba(234,179,8,0.2)', border: 'rgba(234,179,8,0.5)', text: '#facc15', label: 'Faction' },
+  skyblock: { bg: 'rgba(6,182,212,0.2)', border: 'rgba(6,182,212,0.5)', text: '#22d3ee', label: 'Skyblock' },
+  vanilla: { bg: 'rgba(132,204,22,0.2)', border: 'rgba(132,204,22,0.5)', text: '#a3e635', label: 'Vanilla' },
+  pve: { bg: 'rgba(16,185,129,0.2)', border: 'rgba(16,185,129,0.5)', text: '#34d399', label: 'PvE' },
+  'multi-server': { bg: 'rgba(99,102,241,0.2)', border: 'rgba(99,102,241,0.5)', text: '#818cf8', label: 'Network' },
 };
 
 // Generate consistent gradient based on server name
@@ -127,20 +127,38 @@ export default function ServerCard({ server }: ServerCardProps) {
           </p>
 
           {/* Game mode tags - modern pill style */}
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-1.5 mb-3">
             {server.game_modes.slice(0, 3).map((mode) => {
               const style = gameModeStyles[mode];
               return (
                 <span
                   key={mode}
-                  className={`${style.bg} ${style.border} ${style.text} px-3 py-1 rounded-full border text-xs font-medium`}
+                  style={{
+                    background: style.bg,
+                    border: `1px solid ${style.border}`,
+                    color: style.text,
+                    padding: '4px 10px',
+                    borderRadius: '9999px',
+                    fontSize: '11px',
+                    fontWeight: 500,
+                  }}
                 >
                   {style.label}
                 </span>
               );
             })}
             {server.game_modes.length > 3 && (
-              <span className="bg-slate-500/20 border border-slate-500/50 text-slate-400 px-3 py-1 rounded-full text-xs font-medium">
+              <span
+                style={{
+                  background: 'rgba(100,116,139,0.2)',
+                  border: '1px solid rgba(100,116,139,0.5)',
+                  color: '#94a3b8',
+                  padding: '4px 10px',
+                  borderRadius: '9999px',
+                  fontSize: '11px',
+                  fontWeight: 500,
+                }}
+              >
                 +{server.game_modes.length - 3}
               </span>
             )}
