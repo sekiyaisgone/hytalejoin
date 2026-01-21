@@ -55,7 +55,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full overflow-x-hidden">
       <body className="antialiased min-h-screen flex flex-col overflow-x-hidden">
         <ToastProvider />
         <Header />
