@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Heart, Copy, Check } from 'lucide-react';
+import { Heart, Copy, Check, ExternalLink } from 'lucide-react';
 import { Server, GameMode } from '@/types';
 import { useState, useCallback } from 'react';
 
@@ -10,31 +10,46 @@ interface ServerCardProps {
   server: Server;
 }
 
-// Modern pill-style game mode badges with inline styles for reliability
-const gameModeStyles: Record<GameMode, { bg: string; border: string; text: string; label: string }> = {
-  pvp: { bg: 'rgba(239,68,68,0.2)', border: 'rgba(239,68,68,0.5)', text: '#f87171', label: 'PvP' },
-  survival: { bg: 'rgba(249,115,22,0.2)', border: 'rgba(249,115,22,0.5)', text: '#fb923c', label: 'Survival' },
-  creative: { bg: 'rgba(59,130,246,0.2)', border: 'rgba(59,130,246,0.5)', text: '#60a5fa', label: 'Creative' },
-  'mini-games': { bg: 'rgba(168,85,247,0.2)', border: 'rgba(168,85,247,0.5)', text: '#c084fc', label: 'Minigames' },
-  rpg: { bg: 'rgba(245,158,11,0.2)', border: 'rgba(245,158,11,0.5)', text: '#fbbf24', label: 'RPG' },
-  adventure: { bg: 'rgba(20,184,166,0.2)', border: 'rgba(20,184,166,0.5)', text: '#2dd4bf', label: 'Adventure' },
-  roleplay: { bg: 'rgba(236,72,153,0.2)', border: 'rgba(236,72,153,0.5)', text: '#f472b6', label: 'Roleplay' },
-  faction: { bg: 'rgba(234,179,8,0.2)', border: 'rgba(234,179,8,0.5)', text: '#facc15', label: 'Faction' },
-  skyblock: { bg: 'rgba(6,182,212,0.2)', border: 'rgba(6,182,212,0.5)', text: '#22d3ee', label: 'Skyblock' },
-  vanilla: { bg: 'rgba(132,204,22,0.2)', border: 'rgba(132,204,22,0.5)', text: '#a3e635', label: 'Vanilla' },
-  pve: { bg: 'rgba(16,185,129,0.2)', border: 'rgba(16,185,129,0.5)', text: '#34d399', label: 'PvE' },
-  'multi-server': { bg: 'rgba(99,102,241,0.2)', border: 'rgba(99,102,241,0.5)', text: '#818cf8', label: 'Network' },
+// Tag colors using Tailwind-safe classes
+const tagColors: Record<GameMode, string> = {
+  pvp: 'tag-red',
+  survival: 'tag-orange',
+  creative: 'tag-blue',
+  'mini-games': 'tag-purple',
+  rpg: 'tag-amber',
+  adventure: 'tag-teal',
+  roleplay: 'tag-pink',
+  faction: 'tag-yellow',
+  skyblock: 'tag-cyan',
+  vanilla: 'tag-lime',
+  pve: 'tag-emerald',
+  'multi-server': 'tag-indigo',
+};
+
+const tagLabels: Record<GameMode, string> = {
+  pvp: 'PvP',
+  survival: 'Survival',
+  creative: 'Creative',
+  'mini-games': 'Minigames',
+  rpg: 'RPG',
+  adventure: 'Adventure',
+  roleplay: 'Roleplay',
+  faction: 'Faction',
+  skyblock: 'Skyblock',
+  vanilla: 'Vanilla',
+  pve: 'PvE',
+  'multi-server': 'Network',
 };
 
 // Generate consistent gradient based on server name
 function getGradient(name: string): string {
   const gradients = [
-    'from-blue-900 via-blue-800 to-slate-900',
-    'from-purple-900 via-purple-800 to-slate-900',
-    'from-emerald-900 via-emerald-800 to-slate-900',
-    'from-amber-900 via-amber-800 to-slate-900',
-    'from-rose-900 via-rose-800 to-slate-900',
-    'from-cyan-900 via-cyan-800 to-slate-900',
+    'from-blue-600/40 to-blue-900/60',
+    'from-purple-600/40 to-purple-900/60',
+    'from-emerald-600/40 to-emerald-900/60',
+    'from-amber-600/40 to-amber-900/60',
+    'from-rose-600/40 to-rose-900/60',
+    'from-cyan-600/40 to-cyan-900/60',
   ];
   const index = name.charCodeAt(0) % gradients.length;
   return gradients[index];
@@ -68,131 +83,117 @@ export default function ServerCard({ server }: ServerCardProps) {
   const gradient = getGradient(server.name);
 
   return (
-    <Link href={`/servers/${server.id}`} className="block group">
-      <article className="relative overflow-hidden rounded-xl bg-[#131a24] border border-[#2a3548] transition-all duration-300 ease-out hover:border-[#4a5f7a] hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
-        {/* Banner Image with Server Name Overlay */}
-        <div className={`relative h-28 bg-gradient-to-br ${gradient} overflow-hidden`}>
-          {server.banner_image_url && !imageError ? (
-            <Image
-              src={server.banner_image_url}
-              alt={server.name}
-              fill
-              className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-              onError={() => setImageError(true)}
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center transition-transform duration-500 ease-out group-hover:scale-110">
-              <span className="text-5xl font-bold text-white/15 select-none">
-                {server.name.charAt(0).toUpperCase()}
-              </span>
-            </div>
-          )}
-
-          {/* Gradient overlay for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-          {/* Server name at bottom of banner */}
-          <div className="absolute bottom-0 left-0 right-0 p-3">
-            <h3 className="text-lg font-bold text-white drop-shadow-lg line-clamp-1">
-              {server.name}
-            </h3>
+    <article className="group relative flex flex-col h-full overflow-hidden rounded-xl bg-[#111827] border border-white/5 transition-all duration-200 hover:border-white/10 hover:shadow-lg hover:shadow-black/20">
+      {/* Banner - reduced height */}
+      <div className={`relative h-20 bg-gradient-to-br ${gradient} overflow-hidden`}>
+        {server.banner_image_url && !imageError ? (
+          <Image
+            src={server.banner_image_url}
+            alt={server.name}
+            fill
+            className="object-cover"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-4xl font-bold text-white/10 select-none">
+              {server.name.charAt(0).toUpperCase()}
+            </span>
           </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#111827] to-transparent" />
+      </div>
 
-          {/* Copy IP button (shown on hover) */}
+      {/* Content */}
+      <div className="flex-1 flex flex-col p-4 pt-3">
+        {/* Server name + status */}
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <h3 className="text-base font-semibold text-white line-clamp-1 leading-tight">
+            {server.name}
+          </h3>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span
+              className={`w-2 h-2 rounded-full ${
+                server.is_online ? 'bg-green-500' : 'bg-yellow-500'
+              }`}
+            />
+            <span className={`text-xs font-medium ${
+              server.is_online ? 'text-green-400' : 'text-yellow-400'
+            }`}>
+              {server.is_online ? 'Online' : 'Soon'}
+            </span>
+          </div>
+        </div>
+
+        {/* Description */}
+        <p className="text-sm text-[#9ca3af] line-clamp-2 mb-3 leading-relaxed">
+          {server.short_description || server.description || 'No description available'}
+        </p>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-1 mb-3">
+          {server.game_modes.slice(0, 3).map((mode) => (
+            <span
+              key={mode}
+              className={`${tagColors[mode]} px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide`}
+            >
+              {tagLabels[mode]}
+            </span>
+          ))}
+          {server.game_modes.length > 3 && (
+            <span className="tag-gray px-2 py-0.5 rounded text-[10px] font-medium">
+              +{server.game_modes.length - 3}
+            </span>
+          )}
+        </div>
+
+        {/* Spacer */}
+        <div className="flex-1" />
+
+        {/* Footer: Players + Votes */}
+        <div className="flex items-center justify-between text-xs text-[#6b7280] mb-3">
+          <span>
+            {server.is_online && server.current_players !== null
+              ? `${server.current_players} players`
+              : 'No data'}
+          </span>
+          <div className="flex items-center gap-1">
+            <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" />
+            <span className="font-medium text-white">{server.votes}</span>
+          </div>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex gap-2">
           <button
             onClick={copyIP}
-            className={`absolute top-3 right-3 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
               copied
-                ? 'bg-green-500 text-white scale-105'
-                : 'bg-black/70 text-white opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 hover:bg-black/90'
+                ? 'bg-green-500/20 text-green-400'
+                : 'bg-[#d4a033] text-white hover:bg-[#c49030]'
             }`}
           >
             {copied ? (
-              <span className="flex items-center gap-1.5">
-                <Check className="w-3.5 h-3.5" /> Copied!
-              </span>
+              <>
+                <Check className="w-3.5 h-3.5" />
+                Copied!
+              </>
             ) : (
-              <span className="flex items-center gap-1.5">
-                <Copy className="w-3.5 h-3.5" /> Copy IP
-              </span>
+              <>
+                <Copy className="w-3.5 h-3.5" />
+                Copy IP
+              </>
             )}
           </button>
+          <Link
+            href={`/servers/${server.id}`}
+            className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-white/5 text-white hover:bg-white/10 transition-colors"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            View
+          </Link>
         </div>
-
-        {/* Content */}
-        <div className="p-4">
-          {/* Description */}
-          <p className="text-sm text-[#8899aa] line-clamp-2 mb-3 min-h-[40px] leading-relaxed">
-            {server.short_description || server.description || 'No description available'}
-          </p>
-
-          {/* Game mode tags - modern pill style */}
-          <div className="flex flex-wrap gap-1.5 mb-3">
-            {server.game_modes.slice(0, 3).map((mode) => {
-              const style = gameModeStyles[mode];
-              return (
-                <span
-                  key={mode}
-                  style={{
-                    background: style.bg,
-                    border: `1px solid ${style.border}`,
-                    color: style.text,
-                    padding: '4px 10px',
-                    borderRadius: '9999px',
-                    fontSize: '11px',
-                    fontWeight: 500,
-                  }}
-                >
-                  {style.label}
-                </span>
-              );
-            })}
-            {server.game_modes.length > 3 && (
-              <span
-                style={{
-                  background: 'rgba(100,116,139,0.2)',
-                  border: '1px solid rgba(100,116,139,0.5)',
-                  color: '#94a3b8',
-                  padding: '4px 10px',
-                  borderRadius: '9999px',
-                  fontSize: '11px',
-                  fontWeight: 500,
-                }}
-              >
-                +{server.game_modes.length - 3}
-              </span>
-            )}
-          </div>
-
-          {/* Footer: Status and Votes */}
-          <div className="flex items-center justify-between pt-3 border-t border-[#2a3548]">
-            {/* Online status */}
-            <div className="flex items-center gap-2">
-              <span
-                className={`w-2.5 h-2.5 rounded-full ${
-                  server.is_online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-yellow-500'
-                }`}
-              />
-              <span className={`text-xs font-semibold uppercase tracking-wide ${
-                server.is_online ? 'text-green-400' : 'text-yellow-400'
-              }`}>
-                {server.is_online ? 'Online' : 'Soon'}
-              </span>
-              {server.is_online && server.current_players !== null && (
-                <span className="text-xs text-[#6b7c93]">
-                  {server.current_players} players
-                </span>
-              )}
-            </div>
-
-            {/* Vote count */}
-            <div className="flex items-center gap-1.5 transition-transform duration-200 group-hover:scale-110">
-              <Heart className="w-4 h-4 text-red-500 fill-red-500" />
-              <span className="text-sm font-bold text-white">{server.votes}</span>
-            </div>
-          </div>
-        </div>
-      </article>
-    </Link>
+      </div>
+    </article>
   );
 }
