@@ -70,7 +70,7 @@ export default function Header() {
       className="sticky top-0 z-50 h-16 backdrop-blur bg-slate-950/60 border-b border-white/10"
     >
       <div className="max-w-7xl mx-auto px-6 h-full">
-        <div className="h-full flex items-center justify-between">
+        <div className="h-full flex items-center">
           {/* Logo - Left */}
           <Link href="/" className="flex items-center gap-2 group shrink-0">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#d4a033] to-[#a67c20] flex items-center justify-center">
@@ -82,7 +82,7 @@ export default function Header() {
           </Link>
 
           {/* Nav - Center (desktop) */}
-          <nav className="hidden md:flex gap-6 absolute left-1/2 -translate-x-1/2">
+          <nav className="hidden md:flex flex-1 justify-center gap-6">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -189,7 +189,7 @@ export default function Header() {
 
           {/* Mobile menu button */}
           <button
-            className="md:hidden p-2 rounded-lg text-[#8899aa] hover:text-white hover:bg-white/5 transition-colors"
+            className="md:hidden ml-auto p-2 rounded-lg text-[#8899aa] hover:text-white hover:bg-white/5 transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Toggle menu"
           >
