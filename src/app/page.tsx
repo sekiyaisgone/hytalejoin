@@ -21,7 +21,7 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero */}
-      <div className="pt-10 pb-6">
+      <div className="mb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">
           Hytale Server List
         </h1>
@@ -37,7 +37,7 @@ export default async function HomePage() {
       </div>
 
       {/* Content */}
-      <div className="pb-12">
+      <div>
         {/* Featured */}
         {featuredServers.length > 0 && (
           <section className="py-4">
@@ -60,7 +60,7 @@ export default async function HomePage() {
 
           <Suspense
             fallback={
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <ServerCardSkeleton key={i} />
                 ))}
