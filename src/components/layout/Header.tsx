@@ -67,11 +67,7 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 h-16 transition-all duration-200 ${
-        isScrolled
-          ? 'bg-[#0a0f16]/95 backdrop-blur-md border-b border-white/5'
-          : 'bg-[#0a0f16]/80 backdrop-blur-sm'
-      }`}
+      className="sticky top-0 z-50 h-16 backdrop-blur bg-slate-950/60 border-b border-white/10"
     >
       <div className="max-w-7xl mx-auto px-6 h-full">
         <div className="h-full flex items-center justify-between">
@@ -86,15 +82,15 @@ export default function Header() {
           </Link>
 
           {/* Nav - Center (desktop) */}
-          <nav className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
+          <nav className="hidden md:flex gap-6 absolute left-1/2 -translate-x-1/2">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-3 py-2 text-sm font-medium transition-colors ${
                   pathname === link.href
-                    ? 'text-white bg-white/10'
-                    : 'text-[#8899aa] hover:text-white hover:bg-white/5'
+                    ? 'text-white'
+                    : 'text-[#8899aa] hover:text-white'
                 }`}
               >
                 {link.label}
