@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { Search, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { GameMode, Region, SortOption } from '@/types';
 import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
 
 interface ServerFiltersProps {
   onSearch: (query: string) => void;
@@ -87,53 +86,77 @@ export default function ServerFilters({
     onSearch('');
   };
 
-  const hasActiveFilters =
-    currentFilters.gameModes.length > 0 ||
-    currentFilters.regions.length > 0 ||
-    currentFilters.onlineOnly;
+  const activeFilterCount =
+    currentFilters.gameModes.length +
+    currentFilters.regions.length +
+    (currentFilters.onlineOnly ? 1 : 0);
+
+  const hasActiveFilters = activeFilterCount > 0;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* Search and Sort Row */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-3">
         {/* Search */}
         <form onSubmit={handleSearch} className="flex-1">
-          <Input
-            type="text"
-            placeholder="Search servers..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            leftIcon={<Search className="w-5 h-5" />}
-            rightIcon={
-              searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchQuery('');
-                    onSearch('');
-                  }}
-                  className="hover:text-[#e8f0f8] transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )
-            }
-          />
+          <div className="relative group">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7a8fa6] transition-colors group-focus-within:text-[#d4a033]">
+              <Search className="w-5 h-5" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search servers..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="
+                w-full pl-12 pr-12 py-3.5
+                bg-[#151f2e] border border-[rgba(255,255,255,0.06)] rounded-xl
+                text-[#f0f4f8] text-base
+                placeholder:text-[#4a5d73]
+                transition-all duration-200
+                hover:border-[rgba(255,255,255,0.1)]
+                focus:outline-none focus:border-[#d4a033] focus:ring-2 focus:ring-[#d4a033]/20
+              "
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  onSearch('');
+                }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7a8fa6] hover:text-[#f0f4f8] transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </form>
 
         {/* Sort and Filter buttons */}
-        <div className="flex gap-2">
-          <select
-            value={currentSort}
-            onChange={(e) => onSortChange(e.target.value as SortOption)}
-            className="bg-[#1a2f4a] border border-[rgba(255,255,255,0.08)] rounded-lg px-4 py-3 text-[#e8f0f8] cursor-pointer transition-colors hover:border-[#d29f32] focus:outline-none focus:ring-2 focus:ring-[#d29f32]"
-          >
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+        <div className="flex gap-3">
+          <div className="relative">
+            <select
+              value={currentSort}
+              onChange={(e) => onSortChange(e.target.value as SortOption)}
+              className="
+                appearance-none cursor-pointer
+                pl-4 pr-10 py-3.5
+                bg-[#151f2e] border border-[rgba(255,255,255,0.06)] rounded-xl
+                text-[#f0f4f8] text-sm font-medium
+                transition-all duration-200
+                hover:border-[rgba(255,255,255,0.1)]
+                focus:outline-none focus:border-[#d4a033] focus:ring-2 focus:ring-[#d4a033]/20
+              "
+            >
+              {sortOptions.map((option) => (
+                <option key={option.value} value={option.value} className="bg-[#151f2e]">
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#7a8fa6] pointer-events-none" />
+          </div>
 
           <Button
             variant={showFilters ? 'primary' : 'secondary'}
@@ -142,8 +165,8 @@ export default function ServerFilters({
           >
             Filters
             {hasActiveFilters && (
-              <span className="ml-1 bg-[#d29f32] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {currentFilters.gameModes.length + currentFilters.regions.length + (currentFilters.onlineOnly ? 1 : 0)}
+              <span className="ml-1.5 w-5 h-5 rounded-full bg-white/20 text-xs flex items-center justify-center">
+                {activeFilterCount}
               </span>
             )}
           </Button>
@@ -152,20 +175,31 @@ export default function ServerFilters({
 
       {/* Expanded Filters */}
       {showFilters && (
-        <div className="bg-[rgba(26,47,74,0.6)] backdrop-blur-xl border border-[rgba(255,255,255,0.08)] rounded-xl p-4 space-y-4 animate-fade-in">
+        <div className="
+          bg-[rgba(15,23,32,0.8)] backdrop-blur-xl
+          border border-[rgba(255,255,255,0.06)] rounded-2xl
+          p-6 space-y-6
+          animate-fade-in
+          shadow-[0_8px_32px_rgba(0,0,0,0.4)]
+        ">
           {/* Game Modes */}
           <div>
-            <h3 className="text-sm font-semibold text-[#e8f0f8] mb-3">Game Modes</h3>
+            <h3 className="text-sm font-semibold text-[#f0f4f8] mb-4 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#d4a033]" />
+              Game Modes
+            </h3>
             <div className="flex flex-wrap gap-2">
               {gameModes.map((mode) => (
                 <button
                   key={mode.value}
                   onClick={() => toggleGameMode(mode.value)}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-full transition-all ${
-                    currentFilters.gameModes.includes(mode.value)
-                      ? 'bg-[#d29f32] text-white shadow-[0_0_10px_rgba(210,159,50,0.3)]'
-                      : 'bg-[#1a2f4a] text-[#8fa3b8] hover:text-[#e8f0f8] hover:bg-[#2a4060]'
-                  }`}
+                  className={`
+                    px-4 py-2 text-sm font-medium rounded-full transition-all duration-200
+                    ${currentFilters.gameModes.includes(mode.value)
+                      ? 'bg-gradient-to-r from-[#d4a033] to-[#a67c20] text-white shadow-[0_2px_8px_rgba(212,160,51,0.3)]'
+                      : 'bg-[#1a2942] text-[#7a8fa6] border border-[rgba(255,255,255,0.06)] hover:text-[#f0f4f8] hover:border-[rgba(255,255,255,0.1)]'
+                    }
+                  `}
                 >
                   {mode.label}
                 </button>
@@ -175,17 +209,22 @@ export default function ServerFilters({
 
           {/* Regions */}
           <div>
-            <h3 className="text-sm font-semibold text-[#e8f0f8] mb-3">Regions</h3>
+            <h3 className="text-sm font-semibold text-[#f0f4f8] mb-4 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#38bdf8]" />
+              Regions
+            </h3>
             <div className="flex flex-wrap gap-2">
               {regions.map((region) => (
                 <button
                   key={region.value}
                   onClick={() => toggleRegion(region.value)}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-full transition-all ${
-                    currentFilters.regions.includes(region.value)
-                      ? 'bg-[#d29f32] text-white shadow-[0_0_10px_rgba(210,159,50,0.3)]'
-                      : 'bg-[#1a2f4a] text-[#8fa3b8] hover:text-[#e8f0f8] hover:bg-[#2a4060]'
-                  }`}
+                  className={`
+                    px-4 py-2 text-sm font-medium rounded-full transition-all duration-200
+                    ${currentFilters.regions.includes(region.value)
+                      ? 'bg-gradient-to-r from-[#38bdf8] to-[#0ea5e9] text-white shadow-[0_2px_8px_rgba(56,189,248,0.3)]'
+                      : 'bg-[#1a2942] text-[#7a8fa6] border border-[rgba(255,255,255,0.06)] hover:text-[#f0f4f8] hover:border-[rgba(255,255,255,0.1)]'
+                    }
+                  `}
                 >
                   {region.label}
                 </button>
@@ -194,23 +233,39 @@ export default function ServerFilters({
           </div>
 
           {/* Other Filters */}
-          <div className="flex items-center justify-between pt-3 border-t border-[rgba(255,255,255,0.08)]">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={currentFilters.onlineOnly}
-                onChange={(e) =>
-                  onFilterChange({ ...currentFilters, onlineOnly: e.target.checked })
-                }
-                className="w-4 h-4 rounded border-[rgba(255,255,255,0.08)] bg-[#1a2f4a] text-[#d29f32] focus:ring-[#d29f32] focus:ring-offset-0"
-              />
-              <span className="text-sm text-[#8fa3b8]">Online servers only</span>
+          <div className="flex items-center justify-between pt-4 border-t border-[rgba(255,255,255,0.06)]">
+            <label className="flex items-center gap-3 cursor-pointer group">
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  checked={currentFilters.onlineOnly}
+                  onChange={(e) =>
+                    onFilterChange({ ...currentFilters, onlineOnly: e.target.checked })
+                  }
+                  className="sr-only peer"
+                />
+                <div className="
+                  w-10 h-6 rounded-full
+                  bg-[#1a2942] border border-[rgba(255,255,255,0.06)]
+                  peer-checked:bg-emerald-500/20 peer-checked:border-emerald-500/30
+                  transition-colors
+                " />
+                <div className="
+                  absolute left-1 top-1 w-4 h-4 rounded-full
+                  bg-[#7a8fa6]
+                  peer-checked:bg-emerald-400 peer-checked:translate-x-4
+                  transition-all
+                " />
+              </div>
+              <span className="text-sm text-[#7a8fa6] group-hover:text-[#f0f4f8] transition-colors">
+                Online servers only
+              </span>
             </label>
 
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
-                className="text-sm text-[#8fa3b8] hover:text-[#d29f32] transition-colors"
+                className="text-sm text-[#7a8fa6] hover:text-[#d4a033] transition-colors font-medium"
               >
                 Clear all filters
               </button>
@@ -225,11 +280,13 @@ export default function ServerFilters({
           <button
             key={mode.value}
             onClick={() => toggleGameMode(mode.value)}
-            className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-wide rounded-full transition-all ${
-              currentFilters.gameModes.includes(mode.value)
-                ? 'bg-[#d29f32] text-white'
-                : 'bg-[#1a2f4a] text-[#8fa3b8] hover:text-[#e8f0f8]'
-            }`}
+            className={`
+              px-4 py-2 text-xs font-semibold uppercase tracking-wide rounded-full transition-all duration-200
+              ${currentFilters.gameModes.includes(mode.value)
+                ? 'bg-gradient-to-r from-[#d4a033] to-[#a67c20] text-white shadow-[0_2px_8px_rgba(212,160,51,0.3)]'
+                : 'bg-[#1a2942] text-[#7a8fa6] border border-[rgba(255,255,255,0.06)] hover:text-[#f0f4f8] hover:border-[rgba(255,255,255,0.1)]'
+              }
+            `}
           >
             {mode.label}
           </button>
