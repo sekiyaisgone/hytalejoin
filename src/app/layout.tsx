@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { Header, Footer } from '@/components/layout';
+import { Header, Footer, Container } from '@/components/layout';
 import { ToastProvider } from '@/components/ui';
 
 export const metadata: Metadata = {
@@ -56,10 +56,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased min-h-screen flex flex-col">
+      <body className="antialiased min-h-screen flex flex-col overflow-x-hidden">
         <ToastProvider />
         <Header />
-        <main className="flex-1 mx-auto w-full max-w-7xl px-6">{children}</main>
+        <main className="flex-1">
+          <Container className="py-10">{children}</Container>
+        </main>
         <Footer />
       </body>
     </html>
