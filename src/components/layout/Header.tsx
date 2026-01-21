@@ -67,14 +67,14 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 z-50 h-16 transition-all duration-200 ${
         isScrolled
-          ? 'bg-[#0a0f16]/90 backdrop-blur-lg border-b border-white/5'
-          : 'bg-transparent'
+          ? 'bg-[#0a0f16]/95 backdrop-blur-md border-b border-white/5'
+          : 'bg-[#0a0f16]/80 backdrop-blur-sm'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="h-16 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 h-full">
+        <div className="h-full flex items-center justify-between">
           {/* Logo - Left */}
           <Link href="/" className="flex items-center gap-2 group shrink-0">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#d4a033] to-[#a67c20] flex items-center justify-center">

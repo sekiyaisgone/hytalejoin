@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Heart, Copy, Check, ExternalLink } from 'lucide-react';
+import { Heart, Copy, Check } from 'lucide-react';
 import { Server, GameMode } from '@/types';
 import { useState, useCallback } from 'react';
 
@@ -10,7 +10,6 @@ interface ServerCardProps {
   server: Server;
 }
 
-// Tag colors using Tailwind-safe classes
 const tagColors: Record<GameMode, string> = {
   pvp: 'tag-red',
   survival: 'tag-orange',
@@ -41,18 +40,16 @@ const tagLabels: Record<GameMode, string> = {
   'multi-server': 'Network',
 };
 
-// Generate consistent gradient based on server name
 function getGradient(name: string): string {
   const gradients = [
-    'from-blue-600/40 to-blue-900/60',
-    'from-purple-600/40 to-purple-900/60',
-    'from-emerald-600/40 to-emerald-900/60',
-    'from-amber-600/40 to-amber-900/60',
-    'from-rose-600/40 to-rose-900/60',
-    'from-cyan-600/40 to-cyan-900/60',
+    'from-blue-600/30 to-blue-900/50',
+    'from-purple-600/30 to-purple-900/50',
+    'from-emerald-600/30 to-emerald-900/50',
+    'from-amber-600/30 to-amber-900/50',
+    'from-rose-600/30 to-rose-900/50',
+    'from-cyan-600/30 to-cyan-900/50',
   ];
-  const index = name.charCodeAt(0) % gradients.length;
-  return gradients[index];
+  return gradients[name.charCodeAt(0) % gradients.length];
 }
 
 export default function ServerCard({ server }: ServerCardProps) {
@@ -83,9 +80,9 @@ export default function ServerCard({ server }: ServerCardProps) {
   const gradient = getGradient(server.name);
 
   return (
-    <article className="group relative flex flex-col h-full overflow-hidden rounded-xl bg-[#111827] border border-white/5 transition-all duration-200 hover:border-white/10 hover:shadow-lg hover:shadow-black/20">
-      {/* Banner - reduced height */}
-      <div className={`relative h-20 bg-gradient-to-br ${gradient} overflow-hidden`}>
+    <article className="group flex flex-col h-full overflow-hidden rounded-xl bg-[#0d1117] border border-white/[0.06] hover:border-white/10 transition-all">
+      {/* Banner */}
+      <div className={`relative h-32 bg-gradient-to-br ${gradient}`}>
         {server.banner_image_url && !imageError ? (
           <Image
             src={server.banner_image_url}
@@ -96,37 +93,31 @@ export default function ServerCard({ server }: ServerCardProps) {
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-4xl font-bold text-white/10 select-none">
+            <span className="text-5xl font-bold text-white/[0.08] select-none">
               {server.name.charAt(0).toUpperCase()}
             </span>
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#111827] to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d1117] via-transparent to-transparent" />
+
+        {/* Status badge */}
+        <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2 py-1 rounded-md bg-black/40 backdrop-blur-sm">
+          <span className={`w-1.5 h-1.5 rounded-full ${server.is_online ? 'bg-green-400' : 'bg-yellow-400'}`} />
+          <span className={`text-[10px] font-medium ${server.is_online ? 'text-green-400' : 'text-yellow-400'}`}>
+            {server.is_online ? 'Online' : 'Soon'}
+          </span>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex flex-col p-4 pt-3">
-        {/* Server name + status */}
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="text-base font-semibold text-white line-clamp-1 leading-tight">
-            {server.name}
-          </h3>
-          <div className="flex items-center gap-1.5 shrink-0">
-            <span
-              className={`w-2 h-2 rounded-full ${
-                server.is_online ? 'bg-green-500' : 'bg-yellow-500'
-              }`}
-            />
-            <span className={`text-xs font-medium ${
-              server.is_online ? 'text-green-400' : 'text-yellow-400'
-            }`}>
-              {server.is_online ? 'Online' : 'Soon'}
-            </span>
-          </div>
-        </div>
+      <div className="flex-1 flex flex-col p-4">
+        {/* Name */}
+        <h3 className="text-[15px] font-semibold text-white line-clamp-1 mb-1.5">
+          {server.name}
+        </h3>
 
         {/* Description */}
-        <p className="text-sm text-[#9ca3af] line-clamp-2 mb-3 leading-relaxed">
+        <p className="text-[13px] text-[#8b949e] line-clamp-2 mb-3 leading-relaxed">
           {server.short_description || server.description || 'No description available'}
         </p>
 
@@ -135,13 +126,13 @@ export default function ServerCard({ server }: ServerCardProps) {
           {server.game_modes.slice(0, 3).map((mode) => (
             <span
               key={mode}
-              className={`${tagColors[mode]} px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide`}
+              className={`${tagColors[mode]} px-1.5 py-0.5 rounded text-[10px] font-medium`}
             >
               {tagLabels[mode]}
             </span>
           ))}
           {server.game_modes.length > 3 && (
-            <span className="tag-gray px-2 py-0.5 rounded text-[10px] font-medium">
+            <span className="tag-gray px-1.5 py-0.5 rounded text-[10px] font-medium">
               +{server.game_modes.length - 3}
             </span>
           )}
@@ -150,48 +141,45 @@ export default function ServerCard({ server }: ServerCardProps) {
         {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Footer: Players + Votes */}
-        <div className="flex items-center justify-between text-xs text-[#6b7280] mb-3">
-          <span>
-            {server.is_online && server.current_players !== null
-              ? `${server.current_players} players`
-              : 'No data'}
-          </span>
-          <div className="flex items-center gap-1">
-            <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" />
-            <span className="font-medium text-white">{server.votes}</span>
-          </div>
-        </div>
-
-        {/* Action buttons */}
-        <div className="flex gap-2">
-          <button
-            onClick={copyIP}
-            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
-              copied
-                ? 'bg-green-500/20 text-green-400'
-                : 'bg-[#d4a033] text-white hover:bg-[#c49030]'
-            }`}
-          >
-            {copied ? (
-              <>
-                <Check className="w-3.5 h-3.5" />
-                Copied!
-              </>
-            ) : (
-              <>
-                <Copy className="w-3.5 h-3.5" />
-                Copy IP
-              </>
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-3 border-t border-white/[0.06]">
+          <div className="flex items-center gap-3 text-xs text-[#6b7280]">
+            {server.is_online && server.current_players !== null && (
+              <span>{server.current_players} players</span>
             )}
-          </button>
-          <Link
-            href={`/servers/${server.id}`}
-            className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-white/5 text-white hover:bg-white/10 transition-colors"
-          >
-            <ExternalLink className="w-3.5 h-3.5" />
-            View
-          </Link>
+            <div className="flex items-center gap-1">
+              <Heart className="w-3 h-3 text-red-500 fill-red-500" />
+              <span className="text-white font-medium">{server.votes}</span>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={copyIP}
+              className={`px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-colors ${
+                copied
+                  ? 'bg-green-500/20 text-green-400'
+                  : 'bg-[#d4a033] text-white hover:bg-[#c49030]'
+              }`}
+            >
+              {copied ? (
+                <span className="flex items-center gap-1">
+                  <Check className="w-3 h-3" /> Copied
+                </span>
+              ) : (
+                <span className="flex items-center gap-1">
+                  <Copy className="w-3 h-3" /> Copy IP
+                </span>
+              )}
+            </button>
+            <Link
+              href={`/servers/${server.id}`}
+              className="px-2.5 py-1.5 rounded-md text-[11px] font-medium bg-white/5 text-[#c9d1d9] hover:bg-white/10 hover:text-white transition-colors"
+            >
+              View
+            </Link>
+          </div>
         </div>
       </div>
     </article>
