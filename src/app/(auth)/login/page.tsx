@@ -3,7 +3,7 @@
 import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import toast from 'react-hot-toast';
 
@@ -51,40 +51,55 @@ function LoginForm() {
     }
   };
 
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    background: '#0d1117',
+    border: '1px solid #2a3548',
+    borderRadius: '8px',
+    padding: '12px 16px',
+    color: 'white',
+    fontSize: '1rem',
+    outline: 'none',
+  };
+
+  const labelStyle: React.CSSProperties = {
+    display: 'block',
+    fontSize: '0.875rem',
+    fontWeight: '500',
+    color: 'white',
+    marginBottom: '8px',
+  };
+
   return (
-    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
+    <div style={{ minHeight: 'calc(100vh - 200px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 16px' }}>
+      <div style={{ width: '100%', maxWidth: '400px' }}>
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Welcome Back</h1>
-          <p className="text-[#8899aa] text-sm">Sign in to manage your servers</p>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: 'white', marginBottom: '8px' }}>Welcome Back</h1>
+          <p style={{ color: '#8899aa', fontSize: '0.875rem' }}>Sign in to manage your servers</p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-[#131a24] border border-[#2a3548] rounded-xl p-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div style={{ background: '#131a24', border: '1px solid #2a3548', borderRadius: '12px', padding: '24px' }}>
+          <form onSubmit={handleSubmit}>
             {/* Email */}
-            <div>
-              <label className="block text-sm font-medium text-white mb-2">Email</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6b7c93]" />
-                <input
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                  className="w-full bg-[#0d1117] border border-[#2a3548] rounded-lg pl-11 pr-4 py-3 text-white placeholder-[#4a5568] focus:outline-none focus:border-[#d4a033] transition-colors"
-                />
-              </div>
+            <div style={{ marginBottom: '16px' }}>
+              <label style={labelStyle}>Email</label>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+                style={inputStyle}
+              />
             </div>
 
             {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-white mb-2">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6b7c93]" />
+            <div style={{ marginBottom: '16px' }}>
+              <label style={labelStyle}>Password</label>
+              <div style={{ position: 'relative' }}>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
@@ -92,24 +107,21 @@ function LoginForm() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
-                  className="w-full bg-[#0d1117] border border-[#2a3548] rounded-lg pl-11 pr-11 py-3 text-white placeholder-[#4a5568] focus:outline-none focus:border-[#d4a033] transition-colors"
+                  style={{ ...inputStyle, paddingRight: '44px' }}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6b7c93] hover:text-white transition-colors"
+                  style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#6b7c93', cursor: 'pointer' }}
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? <EyeOff style={{ width: '20px', height: '20px' }} /> : <Eye style={{ width: '20px', height: '20px' }} />}
                 </button>
               </div>
             </div>
 
             {/* Forgot Password */}
-            <div className="flex justify-end">
-              <Link
-                href="/forgot-password"
-                className="text-sm text-[#d4a033] hover:text-[#e5b343] transition-colors"
-              >
+            <div style={{ textAlign: 'right', marginBottom: '16px' }}>
+              <Link href="/forgot-password" style={{ fontSize: '0.875rem', color: '#d4a033', textDecoration: 'none' }}>
                 Forgot password?
               </Link>
             </div>
@@ -118,30 +130,37 @@ function LoginForm() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#d4a033] hover:bg-[#e5b343] text-black font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                width: '100%',
+                background: '#d4a033',
+                color: 'black',
+                fontWeight: '600',
+                padding: '12px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                opacity: isLoading ? 0.5 : 1,
+                fontSize: '1rem',
+              }}
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
           {/* Divider */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-[#2a3548]" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-3 bg-[#131a24] text-[#6b7c93]">Or continue with</span>
-            </div>
+          <div style={{ position: 'relative', margin: '24px 0', textAlign: 'center' }}>
+            <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, borderTop: '1px solid #2a3548' }} />
+            <span style={{ position: 'relative', background: '#131a24', padding: '0 12px', color: '#6b7c93', fontSize: '0.875rem' }}>Or continue with</span>
           </div>
 
           {/* OAuth */}
-          <div className="grid grid-cols-2 gap-3">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <button
               type="button"
               onClick={handleGoogleSignIn}
-              className="flex items-center justify-center gap-2 bg-[#0d1117] border border-[#2a3548] hover:border-[#3d4f6a] text-white font-medium py-3 rounded-lg transition-colors"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: '#0d1117', border: '1px solid #2a3548', color: 'white', fontWeight: '500', padding: '12px', borderRadius: '8px', cursor: 'pointer' }}
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <svg style={{ width: '20px', height: '20px' }} viewBox="0 0 24 24">
                 <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                 <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                 <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -152,9 +171,9 @@ function LoginForm() {
             <button
               type="button"
               onClick={handleDiscordSignIn}
-              className="flex items-center justify-center gap-2 bg-[#0d1117] border border-[#2a3548] hover:border-[#3d4f6a] text-white font-medium py-3 rounded-lg transition-colors"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: '#0d1117', border: '1px solid #2a3548', color: 'white', fontWeight: '500', padding: '12px', borderRadius: '8px', cursor: 'pointer' }}
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <svg style={{ width: '20px', height: '20px' }} viewBox="0 0 24 24" fill="currentColor">
                 <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
               </svg>
               Discord
@@ -163,9 +182,9 @@ function LoginForm() {
         </div>
 
         {/* Footer */}
-        <p className="mt-6 text-center text-sm text-[#6b7c93]">
+        <p style={{ marginTop: '24px', textAlign: 'center', fontSize: '0.875rem', color: '#6b7c93' }}>
           Don&apos;t have an account?{' '}
-          <Link href="/signup" className="text-[#d4a033] hover:text-[#e5b343] font-medium transition-colors">
+          <Link href="/signup" style={{ color: '#d4a033', fontWeight: '500', textDecoration: 'none' }}>
             Sign up
           </Link>
         </p>
@@ -178,8 +197,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-[calc(100vh-200px)] flex items-center justify-center">
-          <div className="w-8 h-8 border-4 border-[#d4a033] border-t-transparent rounded-full animate-spin" />
+        <div style={{ minHeight: 'calc(100vh - 200px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '32px', height: '32px', border: '4px solid #d4a033', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
         </div>
       }
     >

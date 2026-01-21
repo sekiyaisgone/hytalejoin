@@ -35,35 +35,50 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen py-12 lg:py-16">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div style={{ minHeight: '100vh', padding: '48px 24px' }}>
+      <div style={{ maxWidth: '900px', margin: '0 auto', width: '100%' }}>
         {/* Hero */}
-        <div className="text-center mb-16">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
-            About <span className="text-[#d4a033]">HytaleJoin</span>
+        <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'white', marginBottom: '16px' }}>
+            About <span style={{ color: '#d4a033' }}>HytaleJoin</span>
           </h1>
-          <p className="text-base md:text-lg text-[#8899aa] max-w-2xl mx-auto">
+          <p style={{ fontSize: '1.125rem', color: '#8899aa', maxWidth: '600px', margin: '0 auto', lineHeight: '1.6' }}>
             HytaleJoin is the premier server listing platform for Hytale, helping players
             discover amazing communities and server owners reach their audience.
           </p>
         </div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-16">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginBottom: '64px' }}>
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-[#131a24] border border-[#2a3548] rounded-xl p-5 hover:border-[#3d4f6a] transition-colors"
+              style={{
+                background: '#131a24',
+                border: '1px solid #2a3548',
+                borderRadius: '12px',
+                padding: '24px',
+              }}
             >
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-[#d4a033]/10 border border-[#d4a033]/20 flex items-center justify-center">
-                  <feature.icon className="w-6 h-6 text-[#d4a033]" />
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+                <div style={{
+                  flexShrink: 0,
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '8px',
+                  background: 'rgba(212, 160, 51, 0.1)',
+                  border: '1px solid rgba(212, 160, 51, 0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <feature.icon style={{ width: '24px', height: '24px', color: '#d4a033' }} />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-base font-semibold text-white mb-1">
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontSize: '1rem', fontWeight: '600', color: 'white', marginBottom: '4px' }}>
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-[#8899aa] leading-relaxed">
+                  <p style={{ fontSize: '0.875rem', color: '#8899aa', lineHeight: '1.5' }}>
                     {feature.description}
                   </p>
                 </div>
@@ -73,10 +88,16 @@ export default function AboutPage() {
         </div>
 
         {/* Mission */}
-        <div className="bg-[#131a24] border border-[#2a3548] rounded-xl p-6 lg:p-8 mb-16">
-          <h2 className="text-xl lg:text-2xl font-bold text-white mb-4">Our Mission</h2>
-          <div className="space-y-3 text-[#8899aa] text-sm lg:text-base leading-relaxed">
-            <p>
+        <div style={{
+          background: '#131a24',
+          border: '1px solid #2a3548',
+          borderRadius: '12px',
+          padding: '32px',
+          marginBottom: '64px',
+        }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white', marginBottom: '16px' }}>Our Mission</h2>
+          <div style={{ color: '#8899aa', fontSize: '1rem', lineHeight: '1.7' }}>
+            <p style={{ marginBottom: '12px' }}>
               We believe that finding the right server should be easy and enjoyable.
               HytaleJoin was created to bridge the gap between server owners and players,
               providing a platform where great communities can thrive and grow.
@@ -91,7 +112,7 @@ export default function AboutPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
           {[
             { value: '100+', label: 'Servers Listed' },
             { value: '10K+', label: 'Monthly Visitors' },
@@ -99,12 +120,18 @@ export default function AboutPage() {
           ].map((stat, index) => (
             <div
               key={index}
-              className="bg-[#131a24] border border-[#2a3548] rounded-xl p-6 text-center"
+              style={{
+                background: '#131a24',
+                border: '1px solid #2a3548',
+                borderRadius: '12px',
+                padding: '24px',
+                textAlign: 'center',
+              }}
             >
-              <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#d4a033] mb-1">
+              <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#d4a033', marginBottom: '4px' }}>
                 {stat.value}
               </p>
-              <p className="text-xs md:text-sm text-[#8899aa]">{stat.label}</p>
+              <p style={{ fontSize: '0.875rem', color: '#8899aa' }}>{stat.label}</p>
             </div>
           ))}
         </div>
