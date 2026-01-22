@@ -99,24 +99,35 @@ export default function ServerFilters({
       <div style={{ display: 'flex', flexDirection: 'row', gap: '12px', width: '100%' }}>
         {/* Search */}
         <form onSubmit={handleSearch} style={{ flex: 1 }}>
-          <div className="relative group">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7a8fa6] transition-colors group-focus-within:text-[#d4a033]">
-              <Search className="w-5 h-5" />
+          <div style={{ position: 'relative' }}>
+            <div style={{
+              position: 'absolute',
+              left: '16px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: '#7a8fa6',
+              pointerEvents: 'none'
+            }}>
+              <Search style={{ width: '20px', height: '20px' }} />
             </div>
             <input
               type="text"
               placeholder="Search servers..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="
-                w-full pl-12 pr-12 py-3.5
-                bg-[#151f2e] border border-[rgba(255,255,255,0.06)] rounded-xl
-                text-[#f0f4f8] text-base
-                placeholder:text-[#4a5d73]
-                transition-all duration-200
-                hover:border-[rgba(255,255,255,0.1)]
-                focus:outline-none focus:border-[#d4a033] focus:ring-2 focus:ring-[#d4a033]/20
-              "
+              style={{
+                width: '100%',
+                paddingLeft: '48px',
+                paddingRight: '48px',
+                paddingTop: '14px',
+                paddingBottom: '14px',
+                background: '#151f2e',
+                border: '1px solid rgba(255,255,255,0.06)',
+                borderRadius: '12px',
+                color: '#f0f4f8',
+                fontSize: '1rem',
+                outline: 'none'
+              }}
             />
             {searchQuery && (
               <button
@@ -125,9 +136,19 @@ export default function ServerFilters({
                   setSearchQuery('');
                   onSearch('');
                 }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#7a8fa6] hover:text-[#f0f4f8] transition-colors"
+                style={{
+                  position: 'absolute',
+                  right: '16px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#7a8fa6',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0
+                }}
               >
-                <X className="w-4 h-4" />
+                <X style={{ width: '16px', height: '16px' }} />
               </button>
             )}
           </div>
