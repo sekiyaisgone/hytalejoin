@@ -82,24 +82,110 @@ export default function SignUpPage() {
     marginBottom: '8px',
   };
 
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  const handleResendEmail = async () => {
+    if (resendCooldown > 0) return;
+    try {
+      const { error } = await signUp(email, password, username);
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('Confirmation email resent!');
+        setResendCooldown(60);
+        const interval = setInterval(() => {
+          setResendCooldown((prev) => {
+            if (prev <= 1) {
+              clearInterval(interval);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+      }
+    } catch {
+      toast.error('Failed to resend email');
+    }
+  };
+
   if (emailSent) {
     return (
-      <div style={{ minHeight: 'calc(100vh - 200px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 16px' }}>
-        <div style={{ width: '100%', maxWidth: '400px', textAlign: 'center' }}>
-          <div style={{ width: '64px', height: '64px', background: 'rgba(212, 160, 51, 0.2)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
-            <Mail style={{ width: '32px', height: '32px', color: '#d4a033' }} />
+      <div style={{ minHeight: 'calc(100vh - 200px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 24px' }}>
+        <div style={{
+          width: '100%',
+          maxWidth: '440px',
+          background: '#12161c',
+          border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: '16px',
+          padding: '40px 32px',
+          textAlign: 'center',
+        }}>
+          <div style={{
+            width: '72px',
+            height: '72px',
+            borderRadius: '16px',
+            background: 'rgba(91, 141, 239, 0.1)',
+            border: '1px solid rgba(91, 141, 239, 0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 24px',
+          }}>
+            <Mail style={{ width: '32px', height: '32px', color: '#5b8def' }} />
           </div>
-          <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: 'white', marginBottom: '16px' }}>Check Your Email</h1>
-          <p style={{ color: '#8899aa', marginBottom: '24px' }}>
-            We&apos;ve sent a confirmation link to <strong style={{ color: 'white' }}>{email}</strong>.
-            Click the link to activate your account.
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f1f5f9', marginBottom: '12px' }}>
+            Check Your Email
+          </h1>
+          <p style={{ fontSize: '0.9375rem', color: '#8899aa', marginBottom: '8px', lineHeight: 1.6 }}>
+            We&apos;ve sent a confirmation link to
           </p>
-          <button
-            onClick={() => setEmailSent(false)}
-            style={{ padding: '12px 24px', background: '#131a24', border: '1px solid #2a3548', color: 'white', fontWeight: '500', borderRadius: '8px', cursor: 'pointer' }}
-          >
-            Use a different email
-          </button>
+          <p style={{
+            fontSize: '0.9375rem',
+            fontWeight: 600,
+            color: '#f1f5f9',
+            marginBottom: '24px',
+            padding: '8px 16px',
+            background: 'rgba(255,255,255,0.03)',
+            borderRadius: '8px',
+            display: 'inline-block',
+          }}>
+            {email}
+          </p>
+          <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '24px 0' }} />
+          <p style={{ fontSize: '0.8125rem', color: '#6b7c8f', marginBottom: '12px' }}>Open your email app</p>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '24px' }}>
+            <a href="https://mail.google.com" target="_blank" rel="noopener noreferrer" style={{
+              display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', borderRadius: '10px',
+              background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+              color: '#c8d4e0', fontSize: '0.8125rem', fontWeight: 500, textDecoration: 'none',
+            }}>Gmail</a>
+            <a href="https://outlook.live.com" target="_blank" rel="noopener noreferrer" style={{
+              display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', borderRadius: '10px',
+              background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+              color: '#c8d4e0', fontSize: '0.8125rem', fontWeight: 500, textDecoration: 'none',
+            }}>Outlook</a>
+          </div>
+          <p style={{ fontSize: '0.8125rem', color: '#6b7c8f', marginBottom: '24px' }}>
+            Didn&apos;t get it? Check your spam folder.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <button onClick={handleResendEmail} disabled={resendCooldown > 0} style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', height: '44px', padding: '0 24px',
+              borderRadius: '10px', background: resendCooldown > 0 ? 'rgba(255,255,255,0.02)' : 'linear-gradient(135deg, #5b8def 0%, #4a7bd4 100%)',
+              color: resendCooldown > 0 ? '#6b7c8f' : 'white', fontSize: '0.875rem', fontWeight: 500, border: 'none',
+              cursor: resendCooldown > 0 ? 'not-allowed' : 'pointer', boxShadow: resendCooldown > 0 ? 'none' : '0 2px 8px rgba(91, 141, 239, 0.25)',
+            }}>
+              {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Email'}
+            </button>
+            <button onClick={() => setEmailSent(false)} style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', height: '44px', padding: '0 24px',
+              borderRadius: '10px', background: 'transparent', border: '1px solid rgba(255,255,255,0.08)',
+              color: '#8899aa', fontSize: '0.875rem', fontWeight: 500, cursor: 'pointer',
+            }}>Use a different email</button>
+          </div>
+          <p style={{ marginTop: '24px', fontSize: '0.8125rem', color: '#6b7c8f' }}>
+            Already confirmed? <Link href="/login" style={{ color: '#5b8def', textDecoration: 'none' }}>Sign in</Link>
+          </p>
         </div>
       </div>
     );

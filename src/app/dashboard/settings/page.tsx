@@ -2,12 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, Mail, Save } from 'lucide-react';
+import { User, Mail, Save, AlertTriangle } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import Card from '@/components/ui/Card';
-import Input from '@/components/ui/Input';
-import Button from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 
 export default function SettingsPage() {
@@ -53,67 +50,171 @@ export default function SettingsPage() {
     }
   };
 
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    height: '44px',
+    padding: '0 16px',
+    paddingLeft: '44px',
+    background: 'rgba(255,255,255,0.03)',
+    border: '1px solid rgba(255,255,255,0.08)',
+    borderRadius: '10px',
+    color: '#f1f5f9',
+    fontSize: '0.9375rem',
+    outline: 'none',
+  };
+
   if (isLoading) {
     return (
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-[#1a2f4a] rounded w-1/4" />
-          <div className="h-64 bg-[#1a2f4a] rounded" />
-        </div>
+      <div style={{ maxWidth: '640px', margin: '0 auto', padding: '32px 24px' }}>
+        <div style={{ height: '32px', background: '#1a2433', borderRadius: '8px', width: '200px', marginBottom: '32px' }} />
+        <div style={{ height: '240px', background: '#1a2433', borderRadius: '14px' }} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold text-[#e8f0f8] mb-8">Account Settings</h1>
+    <div style={{ maxWidth: '640px', margin: '0 auto', padding: '32px 24px' }}>
+      {/* Header */}
+      <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#f1f5f9', marginBottom: '32px' }}>
+        Account Settings
+      </h1>
 
-      <Card hover={false} padding="lg">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <Input
-            label="Email"
-            type="email"
-            value={user?.email || ''}
-            leftIcon={<Mail className="w-5 h-5" />}
-            disabled
-            helperText="Email cannot be changed"
-          />
+      {/* Profile Card */}
+      <div style={{
+        background: '#12161c',
+        border: '1px solid rgba(255,255,255,0.06)',
+        borderRadius: '14px',
+        padding: '24px',
+        marginBottom: '24px',
+      }}>
+        <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#f1f5f9', marginBottom: '20px' }}>
+          Profile Information
+        </h2>
 
-          <Input
-            label="Username"
-            type="text"
-            placeholder="Enter your username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            leftIcon={<User className="w-5 h-5" />}
-          />
-
-          <div className="pt-4">
-            <Button
-              type="submit"
-              isLoading={isSaving}
-              leftIcon={<Save className="w-4 h-4" />}
-            >
-              Save Changes
-            </Button>
+        <form onSubmit={handleSubmit}>
+          {/* Email Field */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 500, color: '#8899aa', marginBottom: '8px' }}>
+              Email
+            </label>
+            <div style={{ position: 'relative' }}>
+              <div style={{
+                position: 'absolute',
+                left: '14px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: '#6b7c8f',
+              }}>
+                <Mail style={{ width: '18px', height: '18px' }} />
+              </div>
+              <input
+                type="email"
+                value={user?.email || ''}
+                disabled
+                style={{
+                  ...inputStyle,
+                  opacity: 0.6,
+                  cursor: 'not-allowed',
+                }}
+              />
+            </div>
+            <p style={{ fontSize: '0.75rem', color: '#6b7c8f', marginTop: '6px' }}>
+              Email cannot be changed
+            </p>
           </div>
-        </form>
-      </Card>
 
-      {/* Danger zone */}
-      <Card hover={false} padding="lg" className="mt-8 border-red-500/20">
-        <h2 className="text-xl font-semibold text-red-400 mb-4">Danger Zone</h2>
-        <p className="text-[#8fa3b8] mb-4">
-          Once you delete your account, there is no going back. Please be certain.
+          {/* Username Field */}
+          <div style={{ marginBottom: '24px' }}>
+            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 500, color: '#8899aa', marginBottom: '8px' }}>
+              Username
+            </label>
+            <div style={{ position: 'relative' }}>
+              <div style={{
+                position: 'absolute',
+                left: '14px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: '#6b7c8f',
+              }}>
+                <User style={{ width: '18px', height: '18px' }} />
+              </div>
+              <input
+                type="text"
+                placeholder="Enter your username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                style={inputStyle}
+              />
+            </div>
+          </div>
+
+          {/* Save Button */}
+          <button
+            type="submit"
+            disabled={isSaving}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              height: '40px',
+              padding: '0 20px',
+              borderRadius: '10px',
+              background: isSaving ? 'rgba(91, 141, 239, 0.5)' : 'linear-gradient(135deg, #5b8def 0%, #4a7bd4 100%)',
+              color: 'white',
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              border: 'none',
+              cursor: isSaving ? 'not-allowed' : 'pointer',
+              boxShadow: '0 2px 8px rgba(91, 141, 239, 0.25)',
+            }}
+          >
+            <Save style={{ width: '16px', height: '16px' }} />
+            {isSaving ? 'Saving...' : 'Save Changes'}
+          </button>
+        </form>
+      </div>
+
+      {/* Danger Zone */}
+      <div style={{
+        background: '#12161c',
+        border: '1px solid rgba(239, 68, 68, 0.2)',
+        borderRadius: '14px',
+        padding: '24px',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+          <AlertTriangle style={{ width: '18px', height: '18px', color: '#f87171' }} />
+          <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#f87171' }}>
+            Danger Zone
+          </h2>
+        </div>
+
+        <p style={{ fontSize: '0.875rem', color: '#8899aa', marginBottom: '16px', lineHeight: 1.6 }}>
+          Once you delete your account, there is no going back. All your servers and data will be permanently removed.
         </p>
-        <Button variant="danger" disabled>
+
+        <button
+          disabled
+          style={{
+            height: '40px',
+            padding: '0 20px',
+            borderRadius: '10px',
+            background: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid rgba(239, 68, 68, 0.2)',
+            color: '#6b7c8f',
+            fontSize: '0.875rem',
+            fontWeight: 500,
+            cursor: 'not-allowed',
+          }}
+        >
           Delete Account
-        </Button>
-        <p className="mt-2 text-xs text-[#8fa3b8]">
-          Account deletion is currently disabled. Contact support if you need to delete
-          your account.
+        </button>
+
+        <p style={{ fontSize: '0.75rem', color: '#6b7c8f', marginTop: '12px' }}>
+          Account deletion is currently disabled. Contact{' '}
+          <a href="/contact" style={{ color: '#5b8def', textDecoration: 'none' }}>support</a>{' '}
+          if you need to delete your account.
         </p>
-      </Card>
+      </div>
     </div>
   );
 }

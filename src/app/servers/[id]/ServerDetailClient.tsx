@@ -112,23 +112,24 @@ export default function ServerDetailClient({ server }: ServerDetailClientProps) 
     setIsVoting(true);
 
     try {
-      if (hasVoted) {
-        await supabase
-          .from('votes')
-          .delete()
-          .eq('user_id', user.id)
-          .eq('server_id', server.id);
-        setVotes((v) => v - 1);
-        setHasVoted(false);
-        toast.success('Vote removed');
-      } else {
-        await supabase.from('votes').insert({
-          user_id: user.id,
-          server_id: server.id,
-        });
+      const response = await fetch(`/api/servers/${server.id}/vote`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to process vote');
+      }
+
+      const data = await response.json();
+
+      if (data.voted) {
         setVotes((v) => v + 1);
         setHasVoted(true);
         toast.success('Vote added!');
+      } else {
+        setVotes((v) => v - 1);
+        setHasVoted(false);
+        toast.success('Vote removed');
       }
     } catch (error) {
       toast.error('Failed to process vote');
@@ -322,30 +323,30 @@ export default function ServerDetailClient({ server }: ServerDetailClientProps) 
             </h2>
             <ol className="space-y-3 text-[#8fa3b8]">
               <li className="flex gap-3">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#d29f32] text-white text-sm font-bold flex items-center justify-center">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#5b8def] text-white text-sm font-bold flex items-center justify-center">
                   1
                 </span>
                 <span>Open Hytale and go to the multiplayer menu</span>
               </li>
               <li className="flex gap-3">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#d29f32] text-white text-sm font-bold flex items-center justify-center">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#5b8def] text-white text-sm font-bold flex items-center justify-center">
                   2
                 </span>
                 <span>Click &quot;Add Server&quot; or &quot;Direct Connect&quot;</span>
               </li>
               <li className="flex gap-3">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#d29f32] text-white text-sm font-bold flex items-center justify-center">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#5b8def] text-white text-sm font-bold flex items-center justify-center">
                   3
                 </span>
                 <div className="flex-1">
                   <span>Enter the server address: </span>
-                  <code className="px-2 py-1 bg-[#1a2f4a] rounded text-[#d29f32]">
+                  <code className="px-2 py-1 bg-[#1a2f4a] rounded text-[#5b8def]">
                     {serverIP}
                   </code>
                 </div>
               </li>
               <li className="flex gap-3">
-                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#d29f32] text-white text-sm font-bold flex items-center justify-center">
+                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#5b8def] text-white text-sm font-bold flex items-center justify-center">
                   4
                 </span>
                 <span>Click &quot;Join Server&quot; and enjoy!</span>
@@ -486,7 +487,7 @@ export default function ServerDetailClient({ server }: ServerDetailClientProps) 
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 p-3 bg-[#1a2f4a] hover:bg-[#2a4060] rounded-lg transition-colors"
                   >
-                    <Globe className="w-5 h-5 text-[#d29f32]" />
+                    <Globe className="w-5 h-5 text-[#5b8def]" />
                     <span className="text-[#e8f0f8]">Website</span>
                     <ExternalLink className="w-4 h-4 text-[#8fa3b8] ml-auto" />
                   </a>

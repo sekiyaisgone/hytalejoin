@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Heart, Copy, Check, Users, ExternalLink, Globe } from 'lucide-react';
+import { Heart, Copy, Check, Users, Globe } from 'lucide-react';
 import { Server, GameMode } from '@/types';
 import { useState, useCallback } from 'react';
 
@@ -177,7 +177,8 @@ export default function ServerCard({ server }: ServerCardProps) {
   const displayIP = server.port === 25565 ? server.ip_address : `${server.ip_address}:${server.port}`;
 
   return (
-    <article
+    <Link
+      href={`/servers/${server.id}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
@@ -190,6 +191,8 @@ export default function ServerCard({ server }: ServerCardProps) {
         transition: 'all 0.2s ease',
         transform: isHovered ? 'translateY(-2px)' : 'none',
         boxShadow: isHovered ? '0 8px 24px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.2)',
+        textDecoration: 'none',
+        cursor: 'pointer',
       }}
     >
       {/* Banner */}
@@ -376,65 +379,42 @@ export default function ServerCard({ server }: ServerCardProps) {
             />
           </div>
 
-          {/* Right: Action Buttons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <button
-              onClick={copyIP}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                height: '34px',
-                padding: '0 14px',
-                borderRadius: '10px',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '0.75rem',
-                fontWeight: 500,
-                transition: 'all 0.15s ease',
-                background: copied
-                  ? 'rgba(34, 197, 94, 0.15)'
-                  : 'linear-gradient(135deg, #5b8def 0%, #4a7bd4 100%)',
-                color: copied ? '#86efac' : 'white',
-                boxShadow: copied ? 'none' : '0 2px 8px rgba(91, 141, 239, 0.25)',
-              }}
-            >
-              {copied ? (
-                <>
-                  <Check style={{ width: '13px', height: '13px' }} />
-                  <span>Copied</span>
-                </>
-              ) : (
-                <>
-                  <Copy style={{ width: '13px', height: '13px' }} />
-                  <span>Copy IP</span>
-                </>
-              )}
-            </button>
-            <Link
-              href={`/servers/${server.id}`}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                height: '34px',
-                padding: '0 14px',
-                borderRadius: '10px',
-                textDecoration: 'none',
-                fontSize: '0.75rem',
-                fontWeight: 500,
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                color: '#c8d4e0',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              <span>View</span>
-              <ExternalLink style={{ width: '12px', height: '12px' }} />
-            </Link>
-          </div>
+          {/* Right: Copy IP Button */}
+          <button
+            onClick={copyIP}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              height: '34px',
+              padding: '0 14px',
+              borderRadius: '10px',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '0.75rem',
+              fontWeight: 500,
+              transition: 'all 0.15s ease',
+              background: copied
+                ? 'rgba(34, 197, 94, 0.15)'
+                : 'linear-gradient(135deg, #5b8def 0%, #4a7bd4 100%)',
+              color: copied ? '#86efac' : 'white',
+              boxShadow: copied ? 'none' : '0 2px 8px rgba(91, 141, 239, 0.25)',
+            }}
+          >
+            {copied ? (
+              <>
+                <Check style={{ width: '13px', height: '13px' }} />
+                <span>Copied</span>
+              </>
+            ) : (
+              <>
+                <Copy style={{ width: '13px', height: '13px' }} />
+                <span>Copy IP</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
-    </article>
+    </Link>
   );
 }
