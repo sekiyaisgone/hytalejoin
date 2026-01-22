@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="py-12">
+    <div className="max-w-4xl mx-auto px-6 py-12">
       <h1 className="text-4xl font-bold text-[#e8f0f8] mb-8">Privacy Policy</h1>
 
       <Card hover={false} padding="lg">
