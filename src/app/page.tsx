@@ -19,7 +19,7 @@ export default async function HomePage() {
   const isMockData = servers.length === 0;
 
   return (
-    <div className="max-w-7xl mx-auto w-full">
+    <div className="max-w-7xl mx-auto px-6 py-10">
       {/* Hero */}
       <div className="mb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">
