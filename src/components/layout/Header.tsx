@@ -171,16 +171,38 @@ export default function Header() {
                 </div>
               </>
             ) : (
-              <>
-                <Link href="/login">
-                  <Button variant="ghost" size="sm">
-                    Log In
-                  </Button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <Link
+                  href="/login"
+                  style={{
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                    color: '#8899aa',
+                    textDecoration: 'none',
+                    padding: '8px 12px',
+                    borderRadius: '10px',
+                    transition: 'color 0.2s'
+                  }}
+                >
+                  Log In
                 </Link>
-                <Link href="/signup">
-                  <Button size="sm">Sign Up</Button>
+                <Link
+                  href="/signup"
+                  style={{
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                    color: 'white',
+                    textDecoration: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '10px',
+                    background: 'linear-gradient(135deg, #5b8def 0%, #4a7bd4 100%)',
+                    boxShadow: '0 2px 8px rgba(91, 141, 239, 0.25)',
+                    transition: 'transform 0.2s, box-shadow 0.2s'
+                  }}
+                >
+                  Sign Up
                 </Link>
-              </>
+              </div>
             )}
           </div>
 

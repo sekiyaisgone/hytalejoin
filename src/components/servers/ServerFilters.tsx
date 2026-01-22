@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { Search, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { GameMode, Region, SortOption } from '@/types';
-import Button from '@/components/ui/Button';
 
 interface ServerFiltersProps {
   onSearch: (query: string) => void;
@@ -20,18 +19,18 @@ export interface FilterState {
 }
 
 const gameModes: { value: GameMode; label: string }[] = [
-  { value: 'pvp', label: 'PVP' },
+  { value: 'pvp', label: 'PvP' },
   { value: 'survival', label: 'Survival' },
   { value: 'creative', label: 'Creative' },
-  { value: 'mini-games', label: 'Mini-Games' },
+  { value: 'mini-games', label: 'Mini-games' },
   { value: 'rpg', label: 'RPG' },
   { value: 'adventure', label: 'Adventure' },
   { value: 'roleplay', label: 'Roleplay' },
   { value: 'faction', label: 'Faction' },
   { value: 'skyblock', label: 'Skyblock' },
   { value: 'vanilla', label: 'Vanilla' },
-  { value: 'pve', label: 'PVE' },
-  { value: 'multi-server', label: 'Multi-Server' },
+  { value: 'pve', label: 'PvE' },
+  { value: 'multi-server', label: 'Network' },
 ];
 
 const regions: { value: Region; label: string }[] = [
@@ -80,6 +79,10 @@ export default function ServerFilters({
     onFilterChange({ ...currentFilters, regions: newRegions });
   };
 
+  const clearAllFilters = () => {
+    onFilterChange({ gameModes: [], regions: [], onlineOnly: false });
+  };
+
   const clearFilters = () => {
     onFilterChange({ gameModes: [], regions: [], onlineOnly: false });
     setSearchQuery('');
@@ -92,11 +95,37 @@ export default function ServerFilters({
     (currentFilters.onlineOnly ? 1 : 0);
 
   const hasActiveFilters = activeFilterCount > 0;
+  const noFiltersActive = currentFilters.gameModes.length === 0;
+
+  // Chip styles
+  const baseChipStyle: React.CSSProperties = {
+    height: '34px',
+    padding: '0 14px',
+    fontSize: '0.8125rem',
+    fontWeight: 500,
+    borderRadius: '10px',
+    border: '1px solid rgba(255,255,255,0.08)',
+    background: 'rgba(255,255,255,0.03)',
+    color: '#8899aa',
+    cursor: 'pointer',
+    transition: 'all 0.15s ease',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    whiteSpace: 'nowrap' as const,
+  };
+
+  const activeChipStyle: React.CSSProperties = {
+    ...baseChipStyle,
+    background: 'rgba(91, 141, 239, 0.15)',
+    border: '1px solid rgba(91, 141, 239, 0.3)',
+    color: '#7bb0ff',
+  };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Search and Sort Row */}
-      <div style={{ display: 'flex', flexDirection: 'row', gap: '12px', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {/* Search and Controls Row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         {/* Search */}
         <form onSubmit={handleSearch} style={{ flex: 1 }}>
           <div style={{ position: 'relative' }}>
@@ -107,16 +136,15 @@ export default function ServerFilters({
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
                 width: '100%',
+                height: '40px',
                 paddingLeft: '16px',
-                paddingRight: '48px',
-                paddingTop: '14px',
-                paddingBottom: '14px',
-                background: '#151f2e',
-                border: '1px solid rgba(255,255,255,0.06)',
-                borderRadius: '12px',
+                paddingRight: '44px',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '10px',
                 color: '#f0f4f8',
-                fontSize: '1rem',
-                outline: 'none'
+                fontSize: '0.875rem',
+                outline: 'none',
               }}
             />
             {searchQuery ? (
@@ -128,100 +156,172 @@ export default function ServerFilters({
                 }}
                 style={{
                   position: 'absolute',
-                  right: '16px',
+                  right: '14px',
                   top: '50%',
                   transform: 'translateY(-50%)',
                   color: '#7a8fa6',
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  padding: 0
+                  padding: 0,
                 }}
               >
                 <X style={{ width: '16px', height: '16px' }} />
               </button>
             ) : (
-              <div style={{
-                position: 'absolute',
-                right: '16px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: '#4a5d73',
-                pointerEvents: 'none'
-              }}>
-                <Search style={{ width: '18px', height: '18px' }} />
+              <div
+                style={{
+                  position: 'absolute',
+                  right: '14px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#4a5d73',
+                  pointerEvents: 'none',
+                }}
+              >
+                <Search style={{ width: '16px', height: '16px' }} />
               </div>
             )}
           </div>
         </form>
 
-        {/* Sort and Filter buttons */}
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <div className="relative">
-            <select
-              value={currentSort}
-              onChange={(e) => onSortChange(e.target.value as SortOption)}
-              className="
-                appearance-none cursor-pointer
-                pl-4 pr-10 py-3.5
-                bg-[#151f2e] border border-[rgba(255,255,255,0.06)] rounded-xl
-                text-[#f0f4f8] text-sm font-medium
-                transition-all duration-200
-                hover:border-[rgba(255,255,255,0.1)]
-                focus:outline-none focus:border-[#d4a033] focus:ring-2 focus:ring-[#d4a033]/20
-              "
-            >
-              {sortOptions.map((option) => (
-                <option key={option.value} value={option.value} className="bg-[#151f2e]">
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#7a8fa6] pointer-events-none" />
-          </div>
-
-          <Button
-            variant={showFilters ? 'primary' : 'secondary'}
-            onClick={() => setShowFilters(!showFilters)}
-            leftIcon={<SlidersHorizontal className="w-4 h-4" />}
+        {/* Sort Dropdown */}
+        <div style={{ position: 'relative' }}>
+          <select
+            value={currentSort}
+            onChange={(e) => onSortChange(e.target.value as SortOption)}
+            style={{
+              height: '40px',
+              paddingLeft: '14px',
+              paddingRight: '36px',
+              appearance: 'none',
+              cursor: 'pointer',
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '10px',
+              color: '#c8d4e0',
+              fontSize: '0.8125rem',
+              fontWeight: 500,
+              outline: 'none',
+            }}
           >
-            Filters
-            {hasActiveFilters && (
-              <span className="ml-1.5 w-5 h-5 rounded-full bg-white/20 text-xs flex items-center justify-center">
-                {activeFilterCount}
-              </span>
-            )}
-          </Button>
+            {sortOptions.map((option) => (
+              <option key={option.value} value={option.value} style={{ background: '#151f2e' }}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown
+            style={{
+              position: 'absolute',
+              right: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '14px',
+              height: '14px',
+              color: '#6b7c8f',
+              pointerEvents: 'none',
+            }}
+          />
         </div>
+
+        {/* Filters Button */}
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          style={{
+            height: '40px',
+            padding: '0 14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: showFilters ? 'rgba(91, 141, 239, 0.1)' : 'rgba(255,255,255,0.03)',
+            border: showFilters ? '1px solid rgba(91, 141, 239, 0.3)' : '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '10px',
+            color: showFilters ? '#7bb0ff' : '#8899aa',
+            fontSize: '0.8125rem',
+            fontWeight: 500,
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+          }}
+        >
+          <SlidersHorizontal style={{ width: '15px', height: '15px' }} />
+          <span>Filters</span>
+          {hasActiveFilters && (
+            <span
+              style={{
+                width: '18px',
+                height: '18px',
+                borderRadius: '50%',
+                background: 'rgba(91, 141, 239, 0.2)',
+                color: '#7bb0ff',
+                fontSize: '0.6875rem',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
       </div>
 
-      {/* Expanded Filters */}
+      {/* Filter Chips Row */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center' }}>
+        {/* All chip */}
+        <button
+          onClick={clearAllFilters}
+          style={noFiltersActive ? activeChipStyle : baseChipStyle}
+        >
+          All
+        </button>
+
+        {/* Game mode chips */}
+        {gameModes.slice(0, 5).map((mode) => (
+          <button
+            key={mode.value}
+            onClick={() => toggleGameMode(mode.value)}
+            style={currentFilters.gameModes.includes(mode.value) ? activeChipStyle : baseChipStyle}
+          >
+            {mode.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Expanded Filters Panel */}
       {showFilters && (
-        <div className="
-          bg-[rgba(15,23,32,0.8)] backdrop-blur-xl
-          border border-[rgba(255,255,255,0.06)] rounded-2xl
-          p-6 space-y-6
-          animate-fade-in
-          shadow-[0_8px_32px_rgba(0,0,0,0.4)]
-        ">
+        <div
+          style={{
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: '12px',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+          }}
+        >
           {/* Game Modes */}
           <div>
-            <h3 className="text-sm font-semibold text-[#f0f4f8] mb-4 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#d4a033]" />
+            <h3
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: '#8899aa',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: '12px',
+              }}
+            >
               Game Modes
             </h3>
-            <div className="flex flex-wrap gap-2">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {gameModes.map((mode) => (
                 <button
                   key={mode.value}
                   onClick={() => toggleGameMode(mode.value)}
-                  className={`
-                    px-4 py-2 text-sm font-medium rounded-full transition-all duration-200
-                    ${currentFilters.gameModes.includes(mode.value)
-                      ? 'bg-gradient-to-r from-[#d4a033] to-[#a67c20] text-white shadow-[0_2px_8px_rgba(212,160,51,0.3)]'
-                      : 'bg-[#1a2942] text-[#7a8fa6] border border-[rgba(255,255,255,0.06)] hover:text-[#f0f4f8] hover:border-[rgba(255,255,255,0.1)]'
-                    }
-                  `}
+                  style={currentFilters.gameModes.includes(mode.value) ? activeChipStyle : baseChipStyle}
                 >
                   {mode.label}
                 </button>
@@ -231,22 +331,24 @@ export default function ServerFilters({
 
           {/* Regions */}
           <div>
-            <h3 className="text-sm font-semibold text-[#f0f4f8] mb-4 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#38bdf8]" />
+            <h3
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                color: '#8899aa',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: '12px',
+              }}
+            >
               Regions
             </h3>
-            <div className="flex flex-wrap gap-2">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {regions.map((region) => (
                 <button
                   key={region.value}
                   onClick={() => toggleRegion(region.value)}
-                  className={`
-                    px-4 py-2 text-sm font-medium rounded-full transition-all duration-200
-                    ${currentFilters.regions.includes(region.value)
-                      ? 'bg-gradient-to-r from-[#38bdf8] to-[#0ea5e9] text-white shadow-[0_2px_8px_rgba(56,189,248,0.3)]'
-                      : 'bg-[#1a2942] text-[#7a8fa6] border border-[rgba(255,255,255,0.06)] hover:text-[#f0f4f8] hover:border-[rgba(255,255,255,0.1)]'
-                    }
-                  `}
+                  style={currentFilters.regions.includes(region.value) ? activeChipStyle : baseChipStyle}
                 >
                   {region.label}
                 </button>
@@ -254,66 +356,51 @@ export default function ServerFilters({
             </div>
           </div>
 
-          {/* Other Filters */}
-          <div className="flex items-center justify-between pt-4 border-t border-[rgba(255,255,255,0.06)]">
-            <label className="flex items-center gap-3 cursor-pointer group">
-              <div className="relative">
-                <input
-                  type="checkbox"
-                  checked={currentFilters.onlineOnly}
-                  onChange={(e) =>
-                    onFilterChange({ ...currentFilters, onlineOnly: e.target.checked })
-                  }
-                  className="sr-only peer"
-                />
-                <div className="
-                  w-10 h-6 rounded-full
-                  bg-[#1a2942] border border-[rgba(255,255,255,0.06)]
-                  peer-checked:bg-emerald-500/20 peer-checked:border-emerald-500/30
-                  transition-colors
-                " />
-                <div className="
-                  absolute left-1 top-1 w-4 h-4 rounded-full
-                  bg-[#7a8fa6]
-                  peer-checked:bg-emerald-400 peer-checked:translate-x-4
-                  transition-all
-                " />
-              </div>
-              <span className="text-sm text-[#7a8fa6] group-hover:text-[#f0f4f8] transition-colors">
-                Online servers only
-              </span>
+          {/* Online Only + Clear */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingTop: '16px',
+              borderTop: '1px solid rgba(255,255,255,0.06)',
+            }}
+          >
+            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={currentFilters.onlineOnly}
+                onChange={(e) =>
+                  onFilterChange({ ...currentFilters, onlineOnly: e.target.checked })
+                }
+                style={{
+                  width: '16px',
+                  height: '16px',
+                  accentColor: '#5b8def',
+                  cursor: 'pointer',
+                }}
+              />
+              <span style={{ fontSize: '0.875rem', color: '#8899aa' }}>Online servers only</span>
             </label>
 
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
-                className="text-sm text-[#7a8fa6] hover:text-[#d4a033] transition-colors font-medium"
+                style={{
+                  fontSize: '0.8125rem',
+                  color: '#6b7c8f',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: 500,
+                }}
               >
-                Clear all filters
+                Clear all
               </button>
             )}
           </div>
         </div>
       )}
-
-      {/* Quick filter pills (always visible) */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-        {gameModes.slice(0, 6).map((mode) => (
-          <button
-            key={mode.value}
-            onClick={() => toggleGameMode(mode.value)}
-            className={`
-              px-3 py-1.5 text-xs font-medium uppercase tracking-wide rounded-full transition-all duration-200
-              ${currentFilters.gameModes.includes(mode.value)
-                ? 'bg-gradient-to-r from-[#d4a033] to-[#a67c20] text-white shadow-[0_2px_8px_rgba(212,160,51,0.3)]'
-                : 'bg-[#1a2942] text-[#7a8fa6] border border-[rgba(255,255,255,0.06)] hover:text-[#f0f4f8] hover:border-[rgba(255,255,255,0.1)]'
-              }
-            `}
-          >
-            {mode.label}
-          </button>
-        ))}
-      </div>
     </div>
   );
 }
