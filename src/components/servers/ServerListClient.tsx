@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client';
 import { mockServers } from '@/lib/mockServers';
 import Button from '@/components/ui/Button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { User } from '@supabase/supabase-js';
 
 interface ServerListClientProps {
   initialServers: Server[];
@@ -34,8 +35,31 @@ export default function ServerListClient({
     onlineOnly: false,
   });
   const [sort, setSort] = useState<SortOption>('popular');
+  const [user, setUser] = useState<User | null>(null);
 
   const supabase = createClient();
+
+  // Check if user is logged in
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getUser();
+  }, [supabase]);
+
+  // Check if any filters are active
+  const hasActiveFilters = searchQuery !== '' ||
+    filters.gameModes.length > 0 ||
+    filters.regions.length > 0 ||
+    filters.onlineOnly;
+
+  // Clear all filters function (pure state reset, no navigation)
+  const clearAllFilters = useCallback(() => {
+    setSearchQuery('');
+    setFilters({ gameModes: [], regions: [], onlineOnly: false });
+    setPage(1);
+  }, []);
   const pageSize = 12;
 
   // Filter mock servers locally when using mock fallback
@@ -236,7 +260,13 @@ export default function ServerListClient({
         </p>
       </div>
 
-      <ServerGrid servers={servers} isLoading={isLoading} />
+      <ServerGrid
+        servers={servers}
+        isLoading={isLoading}
+        onClearFilters={clearAllFilters}
+        hasActiveFilters={hasActiveFilters}
+        isLoggedIn={!!user}
+      />
 
       {/* Pagination */}
       {totalPages > 1 && (
@@ -272,12 +302,15 @@ export default function ServerListClient({
                   style={{
                     width: '40px',
                     height: '40px',
-                    borderRadius: '8px',
+                    borderRadius: '10px',
                     fontWeight: 500,
+                    fontSize: '0.875rem',
                     transition: 'all 0.2s',
-                    border: 'none',
+                    border: page === pageNum ? 'none' : '1px solid rgba(255,255,255,0.08)',
                     cursor: 'pointer',
-                    background: page === pageNum ? '#d29f32' : '#1a2f4a',
+                    background: page === pageNum
+                      ? 'linear-gradient(135deg, #5b8def 0%, #4a7bd4 100%)'
+                      : 'rgba(255,255,255,0.03)',
                     color: page === pageNum ? 'white' : '#8fa3b8',
                   }}
                 >

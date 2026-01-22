@@ -10,6 +10,9 @@ interface ServerGridProps {
   isLoading?: boolean;
   emptyVariant?: 'no-servers' | 'no-results';
   skeletonCount?: number;
+  onClearFilters?: () => void;
+  hasActiveFilters?: boolean;
+  isLoggedIn?: boolean;
 }
 
 const gridStyle: React.CSSProperties = {
@@ -24,6 +27,9 @@ export default function ServerGrid({
   isLoading = false,
   emptyVariant = 'no-results',
   skeletonCount = 6,
+  onClearFilters,
+  hasActiveFilters = false,
+  isLoggedIn = false,
 }: ServerGridProps) {
   if (isLoading) {
     return (
@@ -36,7 +42,14 @@ export default function ServerGrid({
   }
 
   if (servers.length === 0) {
-    return <EmptyState variant={emptyVariant} />;
+    return (
+      <EmptyState
+        variant={emptyVariant}
+        onClearFilters={onClearFilters}
+        hasActiveFilters={hasActiveFilters}
+        isLoggedIn={isLoggedIn}
+      />
+    );
   }
 
   return (

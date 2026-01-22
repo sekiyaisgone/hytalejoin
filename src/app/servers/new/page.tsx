@@ -16,13 +16,13 @@ export default async function NewServerPage() {
   }
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '32px 24px' }}>
+    <div style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 24px 100px' }}>
       {/* Header */}
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#f1f5f9', marginBottom: '8px' }}>
+      <div style={{ marginBottom: '28px' }}>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f0f4f8', marginBottom: '8px' }}>
           Add New Server
         </h1>
-        <p style={{ fontSize: '0.9375rem', color: '#8899aa', lineHeight: 1.6 }}>
+        <p style={{ fontSize: '0.875rem', color: '#6b7c8f', lineHeight: 1.6 }}>
           Submit your server to be listed on HytaleJoin. All submissions are reviewed before being published.
         </p>
       </div>

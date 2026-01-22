@@ -99,10 +99,25 @@ export default function Header() {
         <div className="hidden md:flex items-center gap-3 shrink-0">
             {user ? (
               <>
-                <Link href="/servers/new">
-                  <Button size="sm" leftIcon={<Plus className="w-4 h-4" />}>
-                    Add Server
-                  </Button>
+                <Link
+                  href="/servers/new"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 14px',
+                    fontSize: '0.8125rem',
+                    fontWeight: 500,
+                    color: 'white',
+                    background: 'linear-gradient(135deg, #5b8def 0%, #4a7bd4 100%)',
+                    borderRadius: '10px',
+                    textDecoration: 'none',
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 2px 8px rgba(91, 141, 239, 0.2)',
+                  }}
+                >
+                  <Plus style={{ width: '15px', height: '15px' }} />
+                  Add Server
                 </Link>
 
                 {/* Profile dropdown */}
@@ -112,27 +127,28 @@ export default function Header() {
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '8px',
-                      padding: '6px',
+                      justifyContent: 'center',
+                      padding: '2px',
                       borderRadius: '50%',
-                      background: isProfileOpen ? 'rgba(255,255,255,0.08)' : 'transparent',
-                      border: 'none',
+                      background: 'transparent',
+                      border: isProfileOpen ? '2px solid rgba(91, 141, 239, 0.5)' : '2px solid transparent',
                       cursor: 'pointer',
-                      transition: 'background 0.15s ease',
+                      transition: 'all 0.15s ease',
                     }}
                   >
                     <div
                       style={{
-                        width: '36px',
-                        height: '36px',
+                        width: '34px',
+                        height: '34px',
                         borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #5b8def 0%, #4a7bd4 100%)',
+                        background: 'linear-gradient(135deg, #3d5a80 0%, #293d52 100%)',
+                        border: '1px solid rgba(255,255,255,0.1)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '0.875rem',
+                        fontSize: '0.8125rem',
                         fontWeight: 600,
-                        color: 'white',
+                        color: '#c8d4e0',
                       }}
                     >
                       {user.email?.charAt(0).toUpperCase() || 'U'}
