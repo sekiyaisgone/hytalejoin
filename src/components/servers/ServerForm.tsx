@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import Link from 'next/link';
 import { Server, GameMode, Region } from '@/types';
 import { createClient } from '@/lib/supabase/client';
 import Card from '@/components/ui/Card';
@@ -12,7 +13,7 @@ import Input from '@/components/ui/Input';
 import Textarea from '@/components/ui/Textarea';
 import Select from '@/components/ui/Select';
 import Button from '@/components/ui/Button';
-import { Upload, X } from 'lucide-react';
+import { Upload, X, ImageIcon, ArrowLeft, Save, Eye, Users, Globe, Heart } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const gameModes: { value: GameMode; label: string }[] = [
@@ -39,6 +40,15 @@ const regions: { value: Region; label: string }[] = [
   { value: 'africa', label: 'Africa' },
 ];
 
+const regionLabels: Record<string, string> = {
+  'north-america': 'North America',
+  'south-america': 'South America',
+  europe: 'Europe',
+  asia: 'Asia',
+  oceania: 'Oceania',
+  africa: 'Africa',
+};
+
 const serverSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters').max(64, 'Name is too long'),
   ip_address: z.string().min(1, 'IP address is required'),
@@ -61,6 +71,8 @@ interface ServerFormProps {
   server?: Server;
 }
 
+const DRAFT_KEY = 'hytalejoin_server_draft';
+
 export default function ServerForm({ userId, server }: ServerFormProps) {
   const router = useRouter();
   const supabase = createClient();
@@ -74,12 +86,17 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
   const [bannerPreview, setBannerPreview] = useState<string | null>(
     server?.banner_image_url || null
   );
+  const [showPreview, setShowPreview] = useState(false);
+  const [hasDraft, setHasDraft] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
+    getValues,
+    reset,
   } = useForm<ServerFormData>({
     resolver: zodResolver(serverSchema),
     defaultValues: {
@@ -97,6 +114,53 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
       website_url: server?.website_url || '',
     },
   });
+
+  // Watch form values for preview
+  const formValues = watch();
+
+  // Check for draft on mount
+  useEffect(() => {
+    if (!isEditing) {
+      const draft = localStorage.getItem(DRAFT_KEY);
+      if (draft) {
+        setHasDraft(true);
+      }
+    }
+  }, [isEditing]);
+
+  // Load draft
+  const loadDraft = () => {
+    const draft = localStorage.getItem(DRAFT_KEY);
+    if (draft) {
+      try {
+        const data = JSON.parse(draft);
+        reset(data.formData);
+        setSelectedGameModes(data.gameModes || []);
+        setBannerPreview(data.bannerPreview || null);
+        toast.success('Draft loaded');
+        setHasDraft(false);
+      } catch {
+        toast.error('Failed to load draft');
+      }
+    }
+  };
+
+  // Save draft
+  const saveDraft = () => {
+    const data = {
+      formData: getValues(),
+      gameModes: selectedGameModes,
+      bannerPreview: bannerPreview,
+      savedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+    toast.success('Draft saved');
+  };
+
+  // Clear draft on successful submit
+  const clearDraft = () => {
+    localStorage.removeItem(DRAFT_KEY);
+  };
 
   const handleGameModeToggle = (mode: GameMode) => {
     const newModes = selectedGameModes.includes(mode)
@@ -184,6 +248,7 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
       } else {
         const { error } = await supabase.from('servers').insert(serverData);
         if (error) throw error;
+        clearDraft();
         toast.success('Server submitted for review!');
       }
 
@@ -197,237 +262,664 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
     }
   };
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Basic Info */}
-      <Card hover={false} padding="lg">
-        <h2 className="text-xl font-semibold text-[#e8f0f8] mb-6">Basic Information</h2>
-        <div className="space-y-5">
-          <Input
-            label="Server Name *"
-            placeholder="My Awesome Server"
-            error={errors.name?.message}
-            {...register('name')}
-          />
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input
-              label="IP Address *"
-              placeholder="play.myserver.com"
-              error={errors.ip_address?.message}
-              {...register('ip_address')}
-            />
-            <Input
-              label="Port *"
-              type="number"
-              placeholder="25565"
-              error={errors.port?.message}
-              {...register('port', { valueAsNumber: true })}
-            />
-          </div>
-
-          <Textarea
-            label="Description *"
-            placeholder="Tell players about your server..."
-            error={errors.description?.message}
-            {...register('description')}
-          />
-
-          <Input
-            label="Short Description"
-            placeholder="A brief summary (shown in server cards)"
-            helperText="Max 200 characters"
-            error={errors.short_description?.message}
-            {...register('short_description')}
-          />
-        </div>
-      </Card>
-
-      {/* Server Details */}
-      <Card hover={false} padding="lg">
-        <h2 className="text-xl font-semibold text-[#e8f0f8] mb-6">Server Details</h2>
-        <div className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-[#e8f0f8] mb-3">
-              Game Modes *
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {gameModes.map((mode) => (
-                <button
-                  key={mode.value}
-                  type="button"
-                  onClick={() => handleGameModeToggle(mode.value)}
-                  style={{
-                    padding: '8px 16px',
-                    fontSize: '0.875rem',
-                    fontWeight: 500,
-                    borderRadius: '10px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease',
-                    background: selectedGameModes.includes(mode.value)
-                      ? 'rgba(91, 141, 239, 0.2)'
-                      : 'rgba(255,255,255,0.04)',
-                    color: selectedGameModes.includes(mode.value) ? '#7bb0ff' : '#8fa3b8',
-                    boxShadow: selectedGameModes.includes(mode.value)
-                      ? 'inset 0 0 0 1px rgba(91, 141, 239, 0.4)'
-                      : 'inset 0 0 0 1px rgba(255,255,255,0.08)',
-                  }}
-                >
-                  {mode.label}
-                </button>
-              ))}
-            </div>
-            {errors.game_modes && (
-              <p className="mt-2 text-sm text-red-400">{errors.game_modes.message}</p>
-            )}
-          </div>
-
-          <Select
-            label="Region *"
-            options={regions}
-            placeholder="Select a region"
-            error={errors.region?.message}
-            {...register('region')}
-          />
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input
-              label="Version *"
-              placeholder="1.0"
-              error={errors.version?.message}
-              {...register('version')}
-            />
-            <Input
-              label="Max Players *"
-              type="number"
-              placeholder="100"
-              error={errors.max_players?.message}
-              {...register('max_players', { valueAsNumber: true })}
-            />
-          </div>
-
-          <Input
-            label="Tags"
-            placeholder="economy, mcmmo, custom plugins"
-            helperText="Comma-separated list"
-            {...register('tags')}
-          />
-        </div>
-      </Card>
-
-      {/* Links */}
-      <Card hover={false} padding="lg">
-        <h2 className="text-xl font-semibold text-[#e8f0f8] mb-6">Links</h2>
-        <div className="space-y-5">
-          <Input
-            label="Discord Invite URL"
-            placeholder="https://discord.gg/yourserver"
-            error={errors.discord_url?.message}
-            {...register('discord_url')}
-          />
-          <Input
-            label="Website URL"
-            placeholder="https://yourserver.com"
-            error={errors.website_url?.message}
-            {...register('website_url')}
-          />
-        </div>
-      </Card>
-
+  // Preview Card Component
+  const PreviewCard = () => (
+    <div
+      style={{
+        background: '#12161c',
+        border: '1px solid rgba(255,255,255,0.06)',
+        borderRadius: '14px',
+        overflow: 'hidden',
+        maxWidth: '380px',
+        margin: '0 auto',
+      }}
+    >
       {/* Banner */}
-      <Card hover={false} padding="lg">
-        <h2 className="text-xl font-semibold text-[#e8f0f8] mb-6">Banner Image</h2>
-        <div className="space-y-4">
-          {bannerPreview ? (
-            <div className="relative">
-              <img
-                src={bannerPreview}
-                alt="Banner preview"
-                className="w-full h-48 object-cover rounded-lg"
-              />
-              <button
-                type="button"
-                onClick={removeBanner}
-                className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          ) : (
-            <label
+      <div style={{ height: '120px', background: '#1a2535', position: 'relative' }}>
+        {bannerPreview ? (
+          <img src={bannerPreview} alt="Banner" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ fontSize: '3rem', fontWeight: 700, color: '#2a4060' }}>
+              {formValues.name?.charAt(0)?.toUpperCase() || '?'}
+            </span>
+          </div>
+        )}
+        <div style={{
+          position: 'absolute',
+          top: '8px',
+          right: '8px',
+          padding: '4px 8px',
+          background: 'rgba(34, 197, 94, 0.9)',
+          borderRadius: '6px',
+          fontSize: '0.6875rem',
+          fontWeight: 500,
+          color: 'white',
+        }}>
+          Online
+        </div>
+      </div>
+
+      {/* Content */}
+      <div style={{ padding: '16px' }}>
+        <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#f0f4f8', marginBottom: '4px' }}>
+          {formValues.name || 'Server Name'}
+        </h3>
+        <p style={{ fontSize: '0.8125rem', color: '#6b7c8f', marginBottom: '12px', lineHeight: 1.4 }}>
+          {formValues.short_description || formValues.description?.slice(0, 80) || 'Server description...'}
+        </p>
+
+        {/* Game modes */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px' }}>
+          {selectedGameModes.slice(0, 3).map((mode) => (
+            <span
+              key={mode}
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                height: '200px',
-                border: '2px dashed rgba(255,255,255,0.1)',
-                borderRadius: '14px',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                background: 'rgba(255,255,255,0.02)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(91, 141, 239, 0.4)';
-                e.currentTarget.style.background = 'rgba(91, 141, 239, 0.05)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
-                e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
+                padding: '3px 8px',
+                fontSize: '0.6875rem',
+                fontWeight: 500,
+                background: 'rgba(91, 141, 239, 0.15)',
+                color: '#7bb0ff',
+                borderRadius: '6px',
               }}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px 0' }}>
-                <Upload style={{ width: '40px', height: '40px', color: '#6b7c8f', marginBottom: '12px' }} />
-                <p style={{ fontSize: '0.875rem', color: '#8fa3b8' }}>
+              {gameModes.find(m => m.value === mode)?.label || mode}
+            </span>
+          ))}
+          {selectedGameModes.length > 3 && (
+            <span style={{ padding: '3px 8px', fontSize: '0.6875rem', color: '#6b7c8f' }}>
+              +{selectedGameModes.length - 3}
+            </span>
+          )}
+        </div>
+
+        {/* Stats */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.75rem', color: '#6b7c8f' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <Users style={{ width: '12px', height: '12px' }} />
+            0/{formValues.max_players || 100}
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <Globe style={{ width: '12px', height: '12px' }} />
+            {regionLabels[formValues.region] || 'Region'}
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <Heart style={{ width: '12px', height: '12px' }} />
+            0
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Draft notification */}
+      {hasDraft && !isEditing && (
+        <div
+          style={{
+            marginBottom: '20px',
+            padding: '14px 18px',
+            background: 'rgba(91, 141, 239, 0.1)',
+            border: '1px solid rgba(91, 141, 239, 0.2)',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <span style={{ fontSize: '0.875rem', color: '#c8d4e0' }}>
+            You have an unsaved draft. Would you like to continue?
+          </span>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              type="button"
+              onClick={() => setHasDraft(false)}
+              style={{
+                padding: '6px 12px',
+                fontSize: '0.8125rem',
+                fontWeight: 500,
+                color: '#6b7c8f',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              Dismiss
+            </button>
+            <button
+              type="button"
+              onClick={loadDraft}
+              style={{
+                padding: '6px 12px',
+                fontSize: '0.8125rem',
+                fontWeight: 500,
+                color: '#5b8def',
+                background: 'rgba(91, 141, 239, 0.1)',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+              }}
+            >
+              Load Draft
+            </button>
+          </div>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {/* Basic Info */}
+        <section
+          style={{
+            background: '#12161c',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: '14px',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              padding: '16px 20px',
+              borderBottom: '1px solid rgba(255,255,255,0.06)',
+            }}
+          >
+            <h2 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#f0f4f8', margin: 0 }}>
+              Basic Information
+            </h2>
+          </div>
+          <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <Input
+              label="Server Name"
+              placeholder="My Awesome Server"
+              error={errors.name?.message}
+              {...register('name')}
+            />
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 140px', gap: '12px' }}>
+              <Input
+                label="IP Address"
+                placeholder="play.myserver.com"
+                error={errors.ip_address?.message}
+                {...register('ip_address')}
+              />
+              <Input
+                label="Port"
+                type="number"
+                placeholder="25565"
+                error={errors.port?.message}
+                {...register('port', { valueAsNumber: true })}
+              />
+            </div>
+
+            <Textarea
+              label="Description"
+              placeholder="Tell players about your server, what makes it unique, the features you offer..."
+              error={errors.description?.message}
+              {...register('description')}
+            />
+
+            <Input
+              label="Short Description"
+              placeholder="A brief one-line summary"
+              helperText="Shown on server cards (max 200 characters)"
+              error={errors.short_description?.message}
+              {...register('short_description')}
+            />
+          </div>
+        </section>
+
+        {/* Server Details */}
+        <section
+          style={{
+            background: '#12161c',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: '14px',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              padding: '16px 20px',
+              borderBottom: '1px solid rgba(255,255,255,0.06)',
+            }}
+          >
+            <h2 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#f0f4f8', margin: 0 }}>
+              Server Details
+            </h2>
+          </div>
+          <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, color: '#c8d4e0', marginBottom: '10px' }}>
+                Game Modes
+              </label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {gameModes.map((mode) => (
+                  <button
+                    key={mode.value}
+                    type="button"
+                    onClick={() => handleGameModeToggle(mode.value)}
+                    style={{
+                      padding: '8px 14px',
+                      fontSize: '0.8125rem',
+                      fontWeight: 500,
+                      borderRadius: '8px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                      background: selectedGameModes.includes(mode.value)
+                        ? 'rgba(91, 141, 239, 0.2)'
+                        : 'rgba(255,255,255,0.04)',
+                      color: selectedGameModes.includes(mode.value) ? '#7bb0ff' : '#8fa3b8',
+                      boxShadow: selectedGameModes.includes(mode.value)
+                        ? 'inset 0 0 0 1px rgba(91, 141, 239, 0.4)'
+                        : 'inset 0 0 0 1px rgba(255,255,255,0.08)',
+                    }}
+                  >
+                    {mode.label}
+                  </button>
+                ))}
+              </div>
+              {errors.game_modes && (
+                <p style={{ marginTop: '8px', fontSize: '0.8125rem', color: '#f87171' }}>{errors.game_modes.message}</p>
+              )}
+            </div>
+
+            <Select
+              label="Region"
+              options={regions}
+              placeholder="Select your server's region"
+              error={errors.region?.message}
+              {...register('region')}
+            />
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <Input
+                label="Version"
+                placeholder="1.0"
+                helperText="Game version"
+                error={errors.version?.message}
+                {...register('version')}
+              />
+              <Input
+                label="Max Players"
+                type="number"
+                placeholder="100"
+                error={errors.max_players?.message}
+                {...register('max_players', { valueAsNumber: true })}
+              />
+            </div>
+
+            <Input
+              label="Tags"
+              placeholder="economy, custom-items, friendly"
+              helperText="Comma-separated. Helps players find your server."
+              {...register('tags')}
+            />
+          </div>
+        </section>
+
+        {/* Links */}
+        <section
+          style={{
+            background: '#12161c',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: '14px',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              padding: '16px 20px',
+              borderBottom: '1px solid rgba(255,255,255,0.06)',
+            }}
+          >
+            <h2 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#f0f4f8', margin: 0 }}>
+              Links
+            </h2>
+            <p style={{ fontSize: '0.75rem', color: '#6b7c8f', marginTop: '4px' }}>Optional community links</p>
+          </div>
+          <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <Input
+              label="Discord Invite"
+              placeholder="https://discord.gg/yourserver"
+              error={errors.discord_url?.message}
+              {...register('discord_url')}
+            />
+            <Input
+              label="Website"
+              placeholder="https://yourserver.com"
+              error={errors.website_url?.message}
+              {...register('website_url')}
+            />
+          </div>
+        </section>
+
+        {/* Banner */}
+        <section
+          style={{
+            background: '#12161c',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: '14px',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              padding: '16px 20px',
+              borderBottom: '1px solid rgba(255,255,255,0.06)',
+            }}
+          >
+            <h2 style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#f0f4f8', margin: 0 }}>
+              Banner Image
+            </h2>
+            <p style={{ fontSize: '0.75rem', color: '#6b7c8f', marginTop: '4px' }}>Recommended: 1920×480px</p>
+          </div>
+          <div style={{ padding: '20px' }}>
+            {bannerPreview ? (
+              <div style={{ position: 'relative' }}>
+                <img
+                  src={bannerPreview}
+                  alt="Banner preview"
+                  style={{
+                    width: '100%',
+                    height: '160px',
+                    objectFit: 'cover',
+                    borderRadius: '10px',
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: '12px',
+                    right: '12px',
+                    display: 'flex',
+                    gap: '8px',
+                  }}
+                >
+                  <label
+                    style={{
+                      padding: '8px 12px',
+                      fontSize: '0.8125rem',
+                      fontWeight: 500,
+                      color: 'white',
+                      background: 'rgba(0,0,0,0.7)',
+                      backdropFilter: 'blur(8px)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Change
+                    <input
+                      type="file"
+                      style={{ display: 'none' }}
+                      accept="image/png,image/jpeg,image/webp"
+                      onChange={handleBannerChange}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    onClick={removeBanner}
+                    style={{
+                      padding: '8px 12px',
+                      fontSize: '0.8125rem',
+                      fontWeight: 500,
+                      color: '#f87171',
+                      background: 'rgba(0,0,0,0.7)',
+                      backdropFilter: 'blur(8px)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <label
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '32px 20px',
+                  border: '1px dashed rgba(255,255,255,0.12)',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  background: 'rgba(255,255,255,0.02)',
+                }}
+              >
+                <div
+                  style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '10px',
+                    background: 'rgba(255,255,255,0.04)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: '12px',
+                  }}
+                >
+                  <ImageIcon style={{ width: '22px', height: '22px', color: '#6b7c8f' }} />
+                </div>
+                <p style={{ fontSize: '0.875rem', color: '#c8d4e0', marginBottom: '4px' }}>
                   <span style={{ fontWeight: 500, color: '#5b8def' }}>Click to upload</span> or drag and drop
                 </p>
-                <p style={{ fontSize: '0.75rem', color: '#6b7c8f', marginTop: '4px' }}>PNG, JPG or WebP (max 5MB)</p>
-              </div>
-              <input
-                type="file"
-                className="hidden"
-                accept="image/png,image/jpeg,image/webp"
-                onChange={handleBannerChange}
-              />
-            </label>
-          )}
-          <p className="text-sm text-[#8fa3b8]">
-            Recommended size: 1920x480 pixels. This will be displayed at the top of your
-            server page.
-          </p>
-        </div>
-      </Card>
+                <p style={{ fontSize: '0.75rem', color: '#6b7c8f' }}>PNG, JPG, or WebP (max 5MB)</p>
+                <input
+                  type="file"
+                  style={{ display: 'none' }}
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={handleBannerChange}
+                />
+              </label>
+            )}
+          </div>
+        </section>
 
-      {/* Submit Bar */}
-      <div
-        style={{
-          position: 'sticky',
-          bottom: 0,
-          marginLeft: '-24px',
-          marginRight: '-24px',
-          marginBottom: '-24px',
-          padding: '16px 24px',
-          background: 'rgba(10, 14, 20, 0.95)',
-          backdropFilter: 'blur(12px)',
-          borderTop: '1px solid rgba(255,255,255,0.08)',
-          display: 'flex',
-          justifyContent: 'flex-end',
-          gap: '12px',
-        }}
-      >
-        <Button type="button" variant="secondary" onClick={() => router.back()} disabled={isSubmitting}>
-          Cancel
-        </Button>
-        <Button type="submit" isLoading={isSubmitting}>
-          {isSubmitting
-            ? 'Submitting...'
-            : isEditing
-            ? 'Save Changes'
-            : 'Submit Server'}
-        </Button>
-      </div>
-    </form>
+        {/* Spacer for sticky bar */}
+        <div style={{ height: '80px' }} />
+
+        {/* Sticky Action Bar */}
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: '14px 24px',
+            background: 'rgba(10, 14, 20, 0.95)',
+            backdropFilter: 'blur(12px)',
+            borderTop: '1px solid rgba(255,255,255,0.08)',
+            zIndex: 50,
+          }}
+        >
+          <div
+            style={{
+              maxWidth: '900px',
+              margin: '0 auto',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            {/* Left side */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Link
+                href="/dashboard"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '9px 14px',
+                  fontSize: '0.8125rem',
+                  fontWeight: 500,
+                  color: '#8fa3b8',
+                  background: 'transparent',
+                  border: 'none',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  cursor: 'pointer',
+                  transition: 'color 0.15s ease',
+                }}
+              >
+                <ArrowLeft style={{ width: '15px', height: '15px' }} />
+                Back
+              </Link>
+              {!isEditing && (
+                <button
+                  type="button"
+                  onClick={saveDraft}
+                  disabled={isSubmitting}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '9px 14px',
+                    fontSize: '0.8125rem',
+                    fontWeight: 500,
+                    color: '#8fa3b8',
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: '8px',
+                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.15s ease',
+                    opacity: isSubmitting ? 0.5 : 1,
+                  }}
+                >
+                  <Save style={{ width: '14px', height: '14px' }} />
+                  Save Draft
+                </button>
+              )}
+            </div>
+
+            {/* Right side */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <button
+                type="button"
+                onClick={() => setShowPreview(true)}
+                disabled={isSubmitting}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '9px 14px',
+                  fontSize: '0.8125rem',
+                  fontWeight: 500,
+                  color: '#c8d4e0',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: '8px',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.15s ease',
+                  opacity: isSubmitting ? 0.5 : 1,
+                }}
+              >
+                <Eye style={{ width: '14px', height: '14px' }} />
+                Preview
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '9px 18px',
+                  fontSize: '0.8125rem',
+                  fontWeight: 500,
+                  color: 'white',
+                  background: isSubmitting
+                    ? 'rgba(91, 141, 239, 0.5)'
+                    : 'linear-gradient(135deg, #5b8def 0%, #4a7bd4 100%)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.15s ease',
+                  boxShadow: isSubmitting ? 'none' : '0 2px 8px rgba(91, 141, 239, 0.25)',
+                }}
+              >
+                {isSubmitting ? 'Submitting...' : isEditing ? 'Save Changes' : 'Submit Server'}
+              </button>
+            </div>
+          </div>
+
+          {/* Terms notice */}
+          {!isEditing && (
+            <p
+              style={{
+                maxWidth: '900px',
+                margin: '10px auto 0',
+                fontSize: '0.6875rem',
+                color: '#4a5d73',
+                textAlign: 'center',
+              }}
+            >
+              By submitting, you agree to our{' '}
+              <Link href="/terms" style={{ color: '#6b7c8f', textDecoration: 'underline' }}>Terms</Link>{' '}
+              and confirm you own or admin this server.
+            </p>
+          )}
+        </div>
+      </form>
+
+      {/* Preview Modal */}
+      {showPreview && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.8)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 100,
+            padding: '24px',
+          }}
+          onClick={() => setShowPreview(false)}
+        >
+          <div
+            style={{
+              background: '#0d1117',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '16px',
+              padding: '24px',
+              maxWidth: '440px',
+              width: '100%',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#f0f4f8', margin: 0 }}>
+                Card Preview
+              </h3>
+              <button
+                onClick={() => setShowPreview(false)}
+                style={{
+                  padding: '6px',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  color: '#6b7c8f',
+                }}
+              >
+                <X style={{ width: '16px', height: '16px' }} />
+              </button>
+            </div>
+
+            <PreviewCard />
+
+            <p style={{ marginTop: '16px', fontSize: '0.75rem', color: '#6b7c8f', textAlign: 'center' }}>
+              This is how your server will appear in listings
+            </p>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
