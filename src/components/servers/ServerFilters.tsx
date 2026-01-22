@@ -366,21 +366,43 @@ export default function ServerFilters({
               borderTop: '1px solid rgba(255,255,255,0.06)',
             }}
           >
-            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-              <input
-                type="checkbox"
-                checked={currentFilters.onlineOnly}
-                onChange={(e) =>
-                  onFilterChange({ ...currentFilters, onlineOnly: e.target.checked })
+            <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+              {/* Modern Toggle Switch */}
+              <button
+                type="button"
+                role="switch"
+                aria-checked={currentFilters.onlineOnly}
+                onClick={() =>
+                  onFilterChange({ ...currentFilters, onlineOnly: !currentFilters.onlineOnly })
                 }
                 style={{
-                  width: '16px',
-                  height: '16px',
-                  accentColor: '#5b8def',
+                  position: 'relative',
+                  width: '44px',
+                  height: '24px',
+                  borderRadius: '12px',
+                  border: 'none',
                   cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  background: currentFilters.onlineOnly
+                    ? 'linear-gradient(135deg, #5b8def 0%, #4a7bd4 100%)'
+                    : 'rgba(255,255,255,0.1)',
                 }}
-              />
-              <span style={{ fontSize: '0.875rem', color: '#8899aa' }}>Online servers only</span>
+              >
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: '2px',
+                    left: currentFilters.onlineOnly ? '22px' : '2px',
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    background: 'white',
+                    transition: 'left 0.2s ease',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                  }}
+                />
+              </button>
+              <span style={{ fontSize: '0.875rem', color: '#c8d4e0' }}>Online servers only</span>
             </label>
 
             {hasActiveFilters && (
@@ -393,6 +415,17 @@ export default function ServerFilters({
                   border: 'none',
                   cursor: 'pointer',
                   fontWeight: 500,
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  transition: 'all 0.15s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                  e.currentTarget.style.color = '#8fa3b8';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'none';
+                  e.currentTarget.style.color = '#6b7c8f';
                 }}
               >
                 Clear all
