@@ -257,11 +257,22 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
                   key={mode.value}
                   type="button"
                   onClick={() => handleGameModeToggle(mode.value)}
-                  className={`px-4 py-2 text-sm font-medium rounded-full transition-all ${
-                    selectedGameModes.includes(mode.value)
-                      ? 'bg-[#d29f32] text-white'
-                      : 'bg-[#1a2f4a] text-[#8fa3b8] hover:text-[#e8f0f8]'
-                  }`}
+                  style={{
+                    padding: '8px 16px',
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                    borderRadius: '10px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                    background: selectedGameModes.includes(mode.value)
+                      ? 'rgba(91, 141, 239, 0.2)'
+                      : 'rgba(255,255,255,0.04)',
+                    color: selectedGameModes.includes(mode.value) ? '#7bb0ff' : '#8fa3b8',
+                    boxShadow: selectedGameModes.includes(mode.value)
+                      ? 'inset 0 0 0 1px rgba(91, 141, 239, 0.4)'
+                      : 'inset 0 0 0 1px rgba(255,255,255,0.08)',
+                  }}
                 >
                   {mode.label}
                 </button>
@@ -344,14 +355,35 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
               </button>
             </div>
           ) : (
-            <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-[rgba(255,255,255,0.08)] rounded-lg cursor-pointer hover:border-[#d29f32] transition-colors">
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <Upload className="w-10 h-10 text-[#8fa3b8] mb-3" />
-                <p className="text-sm text-[#8fa3b8]">
-                  <span className="font-medium text-[#d29f32]">Click to upload</span> or
-                  drag and drop
+            <label
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                height: '200px',
+                border: '2px dashed rgba(255,255,255,0.1)',
+                borderRadius: '14px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                background: 'rgba(255,255,255,0.02)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(91, 141, 239, 0.4)';
+                e.currentTarget.style.background = 'rgba(91, 141, 239, 0.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+                e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
+              }}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px 0' }}>
+                <Upload style={{ width: '40px', height: '40px', color: '#6b7c8f', marginBottom: '12px' }} />
+                <p style={{ fontSize: '0.875rem', color: '#8fa3b8' }}>
+                  <span style={{ fontWeight: 500, color: '#5b8def' }}>Click to upload</span> or drag and drop
                 </p>
-                <p className="text-xs text-[#8fa3b8] mt-1">PNG, JPG or WebP (max 5MB)</p>
+                <p style={{ fontSize: '0.75rem', color: '#6b7c8f', marginTop: '4px' }}>PNG, JPG or WebP (max 5MB)</p>
               </div>
               <input
                 type="file"
@@ -368,13 +400,32 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
         </div>
       </Card>
 
-      {/* Submit */}
-      <div className="flex justify-end gap-4">
-        <Button type="button" variant="secondary" onClick={() => router.back()}>
+      {/* Submit Bar */}
+      <div
+        style={{
+          position: 'sticky',
+          bottom: 0,
+          marginLeft: '-24px',
+          marginRight: '-24px',
+          marginBottom: '-24px',
+          padding: '16px 24px',
+          background: 'rgba(10, 14, 20, 0.95)',
+          backdropFilter: 'blur(12px)',
+          borderTop: '1px solid rgba(255,255,255,0.08)',
+          display: 'flex',
+          justifyContent: 'flex-end',
+          gap: '12px',
+        }}
+      >
+        <Button type="button" variant="secondary" onClick={() => router.back()} disabled={isSubmitting}>
           Cancel
         </Button>
         <Button type="submit" isLoading={isSubmitting}>
-          {isEditing ? 'Save Changes' : 'Submit Server'}
+          {isSubmitting
+            ? 'Submitting...'
+            : isEditing
+            ? 'Save Changes'
+            : 'Submit Server'}
         </Button>
       </div>
     </form>

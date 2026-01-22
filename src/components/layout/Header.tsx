@@ -70,11 +70,11 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
         {/* Logo - Left */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#d4a033] to-[#a67c20] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#5b8def] to-[#4a7bd4] flex items-center justify-center">
             <Server className="w-4 h-4 text-white" />
           </div>
           <span className="text-lg font-bold text-white">
-            Hytale<span className="text-[#d4a033]">Join</span>
+            Hytale<span className="text-[#5b8def]">Join</span>
           </span>
         </Link>
 
@@ -109,10 +109,33 @@ export default function Header() {
                 <div className="relative">
                   <button
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
-                    className="flex items-center gap-2 p-2 rounded-lg text-[#8899aa] hover:text-white hover:bg-white/5 transition-colors"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '6px',
+                      borderRadius: '50%',
+                      background: isProfileOpen ? 'rgba(255,255,255,0.08)' : 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      transition: 'background 0.15s ease',
+                    }}
                   >
-                    <div className="w-8 h-8 rounded-lg bg-[#1a2535] flex items-center justify-center">
-                      <User className="w-4 h-4" />
+                    <div
+                      style={{
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #5b8def 0%, #4a7bd4 100%)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        color: 'white',
+                      }}
+                    >
+                      {user.email?.charAt(0).toUpperCase() || 'U'}
                     </div>
                   </button>
 
@@ -122,46 +145,139 @@ export default function Header() {
                         className="fixed inset-0 z-10"
                         onClick={() => setIsProfileOpen(false)}
                       />
-                      <div className="absolute right-0 mt-2 w-56 bg-[#151f2e] border border-white/10 rounded-xl shadow-xl z-20 py-2">
-                        <div className="px-4 py-3 border-b border-white/5">
-                          <p className="text-sm font-medium text-white truncate">
+                      <div
+                        style={{
+                          position: 'absolute',
+                          right: 0,
+                          marginTop: '8px',
+                          width: '240px',
+                          background: '#12161c',
+                          border: '1px solid rgba(255,255,255,0.08)',
+                          borderRadius: '14px',
+                          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                          zIndex: 20,
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {/* Email header */}
+                        <div
+                          style={{
+                            padding: '14px 16px',
+                            borderBottom: '1px solid rgba(255,255,255,0.06)',
+                          }}
+                        >
+                          <p
+                            style={{
+                              fontSize: '0.75rem',
+                              color: '#6b7c8f',
+                              marginBottom: '2px',
+                            }}
+                          >
+                            Signed in as
+                          </p>
+                          <p
+                            style={{
+                              fontSize: '0.875rem',
+                              fontWeight: 500,
+                              color: '#f0f4f8',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
                             {user.email}
                           </p>
                         </div>
-                        <div className="py-1">
+
+                        {/* Menu items */}
+                        <div style={{ padding: '6px' }}>
                           <Link
                             href="/dashboard"
                             onClick={() => setIsProfileOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#8899aa] hover:text-white hover:bg-white/5 transition-colors"
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              padding: '10px 12px',
+                              borderRadius: '8px',
+                              fontSize: '0.875rem',
+                              color: '#c8d4e0',
+                              textDecoration: 'none',
+                              transition: 'background 0.15s ease',
+                            }}
+                            className="hover:bg-white/5"
                           >
-                            <Server className="w-4 h-4" />
-                            My Servers
+                            <Server style={{ width: '16px', height: '16px', color: '#6b7c8f' }} />
+                            Dashboard
                           </Link>
                           <Link
                             href="/dashboard/settings"
                             onClick={() => setIsProfileOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#8899aa] hover:text-white hover:bg-white/5 transition-colors"
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              padding: '10px 12px',
+                              borderRadius: '8px',
+                              fontSize: '0.875rem',
+                              color: '#c8d4e0',
+                              textDecoration: 'none',
+                              transition: 'background 0.15s ease',
+                            }}
+                            className="hover:bg-white/5"
                           >
-                            <Settings className="w-4 h-4" />
+                            <Settings style={{ width: '16px', height: '16px', color: '#6b7c8f' }} />
                             Settings
                           </Link>
                           {isAdmin && (
                             <Link
                               href="/admin"
                               onClick={() => setIsProfileOpen(false)}
-                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#d4a033] hover:bg-white/5 transition-colors"
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px',
+                                padding: '10px 12px',
+                                borderRadius: '8px',
+                                fontSize: '0.875rem',
+                                color: '#5b8def',
+                                textDecoration: 'none',
+                                transition: 'background 0.15s ease',
+                              }}
+                              className="hover:bg-white/5"
                             >
-                              <Shield className="w-4 h-4" />
+                              <Shield style={{ width: '16px', height: '16px' }} />
                               Admin Panel
                             </Link>
                           )}
                         </div>
-                        <div className="border-t border-white/5 pt-1 mt-1">
+
+                        {/* Sign out */}
+                        <div
+                          style={{
+                            padding: '6px',
+                            borderTop: '1px solid rgba(255,255,255,0.06)',
+                          }}
+                        >
                           <button
                             onClick={handleSignOut}
-                            className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              width: '100%',
+                              padding: '10px 12px',
+                              borderRadius: '8px',
+                              fontSize: '0.875rem',
+                              color: '#f87171',
+                              background: 'none',
+                              border: 'none',
+                              cursor: 'pointer',
+                              transition: 'background 0.15s ease',
+                            }}
+                            className="hover:bg-red-500/10"
                           >
-                            <LogOut className="w-4 h-4" />
+                            <LogOut style={{ width: '16px', height: '16px' }} />
                             Sign Out
                           </button>
                         </div>
@@ -255,7 +371,7 @@ export default function Header() {
                     <Link
                       href="/admin"
                       onClick={() => setIsMenuOpen(false)}
-                      className="px-3 py-2 rounded text-sm font-medium text-[#d4a033] hover:bg-white/5 transition-colors"
+                      className="px-3 py-2 rounded text-sm font-medium text-[#5b8def] hover:bg-white/5 transition-colors"
                     >
                       Admin Panel
                     </Link>
