@@ -59,8 +59,8 @@ export default function RootLayout({
       <body className="antialiased min-h-screen flex flex-col overflow-x-hidden">
         <ToastProvider />
         <Header />
-        <main className="flex-1">
-          <Container className="py-10">{children}</Container>
+        <main className="flex-1 py-10 px-6">
+          {children}
         </main>
         <Footer />
       </body>

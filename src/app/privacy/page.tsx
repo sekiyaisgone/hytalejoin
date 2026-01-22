@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-3xl mx-auto w-full">
       <h1 className="text-4xl font-bold text-[#e8f0f8] mb-8">Privacy Policy</h1>
 
       <Card hover={false} padding="lg">
