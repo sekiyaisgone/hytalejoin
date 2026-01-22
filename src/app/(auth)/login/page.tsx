@@ -2,13 +2,12 @@
 
 import { Suspense, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import toast from 'react-hot-toast';
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/dashboard';
   const { user, isLoading: authLoading, signIn, signInWithGoogle, signInWithDiscord } = useAuth();
@@ -19,12 +18,13 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Redirect authenticated users away from login page
-  // This is a client-side fallback in case middleware didn't catch it
+  // Use hard navigation (window.location) to ensure cookies are properly sent
+  // This avoids the middleware redirect loop that can occur with soft navigation
   useEffect(() => {
     if (!authLoading && user) {
-      router.replace(redirect);
+      window.location.href = redirect;
     }
-  }, [user, authLoading, router, redirect]);
+  }, [user, authLoading, redirect]);
 
   // Show loading state while checking auth
   if (authLoading) {
@@ -54,7 +54,8 @@ function LoginForm() {
         toast.error(error.message);
       } else {
         toast.success('Welcome back!');
-        router.push(redirect);
+        // Use hard navigation to ensure cookies are properly sent to middleware
+        window.location.href = redirect;
       }
     } catch {
       toast.error('An unexpected error occurred');

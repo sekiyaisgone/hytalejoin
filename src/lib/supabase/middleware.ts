@@ -45,9 +45,13 @@ export async function updateSession(request: NextRequest) {
     const redirectResponse = NextResponse.redirect(url);
     // Copy all cookies from supabaseResponse to preserve session refresh
     supabaseResponse.cookies.getAll().forEach((cookie) => {
-      redirectResponse.cookies.set(cookie.name, cookie.value, {
-        ...cookie,
-        // Ensure secure settings for production
+      // Destructure to avoid spreading name/value into options
+      const { name, value, ...cookieOptions } = cookie;
+      redirectResponse.cookies.set(name, value, {
+        path: cookieOptions.path || '/',
+        maxAge: cookieOptions.maxAge,
+        domain: cookieOptions.domain,
+        expires: cookieOptions.expires,
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
