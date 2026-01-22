@@ -19,19 +19,30 @@ export default async function HomePage() {
   const isMockData = servers.length === 0;
 
   return (
-    <main className="min-h-screen">
+    <main style={{ minHeight: '100vh' }}>
       {/* Hero */}
-      <section className="pt-10 pb-6">
-        <div className="max-w-7xl mx-auto px-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
+      <section style={{ paddingTop: '40px', paddingBottom: '24px' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px' }}>
+          <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: 'white', marginBottom: '8px' }}>
             Hytale Server List
           </h1>
-          <p className="text-sm text-[#7d8590] max-w-lg mb-3">
+          <p style={{ fontSize: '0.875rem', color: '#7d8590', maxWidth: '32rem', marginBottom: '12px' }}>
             Find servers to play on. Browse by game mode, vote for your favorites.
           </p>
           {isMockData && (
-            <span className="inline-flex items-center gap-1.5 px-2 py-1 bg-amber-500/10 border border-amber-500/20 rounded text-amber-400 text-[11px] font-medium">
-              <span className="w-1 h-1 rounded-full bg-amber-400" />
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '4px 8px',
+              background: 'rgba(245, 158, 11, 0.1)',
+              border: '1px solid rgba(245, 158, 11, 0.2)',
+              borderRadius: '4px',
+              color: '#fbbf24',
+              fontSize: '11px',
+              fontWeight: 500
+            }}>
+              <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#fbbf24' }} />
               Demo servers — DB not connected
             </span>
           )}
@@ -39,14 +50,22 @@ export default async function HomePage() {
       </section>
 
       {/* Content */}
-      <section className="py-6">
-        <div className="max-w-7xl mx-auto px-6">
+      <section style={{ padding: '24px 0' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px' }}>
           {/* Featured */}
           {featuredServers.length > 0 && (
-            <div className="mb-10">
-              <div className="flex items-center gap-2 mb-4">
-                <h2 className="text-sm font-semibold text-white">Featured</h2>
-                <span className="px-1.5 py-0.5 text-[9px] font-semibold bg-[#d4a033]/20 text-[#d4a033] rounded uppercase">
+            <div style={{ marginBottom: '40px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                <h2 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'white' }}>Featured</h2>
+                <span style={{
+                  padding: '2px 6px',
+                  fontSize: '9px',
+                  fontWeight: 600,
+                  background: 'rgba(212, 160, 51, 0.2)',
+                  color: '#d4a033',
+                  borderRadius: '4px',
+                  textTransform: 'uppercase'
+                }}>
                   Promoted
                 </span>
               </div>
@@ -55,15 +74,19 @@ export default async function HomePage() {
           )}
 
           {/* All Servers Header */}
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-white">All Servers</h2>
-            <span className="text-xs text-[#7d8590]">{displayCount} servers</span>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <h2 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'white' }}>All Servers</h2>
+            <span style={{ fontSize: '0.75rem', color: '#7d8590' }}>{displayCount} servers</span>
           </div>
 
           {/* Server List with Controls */}
           <Suspense
             fallback={
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '20px'
+              }}>
                 {Array.from({ length: 6 }).map((_, i) => (
                   <ServerCardSkeleton key={i} />
                 ))}

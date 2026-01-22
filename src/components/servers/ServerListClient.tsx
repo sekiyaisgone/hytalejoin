@@ -214,7 +214,7 @@ export default function ServerListClient({
   };
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <ServerFilters
         onSearch={handleSearch}
         onFilterChange={handleFilterChange}
@@ -224,14 +224,14 @@ export default function ServerListClient({
       />
 
       {/* Results count */}
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-[#8fa3b8]">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <p style={{ fontSize: '0.875rem', color: '#8fa3b8' }}>
           Showing{' '}
-          <span className="text-[#e8f0f8] font-medium">
+          <span style={{ color: '#e8f0f8', fontWeight: 500 }}>
             {Math.min((page - 1) * pageSize + 1, totalCount)}-
             {Math.min(page * pageSize, totalCount)}
           </span>{' '}
-          of <span className="text-[#e8f0f8] font-medium">{totalCount}</span>{' '}
+          of <span style={{ color: '#e8f0f8', fontWeight: 500 }}>{totalCount}</span>{' '}
           servers
         </p>
       </div>
@@ -240,7 +240,7 @@ export default function ServerListClient({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 pt-8">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', paddingTop: '32px' }}>
           <Button
             variant="secondary"
             size="sm"
@@ -251,7 +251,7 @@ export default function ServerListClient({
             Previous
           </Button>
 
-          <div className="flex items-center gap-1">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
               let pageNum: number;
               if (totalPages <= 5) {
@@ -269,11 +269,17 @@ export default function ServerListClient({
                   key={pageNum}
                   onClick={() => setPage(pageNum)}
                   disabled={isLoading}
-                  className={`w-10 h-10 rounded-lg font-medium transition-colors ${
-                    page === pageNum
-                      ? 'bg-[#d29f32] text-white'
-                      : 'bg-[#1a2f4a] text-[#8fa3b8] hover:text-[#e8f0f8] hover:bg-[#2a4060]'
-                  }`}
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '8px',
+                    fontWeight: 500,
+                    transition: 'all 0.2s',
+                    border: 'none',
+                    cursor: 'pointer',
+                    background: page === pageNum ? '#d29f32' : '#1a2f4a',
+                    color: page === pageNum ? 'white' : '#8fa3b8',
+                  }}
                 >
                   {pageNum}
                 </button>

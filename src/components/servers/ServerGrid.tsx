@@ -12,6 +12,13 @@ interface ServerGridProps {
   skeletonCount?: number;
 }
 
+const gridStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(3, 1fr)',
+  gap: '16px',
+  width: '100%',
+};
+
 export default function ServerGrid({
   servers,
   isLoading = false,
@@ -20,7 +27,7 @@ export default function ServerGrid({
 }: ServerGridProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div style={gridStyle}>
         {Array.from({ length: skeletonCount }).map((_, i) => (
           <ServerCardSkeleton key={i} />
         ))}
@@ -33,7 +40,7 @@ export default function ServerGrid({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div style={gridStyle}>
       {servers.map((server) => (
         <ServerCard key={server.id} server={server} />
       ))}

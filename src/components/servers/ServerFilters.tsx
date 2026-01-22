@@ -94,11 +94,11 @@ export default function ServerFilters({
   const hasActiveFilters = activeFilterCount > 0;
 
   return (
-    <div className="space-y-5">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Search and Sort Row */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div style={{ display: 'flex', flexDirection: 'row', gap: '12px', width: '100%' }}>
         {/* Search */}
-        <form onSubmit={handleSearch} className="flex-1">
+        <form onSubmit={handleSearch} style={{ flex: 1 }}>
           <div className="relative group">
             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7a8fa6] transition-colors group-focus-within:text-[#d4a033]">
               <Search className="w-5 h-5" />
@@ -134,7 +134,7 @@ export default function ServerFilters({
         </form>
 
         {/* Sort and Filter buttons */}
-        <div className="flex gap-3">
+        <div style={{ display: 'flex', gap: '12px' }}
           <div className="relative">
             <select
               value={currentSort}
@@ -275,7 +275,7 @@ export default function ServerFilters({
       )}
 
       {/* Quick filter pills (always visible) */}
-      <div className="flex flex-wrap gap-1.5">
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
         {gameModes.slice(0, 6).map((mode) => (
           <button
             key={mode.value}
