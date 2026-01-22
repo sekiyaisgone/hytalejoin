@@ -100,16 +100,6 @@ export default function ServerFilters({
         {/* Search */}
         <form onSubmit={handleSearch} style={{ flex: 1 }}>
           <div style={{ position: 'relative' }}>
-            <div style={{
-              position: 'absolute',
-              left: '16px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: '#7a8fa6',
-              pointerEvents: 'none'
-            }}>
-              <Search style={{ width: '20px', height: '20px' }} />
-            </div>
             <input
               type="text"
               placeholder="Search servers..."
@@ -117,7 +107,7 @@ export default function ServerFilters({
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
                 width: '100%',
-                paddingLeft: '48px',
+                paddingLeft: '16px',
                 paddingRight: '48px',
                 paddingTop: '14px',
                 paddingBottom: '14px',
@@ -129,7 +119,7 @@ export default function ServerFilters({
                 outline: 'none'
               }}
             />
-            {searchQuery && (
+            {searchQuery ? (
               <button
                 type="button"
                 onClick={() => {
@@ -150,6 +140,17 @@ export default function ServerFilters({
               >
                 <X style={{ width: '16px', height: '16px' }} />
               </button>
+            ) : (
+              <div style={{
+                position: 'absolute',
+                right: '16px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: '#4a5d73',
+                pointerEvents: 'none'
+              }}>
+                <Search style={{ width: '18px', height: '18px' }} />
+              </div>
             )}
           </div>
         </form>
