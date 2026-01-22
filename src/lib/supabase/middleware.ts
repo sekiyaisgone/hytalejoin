@@ -26,49 +26,74 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
-  // Refreshing the auth token
+  // IMPORTANT: Do NOT run auth checks on static assets or API routes
+  // This prevents unnecessary auth calls and potential issues
+  const pathname = request.nextUrl.pathname;
+
+  // Skip auth for API routes (they handle their own auth)
+  if (pathname.startsWith('/api/')) {
+    return supabaseResponse;
+  }
+
+  // Refreshing the auth token - this is crucial for session persistence
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protected routes
+  // Helper function to create redirect with preserved cookies
+  const createRedirectResponse = (url: URL) => {
+    const redirectResponse = NextResponse.redirect(url);
+    // Copy all cookies from supabaseResponse to preserve session refresh
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value, {
+        ...cookie,
+        // Ensure secure settings for production
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+      });
+    });
+    return redirectResponse;
+  };
+
+  // Protected routes - require authentication
   const protectedPaths = ['/dashboard', '/admin', '/servers/new', '/servers/edit'];
   const isProtectedPath = protectedPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
+    pathname.startsWith(path)
   );
 
   if (isProtectedPath && !user) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
-    url.searchParams.set('redirect', request.nextUrl.pathname);
-    return NextResponse.redirect(url);
+    url.searchParams.set('redirect', pathname);
+    return createRedirectResponse(url);
   }
 
-  // Admin routes
-  if (request.nextUrl.pathname.startsWith('/admin')) {
+  // Admin routes - require admin role
+  if (pathname.startsWith('/admin') && user) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('is_admin')
-      .eq('id', user?.id)
+      .eq('id', user.id)
       .single();
 
     if (!profile?.is_admin) {
       const url = request.nextUrl.clone();
       url.pathname = '/';
-      return NextResponse.redirect(url);
+      return createRedirectResponse(url);
     }
   }
 
-  // Redirect authenticated users away from auth pages
+  // Auth pages - redirect authenticated users away
   const authPaths = ['/login', '/signup', '/forgot-password'];
-  const isAuthPath = authPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
-  );
+  const isAuthPath = authPaths.some((path) => pathname === path);
 
   if (isAuthPath && user) {
     const url = request.nextUrl.clone();
-    url.pathname = '/dashboard';
-    return NextResponse.redirect(url);
+    const redirectParam = request.nextUrl.searchParams.get('redirect');
+    url.pathname = redirectParam || '/dashboard';
+    url.search = ''; // Clear search params
+    return createRedirectResponse(url);
   }
 
   return supabaseResponse;

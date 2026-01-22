@@ -1,4 +1,3 @@
-import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import ServerForm from '@/components/servers/ServerForm';
 
@@ -11,8 +10,14 @@ export default async function NewServerPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  // Middleware handles redirect for unauthenticated users
+  // This is a safety fallback that shows a message instead of crashing
   if (!user) {
-    redirect('/login?redirect=/servers/new');
+    return (
+      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '32px 24px', textAlign: 'center' }}>
+        <p style={{ color: '#6b7c8f' }}>Loading authentication...</p>
+      </div>
+    );
   }
 
   return (
