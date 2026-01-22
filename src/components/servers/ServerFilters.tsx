@@ -134,7 +134,7 @@ export default function ServerFilters({
         </form>
 
         {/* Sort and Filter buttons */}
-        <div style={{ display: 'flex', gap: '12px' }}
+        <div style={{ display: 'flex', gap: '12px' }}>
           <div className="relative">
             <select
               value={currentSort}
