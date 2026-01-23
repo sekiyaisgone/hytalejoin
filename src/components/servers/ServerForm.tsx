@@ -187,10 +187,52 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
     setBannerPreview(null);
   };
 
+  // Ensure profile exists before submitting (fallback if trigger didn't create it)
+  const ensureProfileExists = async () => {
+    // Check if profile exists
+    const { data: profile, error: fetchError } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (fetchError) {
+      console.error('Error checking profile:', fetchError);
+      // Continue anyway, insert might still work if profile exists
+      return;
+    }
+
+    // If no profile, create one
+    if (!profile) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert({
+            id: userId,
+            email: user.email,
+            username: user.user_metadata?.username || user.email?.split('@')[0] || 'User',
+            is_admin: false,
+          });
+
+        if (insertError) {
+          console.error('Error creating profile:', insertError);
+          // If it's a duplicate key error, profile already exists - that's fine
+          if (!insertError.message?.includes('duplicate')) {
+            throw new Error(`Profile setup failed: ${insertError.message}`);
+          }
+        }
+      }
+    }
+  };
+
   const onSubmit = async (data: ServerFormData) => {
     setIsSubmitting(true);
 
     try {
+      // Ensure profile exists before trying to insert server (FK constraint)
+      await ensureProfileExists();
+
       let bannerUrl = server?.banner_image_url || null;
 
       // Upload banner if new file selected

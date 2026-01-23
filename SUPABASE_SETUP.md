@@ -215,9 +215,28 @@ Then you can access `/admin` to approve servers.
 
 ## Troubleshooting
 
+### FK violation "servers_owner_id_fkey"
+This means the profile row doesn't exist for the current user. Run this backfill:
+```sql
+-- Backfill profiles for existing users
+INSERT INTO public.profiles (id, email, username, is_admin, created_at, updated_at)
+SELECT
+  id,
+  email,
+  COALESCE(raw_user_meta_data->>'username', split_part(email, '@', 1)),
+  FALSE,
+  COALESCE(created_at, NOW()),
+  NOW()
+FROM auth.users
+WHERE id NOT IN (SELECT id FROM public.profiles)
+ON CONFLICT (id) DO NOTHING;
+```
+This is now included in the migration script automatically.
+
 ### "406 Not Acceptable" on profiles query
 - This means the profile row doesn't exist for the user
-- The auto-create trigger should handle this
+- The auto-create trigger should handle this for new users
+- For existing users, run the backfill SQL above
 - Verify the trigger exists: `SELECT * FROM pg_trigger WHERE tgname = 'on_auth_user_created';`
 
 ### "Could not find column" errors

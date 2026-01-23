@@ -71,6 +71,22 @@ CREATE TRIGGER on_auth_user_created
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 -- =============================================================================
+-- 2b. BACKFILL PROFILES FOR EXISTING USERS
+-- =============================================================================
+-- This ensures users who existed before this migration get a profile row
+INSERT INTO public.profiles (id, email, username, is_admin, created_at, updated_at)
+SELECT
+  id,
+  email,
+  COALESCE(raw_user_meta_data->>'username', split_part(email, '@', 1)),
+  FALSE,
+  COALESCE(created_at, NOW()),
+  NOW()
+FROM auth.users
+WHERE id NOT IN (SELECT id FROM public.profiles)
+ON CONFLICT (id) DO NOTHING;
+
+-- =============================================================================
 -- 3. SERVERS TABLE
 -- =============================================================================
 
