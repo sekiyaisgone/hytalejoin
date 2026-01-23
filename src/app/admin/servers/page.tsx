@@ -1,10 +1,8 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import Card from '@/components/ui/Card';
-import Badge from '@/components/ui/Badge';
-import AdminServerActions from '../AdminServerActions';
-import { ArrowLeft, Server, Star } from 'lucide-react';
+import { ArrowLeft, Server } from 'lucide-react';
+import AdminServersClient from './AdminServersClient';
 
 export const metadata = {
   title: 'All Servers - Admin',
@@ -34,58 +32,56 @@ export default async function AdminServersPage() {
     .select('*, profiles!servers_owner_id_fkey(username, email)')
     .order('created_at', { ascending: false });
 
+  // Get counts by status
+  const statusCounts = {
+    all: servers?.length || 0,
+    approved: servers?.filter(s => s.status === 'approved').length || 0,
+    pending: servers?.filter(s => s.status === 'pending').length || 0,
+    rejected: servers?.filter(s => s.status === 'rejected').length || 0,
+    featured: servers?.filter(s => s.is_featured).length || 0,
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 24px' }}>
       <Link
         href="/admin"
-        className="inline-flex items-center gap-2 text-sm text-[#8fa3b8] hover:text-[#e8f0f8] transition-colors mb-6"
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px',
+          fontSize: '0.875rem',
+          color: '#6b7c8f',
+          textDecoration: 'none',
+          marginBottom: '24px',
+        }}
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft style={{ width: '16px', height: '16px' }} />
         Back to admin
       </Link>
 
-      <div className="flex items-center gap-3 mb-8">
-        <Server className="w-8 h-8 text-[#d29f32]" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+        <div style={{
+          width: '48px',
+          height: '48px',
+          borderRadius: '12px',
+          background: 'rgba(91, 141, 239, 0.15)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <Server style={{ width: '24px', height: '24px', color: '#5b8def' }} />
+        </div>
         <div>
-          <h1 className="text-3xl font-bold text-[#e8f0f8]">All Servers</h1>
-          <p className="text-[#8fa3b8]">{servers?.length || 0} total servers</p>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#f1f5f9', marginBottom: '4px' }}>
+            All Servers
+          </h1>
+          <p style={{ fontSize: '0.875rem', color: '#6b7c8f' }}>
+            {servers?.length || 0} total servers
+          </p>
         </div>
       </div>
 
-      <div className="space-y-4">
-        {servers?.map((server) => (
-          <Card key={server.id} hover={false} padding="md">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <h2 className="text-lg font-semibold text-[#e8f0f8] truncate">
-                    {server.name}
-                  </h2>
-                  <Badge
-                    variant={
-                      server.status === 'approved'
-                        ? 'success'
-                        : server.status === 'pending'
-                        ? 'warning'
-                        : 'error'
-                    }
-                  >
-                    {server.status}
-                  </Badge>
-                  {server.is_featured && (
-                    <Star className="w-4 h-4 text-[#d29f32] fill-[#d29f32]" />
-                  )}
-                </div>
-                <p className="text-sm text-[#8fa3b8]">
-                  {server.ip_address}:{server.port} • by{' '}
-                  {server.profiles?.username || server.profiles?.email}
-                </p>
-              </div>
-              <AdminServerActions server={server} />
-            </div>
-          </Card>
-        ))}
-      </div>
+      <AdminServersClient servers={servers || []} statusCounts={statusCounts} />
     </div>
   );
 }

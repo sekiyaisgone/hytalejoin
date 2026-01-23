@@ -1,10 +1,8 @@
 import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
-import Card from '@/components/ui/Card';
-import Badge from '@/components/ui/Badge';
-import AdminServerActions from '../AdminServerActions';
 import Link from 'next/link';
-import { ArrowLeft, Clock } from 'lucide-react';
+import { createClient } from '@/lib/supabase/server';
+import { ArrowLeft, Clock, AlertCircle } from 'lucide-react';
+import AdminServerActions from '../AdminServerActions';
 
 export const metadata = {
   title: 'Pending Servers - Admin',
@@ -36,62 +34,192 @@ export default async function PendingServersPage() {
     .order('created_at', { ascending: true });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '32px 24px' }}>
       <Link
         href="/admin"
-        className="inline-flex items-center gap-2 text-sm text-[#8fa3b8] hover:text-[#e8f0f8] transition-colors mb-6"
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px',
+          fontSize: '0.875rem',
+          color: '#6b7c8f',
+          textDecoration: 'none',
+          marginBottom: '24px',
+        }}
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft style={{ width: '16px', height: '16px' }} />
         Back to admin
       </Link>
 
-      <div className="flex items-center gap-3 mb-8">
-        <Clock className="w-8 h-8 text-yellow-400" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+        <div style={{
+          width: '48px',
+          height: '48px',
+          borderRadius: '12px',
+          background: 'rgba(234, 179, 8, 0.15)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <Clock style={{ width: '24px', height: '24px', color: '#eab308' }} />
+        </div>
         <div>
-          <h1 className="text-3xl font-bold text-[#e8f0f8]">Pending Servers</h1>
-          <p className="text-[#8fa3b8]">{servers?.length || 0} servers waiting for review</p>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: '#f1f5f9', marginBottom: '4px' }}>
+            Pending Review
+          </h1>
+          <p style={{ fontSize: '0.875rem', color: '#6b7c8f' }}>
+            {servers?.length || 0} server{servers?.length !== 1 ? 's' : ''} waiting for approval
+          </p>
         </div>
       </div>
 
       {servers && servers.length > 0 ? (
-        <div className="space-y-4">
-          {servers.map((server) => (
-            <Card key={server.id} hover={false} padding="lg">
-              <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h2 className="text-xl font-semibold text-[#e8f0f8]">{server.name}</h2>
-                    <Badge variant="warning">Pending</Badge>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {servers.map((server, index) => (
+            <div
+              key={server.id}
+              style={{
+                background: '#12161c',
+                border: '1px solid rgba(255,255,255,0.06)',
+                borderRadius: '14px',
+                overflow: 'hidden',
+              }}
+            >
+              {/* Header */}
+              <div style={{
+                padding: '16px 20px',
+                borderBottom: '1px solid rgba(255,255,255,0.06)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '12px',
+              }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
+                    <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#f1f5f9' }}>
+                      {server.name}
+                    </h2>
+                    <span style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '4px 10px',
+                      borderRadius: '8px',
+                      background: 'rgba(234, 179, 8, 0.1)',
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      color: '#fde047',
+                    }}>
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#eab308' }} />
+                      #{index + 1} in queue
+                    </span>
                   </div>
-                  <p className="text-[#8fa3b8] mb-3">
+                  <p style={{ fontSize: '0.8125rem', color: '#6b7c8f', fontFamily: 'monospace' }}>
                     {server.ip_address}:{server.port}
                   </p>
-                  <p className="text-[#8fa3b8] mb-4 line-clamp-3">{server.description}</p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {server.game_modes?.map((mode: string) => (
-                      <Badge key={mode} variant="default">
-                        {mode}
-                      </Badge>
+                </div>
+                <AdminServerActions server={server} showViewButton={false} />
+              </div>
+
+              {/* Content */}
+              <div style={{ padding: '20px' }}>
+                {/* Description */}
+                <p style={{
+                  fontSize: '0.9375rem',
+                  color: '#c8d4e0',
+                  lineHeight: 1.6,
+                  marginBottom: '16px',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                }}>
+                  {server.description}
+                </p>
+
+                {/* Game Modes */}
+                {server.game_modes && server.game_modes.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '16px' }}>
+                    {server.game_modes.map((mode: string) => (
+                      <span
+                        key={mode}
+                        style={{
+                          padding: '4px 10px',
+                          borderRadius: '6px',
+                          background: 'rgba(91, 141, 239, 0.1)',
+                          fontSize: '0.75rem',
+                          fontWeight: 500,
+                          color: '#7bb0ff',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {mode.replace('-', ' ')}
+                      </span>
                     ))}
                   </div>
-                  <p className="text-sm text-[#8fa3b8]">
-                    Submitted by <span className="text-[#e8f0f8]">{server.profiles?.username || server.profiles?.email}</span>{' '}
-                    on {new Date(server.created_at).toLocaleDateString()}
-                  </p>
+                )}
+
+                {/* Meta Info */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '24px',
+                  paddingTop: '16px',
+                  borderTop: '1px solid rgba(255,255,255,0.06)',
+                  fontSize: '0.8125rem',
+                  color: '#6b7c8f',
+                }}>
+                  <span>
+                    Submitted by{' '}
+                    <span style={{ color: '#c8d4e0', fontWeight: 500 }}>
+                      {server.profiles?.username || server.profiles?.email || 'Unknown'}
+                    </span>
+                  </span>
+                  <span>
+                    {new Date(server.created_at).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </span>
+                  <span>
+                    Max {server.max_players} players
+                  </span>
                 </div>
-                <AdminServerActions server={server} />
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       ) : (
-        <Card hover={false} padding="lg">
-          <div className="text-center py-8">
-            <Clock className="w-12 h-12 text-[#8fa3b8] mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-[#e8f0f8] mb-2">No pending servers</h3>
-            <p className="text-[#8fa3b8]">All server submissions have been reviewed.</p>
+        <div style={{
+          background: '#12161c',
+          border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: '14px',
+          padding: '64px 24px',
+          textAlign: 'center',
+        }}>
+          <div style={{
+            width: '64px',
+            height: '64px',
+            borderRadius: '16px',
+            background: 'rgba(34, 197, 94, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 20px',
+          }}>
+            <AlertCircle style={{ width: '28px', height: '28px', color: '#22c55e' }} />
           </div>
-        </Card>
+          <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#f1f5f9', marginBottom: '8px' }}>
+            All caught up!
+          </h3>
+          <p style={{ fontSize: '0.9375rem', color: '#6b7c8f' }}>
+            No servers are waiting for review.
+          </p>
+        </div>
       )}
     </div>
   );
