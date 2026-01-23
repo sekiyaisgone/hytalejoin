@@ -18,12 +18,12 @@ export default async function AdminServersPage() {
     redirect('/login?redirect=/admin/servers');
   }
 
-  // Check if user is admin
+  // Check if user is admin (use maybeSingle to avoid 406 if profile missing)
   const { data: profile } = await supabase
     .from('profiles')
     .select('is_admin')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
 
   if (!profile?.is_admin) {
     redirect('/');

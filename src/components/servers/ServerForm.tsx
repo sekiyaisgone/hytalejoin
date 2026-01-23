@@ -198,12 +198,18 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
         const fileExt = bannerFile.name.split('.').pop();
         const fileName = `${userId}/${Date.now()}.${fileExt}`;
 
-        const { error: uploadError } = await supabase.storage
+        const { error: uploadError, data: uploadData } = await supabase.storage
           .from('server-banners')
-          .upload(fileName, bannerFile);
+          .upload(fileName, bannerFile, {
+            cacheControl: '3600',
+            upsert: true, // Allow overwriting if file exists
+          });
 
         if (uploadError) {
-          throw new Error('Failed to upload banner image');
+          console.error('Upload error:', uploadError);
+          // Show actual error message for debugging
+          const errorMsg = uploadError.message || 'Unknown upload error';
+          throw new Error(`Failed to upload banner: ${errorMsg}`);
         }
 
         const { data: urlData } = supabase.storage
@@ -234,7 +240,6 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
         website_url: data.website_url || null,
         banner_image_url: bannerUrl,
         status: isEditing ? server.status : 'pending',
-        updated_at: new Date().toISOString(),
       };
 
       if (isEditing) {
@@ -243,11 +248,21 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
           .update(serverData)
           .eq('id', server.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Update error:', error);
+          // Show actual Supabase error message
+          const errorMsg = error.message || error.code || 'Unknown error';
+          throw new Error(`Failed to update server: ${errorMsg}`);
+        }
         toast.success('Server updated successfully');
       } else {
         const { error } = await supabase.from('servers').insert(serverData);
-        if (error) throw error;
+        if (error) {
+          console.error('Insert error:', error);
+          // Show actual Supabase error message
+          const errorMsg = error.message || error.code || 'Unknown error';
+          throw new Error(`Failed to submit server: ${errorMsg}`);
+        }
         clearDraft();
         toast.success('Server submitted for review!');
       }
@@ -256,7 +271,9 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
       router.refresh();
     } catch (error) {
       console.error('Error saving server:', error);
-      toast.error(isEditing ? 'Failed to update server' : 'Failed to submit server');
+      // Show the actual error message to help debugging
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

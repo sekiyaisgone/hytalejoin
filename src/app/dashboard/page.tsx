@@ -216,11 +216,12 @@ export default async function DashboardPage() {
     pageSize: 100,
   });
 
+  // Use maybeSingle() to avoid 406 error if profile doesn't exist yet
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
 
   const totalViews = servers.reduce((acc, s) => acc + s.views, 0);
   const totalVotes = servers.reduce((acc, s) => acc + s.votes, 0);

@@ -27,11 +27,17 @@ export function useAuth(): UseAuthReturn {
   const supabase = createClient();
 
   const fetchProfile = useCallback(async (userId: string) => {
-    const { data } = await supabase
+    // Use maybeSingle() to avoid 406 error when profile doesn't exist yet
+    // Profile should be auto-created by trigger, but this handles race conditions
+    const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
-      .single();
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching profile:', error);
+    }
     setProfile(data);
   }, [supabase]);
 

@@ -14,13 +14,13 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if already favorited
+    // Check if already favorited (use maybeSingle to avoid error when no favorite exists)
     const { data: existingFavorite } = await supabase
       .from('favorites')
       .select('id')
       .eq('user_id', user.id)
       .eq('server_id', id)
-      .single();
+      .maybeSingle();
 
     if (existingFavorite) {
       // Remove favorite

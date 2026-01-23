@@ -14,13 +14,13 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if already voted
+    // Check if already voted (use maybeSingle to avoid error when no vote exists)
     const { data: existingVote } = await supabase
       .from('votes')
       .select('id')
       .eq('user_id', user.id)
       .eq('server_id', id)
-      .single();
+      .maybeSingle();
 
     if (existingVote) {
       // Remove vote

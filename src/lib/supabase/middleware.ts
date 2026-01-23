@@ -75,11 +75,12 @@ export async function updateSession(request: NextRequest) {
 
   // Admin routes - require admin role
   if (pathname.startsWith('/admin') && user) {
+    // Use maybeSingle() to avoid 406 if profile doesn't exist yet
     const { data: profile } = await supabase
       .from('profiles')
       .select('is_admin')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
     if (!profile?.is_admin) {
       const url = request.nextUrl.clone();

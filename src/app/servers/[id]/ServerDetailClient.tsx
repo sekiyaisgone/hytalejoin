@@ -77,19 +77,20 @@ export default function ServerDetailClient({ server }: ServerDetailClientProps) 
   const checkUserInteractions = async () => {
     if (!user) return;
 
+    // Use maybeSingle() to avoid errors when no vote/favorite exists
     const [voteResult, favoriteResult] = await Promise.all([
       supabase
         .from('votes')
         .select('id')
         .eq('user_id', user.id)
         .eq('server_id', server.id)
-        .single(),
+        .maybeSingle(),
       supabase
         .from('favorites')
         .select('id')
         .eq('user_id', user.id)
         .eq('server_id', server.id)
-        .single(),
+        .maybeSingle(),
     ]);
 
     setHasVoted(!!voteResult.data);

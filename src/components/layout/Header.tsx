@@ -24,11 +24,12 @@ export default function Header() {
       setUser(user);
 
       if (user) {
+        // Use maybeSingle() to avoid 406 error if profile doesn't exist yet
         const { data: profile } = await supabase
           .from('profiles')
           .select('is_admin')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
         setIsAdmin(profile?.is_admin || false);
       }
     };
