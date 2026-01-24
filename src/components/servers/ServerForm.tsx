@@ -270,7 +270,7 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
         owner_id: userId,
         name: data.name,
         ip_address: data.ip_address,
-        port: data.port || null,
+        port: data.port ?? 25565,
         description: data.description,
         short_description: data.short_description || null,
         game_modes: selectedGameModes,

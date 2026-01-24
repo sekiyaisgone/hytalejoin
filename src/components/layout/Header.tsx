@@ -2,56 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, X, User, LogOut, Settings, Server, Shield, Plus, Sparkles } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import Button from '@/components/ui/Button';
-
-// Hytale-inspired shield logo
-const HytaleLogo = () => (
-  <svg
-    width="32"
-    height="32"
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <defs>
-      <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#5b8def" />
-        <stop offset="100%" stopColor="#4a7bd4" />
-      </linearGradient>
-      <linearGradient id="innerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#7ba3ff" />
-        <stop offset="100%" stopColor="#5b8def" />
-      </linearGradient>
-    </defs>
-    {/* Shield shape */}
-    <path
-      d="M16 2L4 7v9c0 7.5 5.1 14.5 12 16 6.9-1.5 12-8.5 12-16V7L16 2z"
-      fill="url(#shieldGradient)"
-    />
-    {/* Inner shield border */}
-    <path
-      d="M16 4L6 8.2v7.3c0 6.3 4.3 12.2 10 13.5 5.7-1.3 10-7.2 10-13.5V8.2L16 4z"
-      fill="#0d1520"
-      fillOpacity="0.3"
-    />
-    {/* H letter */}
-    <text
-      x="16"
-      y="21"
-      textAnchor="middle"
-      fontSize="14"
-      fontWeight="bold"
-      fill="white"
-      fontFamily="system-ui, -apple-system, sans-serif"
-    >
-      H
-    </text>
-  </svg>
-);
 
 export default function Header() {
   const pathname = usePathname();
@@ -60,22 +16,27 @@ export default function Header() {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   const supabase = createClient();
 
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        setUser(user);
 
-      if (user) {
-        // Use maybeSingle() to avoid 406 error if profile doesn't exist yet
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('is_admin')
-          .eq('id', user.id)
-          .maybeSingle();
-        setIsAdmin(profile?.is_admin || false);
+        if (user) {
+          // Use maybeSingle() to avoid 406 error if profile doesn't exist yet
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('is_admin')
+            .eq('id', user.id)
+            .maybeSingle();
+          setIsAdmin(profile?.is_admin || false);
+        }
+      } finally {
+        setIsAuthLoading(false);
       }
     };
 
@@ -83,6 +44,9 @@ export default function Header() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null);
+      if (!session?.user) {
+        setIsAdmin(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -113,17 +77,23 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 h-16 bg-[#0a0e14]/90 backdrop-blur-md border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 h-full flex items-center">
         {/* Logo - Left */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
-          <HytaleLogo />
+          <Image
+            src="/logo.png"
+            alt="HytaleJoin"
+            width={32}
+            height={32}
+            className="object-contain"
+          />
           <span className="text-lg font-bold text-white">
             Hytale<span className="text-[#5b8def]">Join</span>
           </span>
         </Link>
 
-        {/* Nav - Center (desktop) */}
-        <nav className="hidden md:flex items-center gap-6">
+        {/* Nav - After logo */}
+        <nav className="hidden md:flex items-center gap-6 ml-10">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -139,9 +109,15 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Actions - Right */}
+        {/* Spacer to push actions to far right */}
+        <div className="flex-1" />
+
+        {/* Actions - Far Right */}
         <div className="hidden md:flex items-center gap-3 shrink-0">
-            {user ? (
+            {isAuthLoading ? (
+              // Loading placeholder to prevent layout shift
+              <div style={{ width: '150px', height: '38px' }} />
+            ) : user ? (
               <>
                 <Link
                   href="/servers/new"

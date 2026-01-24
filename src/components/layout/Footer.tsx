@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Twitter } from 'lucide-react';
 
 // TikTok icon component
@@ -12,44 +13,6 @@ const TikTokIcon = ({ style }: { style?: React.CSSProperties }) => (
   </svg>
 );
 
-// Hytale-inspired shield logo
-const HytaleLogo = () => (
-  <svg
-    width="40"
-    height="40"
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <defs>
-      <linearGradient id="footerShieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#d4a033" />
-        <stop offset="100%" stopColor="#a67c20" />
-      </linearGradient>
-    </defs>
-    <path
-      d="M16 2L4 7v9c0 7.5 5.1 14.5 12 16 6.9-1.5 12-8.5 12-16V7L16 2z"
-      fill="url(#footerShieldGradient)"
-    />
-    <path
-      d="M16 4L6 8.2v7.3c0 6.3 4.3 12.2 10 13.5 5.7-1.3 10-7.2 10-13.5V8.2L16 4z"
-      fill="#0d1520"
-      fillOpacity="0.3"
-    />
-    <text
-      x="16"
-      y="21"
-      textAnchor="middle"
-      fontSize="14"
-      fontWeight="bold"
-      fill="white"
-      fontFamily="system-ui, -apple-system, sans-serif"
-    >
-      H
-    </text>
-  </svg>
-);
-
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -60,7 +23,13 @@ export default function Footer() {
           {/* Brand */}
           <div style={{ gridColumn: 'span 2' }}>
             <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', textDecoration: 'none' }}>
-              <HytaleLogo />
+              <Image
+                src="/logo.png"
+                alt="HytaleJoin"
+                width={40}
+                height={40}
+                style={{ objectFit: 'contain' }}
+              />
               <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#f0f4f8' }}>
                 Hytale<span style={{ color: '#d4a033' }}>Join</span>
               </span>

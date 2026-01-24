@@ -21,9 +21,9 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'HytaleJoin' }],
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
   },
   openGraph: {
     title: 'HytaleJoin - Find the Best Hytale Servers',
