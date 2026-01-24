@@ -20,6 +20,11 @@ export const metadata: Metadata = {
     'Hytale mini-games',
   ],
   authors: [{ name: 'HytaleJoin' }],
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
   openGraph: {
     title: 'HytaleJoin - Find the Best Hytale Servers',
     description:

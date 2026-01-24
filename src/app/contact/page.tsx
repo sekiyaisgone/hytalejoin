@@ -1,5 +1,16 @@
 import { Metadata } from 'next';
-import { Mail, MessageSquare, Github, Twitter } from 'lucide-react';
+import { Mail, MessageSquare, Twitter } from 'lucide-react';
+
+// TikTok icon component
+const TikTokIcon = ({ style }: { style?: React.CSSProperties }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    style={{ width: '24px', height: '24px', ...style }}
+  >
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+  </svg>
+);
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -77,7 +88,7 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* GitHub */}
+        {/* TikTok */}
         <div style={{
           background: '#151f2e',
           border: '1px solid rgba(255,255,255,0.06)',
@@ -88,19 +99,19 @@ export default function ContactPage() {
             <div style={{
               padding: '12px',
               borderRadius: '10px',
-              background: 'rgba(143, 163, 184, 0.2)'
+              background: 'rgba(255, 0, 80, 0.2)'
             }}>
-              <Github style={{ width: '24px', height: '24px', color: '#8fa3b8' }} />
+              <TikTokIcon style={{ color: '#ff0050' }} />
             </div>
             <div>
               <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#e8f0f8', marginBottom: '8px' }}>
-                GitHub
+                TikTok
               </h3>
               <p style={{ color: '#8fa3b8', marginBottom: '8px' }}>
-                Report bugs or suggest features:
+                Follow us for gaming content and updates:
               </p>
-              <a href="https://github.com/hytalejoin" target="_blank" rel="noopener noreferrer" style={{ color: '#d29f32', textDecoration: 'none' }}>
-                github.com/hytalejoin
+              <a href="https://tiktok.com/@hytalejoin" target="_blank" rel="noopener noreferrer" style={{ color: '#d29f32', textDecoration: 'none' }}>
+                @hytalejoin
               </a>
             </div>
           </div>

@@ -25,7 +25,7 @@ export default async function HomePage() {
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
             <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f0f4f8', margin: 0 }}>
-              Hytale Server List
+              🎮 Hytale Server List
             </h1>
             {isMockData && (
               <span style={{
@@ -58,7 +58,7 @@ export default async function HomePage() {
           {featuredServers.length > 0 && (
             <div style={{ marginBottom: '32px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                <h2 style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#c8d4e0', margin: 0 }}>Featured</h2>
+                <h2 style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#c8d4e0', margin: 0 }}>⭐ Featured</h2>
                 <span style={{
                   padding: '2px 6px',
                   fontSize: '0.625rem',
@@ -78,7 +78,7 @@ export default async function HomePage() {
 
           {/* All Servers Header */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <h2 style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#c8d4e0', margin: 0 }}>All Servers</h2>
+            <h2 style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#c8d4e0', margin: 0 }}>🌍 All Servers</h2>
             <span style={{ fontSize: '0.75rem', color: '#6b7c8f' }}>{displayCount} servers</span>
           </div>
 

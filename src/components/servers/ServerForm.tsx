@@ -52,7 +52,7 @@ const regionLabels: Record<string, string> = {
 const serverSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters').max(64, 'Name is too long'),
   ip_address: z.string().min(1, 'IP address is required'),
-  port: z.number().min(1, 'Port is required').max(65535, 'Invalid port'),
+  port: z.number().min(1).max(65535, 'Invalid port').optional().nullable(),
   description: z.string().min(50, 'Description must be at least 50 characters').max(5000),
   short_description: z.string().max(200).optional(),
   game_modes: z.array(z.string()).min(1, 'Select at least one game mode'),
@@ -102,7 +102,7 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
     defaultValues: {
       name: server?.name || '',
       ip_address: server?.ip_address || '',
-      port: server?.port || 25565,
+      port: server?.port || null,
       description: server?.description || '',
       short_description: server?.short_description || '',
       game_modes: server?.game_modes || [],
@@ -270,7 +270,7 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
         owner_id: userId,
         name: data.name,
         ip_address: data.ip_address,
-        port: data.port,
+        port: data.port || null,
         description: data.description,
         short_description: data.short_description || null,
         game_modes: selectedGameModes,
@@ -502,11 +502,13 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
                 {...register('ip_address')}
               />
               <Input
-                label="Port"
+                label="Port (Optional)"
                 type="number"
                 placeholder="25565"
                 error={errors.port?.message}
-                {...register('port', { valueAsNumber: true })}
+                {...register('port', {
+                  setValueAs: (v) => v === '' || v === null || v === undefined ? null : parseInt(v, 10)
+                })}
               />
             </div>
 
@@ -850,7 +852,7 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
                   }}
                 >
                   <Save style={{ width: '14px', height: '14px' }} />
-                  Save Draft
+                  Save Draft 📝
                 </button>
               )}
             </div>
@@ -878,7 +880,7 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
                 }}
               >
                 <Eye style={{ width: '14px', height: '14px' }} />
-                Preview
+                Preview 👀
               </button>
               <button
                 type="submit"
@@ -901,7 +903,7 @@ export default function ServerForm({ userId, server }: ServerFormProps) {
                   boxShadow: isSubmitting ? 'none' : '0 2px 8px rgba(91, 141, 239, 0.25)',
                 }}
               >
-                {isSubmitting ? 'Submitting...' : isEditing ? 'Save Changes' : 'Submit Server'}
+                {isSubmitting ? 'Submitting...' : isEditing ? 'Save Changes 💾' : 'Submit Server 🎮'}
               </button>
             </div>
           </div>

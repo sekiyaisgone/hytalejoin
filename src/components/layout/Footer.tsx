@@ -1,5 +1,54 @@
 import Link from 'next/link';
-import { Server, Github, Twitter } from 'lucide-react';
+import { Twitter } from 'lucide-react';
+
+// TikTok icon component
+const TikTokIcon = ({ style }: { style?: React.CSSProperties }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    style={{ width: '20px', height: '20px', ...style }}
+  >
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+  </svg>
+);
+
+// Hytale-inspired shield logo
+const HytaleLogo = () => (
+  <svg
+    width="40"
+    height="40"
+    viewBox="0 0 32 32"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      <linearGradient id="footerShieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#d4a033" />
+        <stop offset="100%" stopColor="#a67c20" />
+      </linearGradient>
+    </defs>
+    <path
+      d="M16 2L4 7v9c0 7.5 5.1 14.5 12 16 6.9-1.5 12-8.5 12-16V7L16 2z"
+      fill="url(#footerShieldGradient)"
+    />
+    <path
+      d="M16 4L6 8.2v7.3c0 6.3 4.3 12.2 10 13.5 5.7-1.3 10-7.2 10-13.5V8.2L16 4z"
+      fill="#0d1520"
+      fillOpacity="0.3"
+    />
+    <text
+      x="16"
+      y="21"
+      textAnchor="middle"
+      fontSize="14"
+      fontWeight="bold"
+      fill="white"
+      fontFamily="system-ui, -apple-system, sans-serif"
+    >
+      H
+    </text>
+  </svg>
+);
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -11,18 +60,7 @@ export default function Footer() {
           {/* Brand */}
           <div style={{ gridColumn: 'span 2' }}>
             <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', textDecoration: 'none' }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '12px',
-                background: 'linear-gradient(135deg, #d4a033, #a67c20)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 2px 8px rgba(212,160,51,0.3)'
-              }}>
-                <Server style={{ width: '20px', height: '20px', color: 'white' }} />
-              </div>
+              <HytaleLogo />
               <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#f0f4f8' }}>
                 Hytale<span style={{ color: '#d4a033' }}>Join</span>
               </span>
@@ -51,7 +89,7 @@ export default function Footer() {
                 <Twitter style={{ width: '20px', height: '20px' }} />
               </a>
               <a
-                href="https://github.com"
+                href="https://tiktok.com/@hytalejoin"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -64,9 +102,9 @@ export default function Footer() {
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}
-                aria-label="GitHub"
+                aria-label="TikTok"
               >
-                <Github style={{ width: '20px', height: '20px' }} />
+                <TikTokIcon />
               </a>
             </div>
           </div>

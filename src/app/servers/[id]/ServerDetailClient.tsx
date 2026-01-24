@@ -64,8 +64,10 @@ export default function ServerDetailClient({ server }: ServerDetailClientProps) 
   const [copied, setCopied] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  const serverIP =
-    server.port === 25565 ? server.ip_address : `${server.ip_address}:${server.port}`;
+  // Only show port if it exists and is not the default (25565)
+  const serverIP = !server.port || server.port === 25565
+    ? server.ip_address
+    : `${server.ip_address}:${server.port}`;
 
   useEffect(() => {
     if (user) {
@@ -435,7 +437,7 @@ export default function ServerDetailClient({ server }: ServerDetailClientProps) 
             {/* How to join */}
             <SectionCard>
               <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#f1f5f9', marginBottom: '20px' }}>
-                How to Join
+                🎮 How to Join
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {[
@@ -503,7 +505,7 @@ export default function ServerDetailClient({ server }: ServerDetailClientProps) 
               {/* Connect card */}
               <SectionCard>
                 <h3 style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#6b7c8f', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
-                  Server Address
+                  🌐 Server Address
                 </h3>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <div style={{
@@ -538,7 +540,7 @@ export default function ServerDetailClient({ server }: ServerDetailClientProps) 
               {/* Stats card */}
               <SectionCard>
                 <h3 style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#6b7c8f', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px' }}>
-                  Statistics
+                  📊 Statistics
                 </h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   {[
@@ -564,7 +566,7 @@ export default function ServerDetailClient({ server }: ServerDetailClientProps) 
               {(server.discord_url || server.website_url) && (
                 <SectionCard>
                   <h3 style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#6b7c8f', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px' }}>
-                    Links
+                    🔗 Links
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {server.discord_url && (
@@ -619,7 +621,7 @@ export default function ServerDetailClient({ server }: ServerDetailClientProps) 
               {server.owner && (
                 <SectionCard>
                   <h3 style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#6b7c8f', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px' }}>
-                    Server Owner
+                    👤 Server Owner
                   </h3>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{

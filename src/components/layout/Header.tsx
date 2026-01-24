@@ -3,10 +3,55 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, User, LogOut, Settings, Server, Shield, Plus } from 'lucide-react';
+import { Menu, X, User, LogOut, Settings, Server, Shield, Plus, Sparkles } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import Button from '@/components/ui/Button';
+
+// Hytale-inspired shield logo
+const HytaleLogo = () => (
+  <svg
+    width="32"
+    height="32"
+    viewBox="0 0 32 32"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#5b8def" />
+        <stop offset="100%" stopColor="#4a7bd4" />
+      </linearGradient>
+      <linearGradient id="innerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#7ba3ff" />
+        <stop offset="100%" stopColor="#5b8def" />
+      </linearGradient>
+    </defs>
+    {/* Shield shape */}
+    <path
+      d="M16 2L4 7v9c0 7.5 5.1 14.5 12 16 6.9-1.5 12-8.5 12-16V7L16 2z"
+      fill="url(#shieldGradient)"
+    />
+    {/* Inner shield border */}
+    <path
+      d="M16 4L6 8.2v7.3c0 6.3 4.3 12.2 10 13.5 5.7-1.3 10-7.2 10-13.5V8.2L16 4z"
+      fill="#0d1520"
+      fillOpacity="0.3"
+    />
+    {/* H letter */}
+    <text
+      x="16"
+      y="21"
+      textAnchor="middle"
+      fontSize="14"
+      fontWeight="bold"
+      fill="white"
+      fontFamily="system-ui, -apple-system, sans-serif"
+    >
+      H
+    </text>
+  </svg>
+);
 
 export default function Header() {
   const pathname = usePathname();
@@ -71,9 +116,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
         {/* Logo - Left */}
         <Link href="/" className="flex items-center gap-2 shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#5b8def] to-[#4a7bd4] flex items-center justify-center">
-            <Server className="w-4 h-4 text-white" />
-          </div>
+          <HytaleLogo />
           <span className="text-lg font-bold text-white">
             Hytale<span className="text-[#5b8def]">Join</span>
           </span>
@@ -118,7 +161,7 @@ export default function Header() {
                   }}
                 >
                   <Plus style={{ width: '15px', height: '15px' }} />
-                  Add Server
+                  Add Server ✨
                 </Link>
 
                 {/* Profile dropdown */}
@@ -333,7 +376,7 @@ export default function Header() {
                     transition: 'transform 0.2s, box-shadow 0.2s'
                   }}
                 >
-                  Sign Up
+                  Sign Up 🚀
                 </Link>
               </div>
             )}
