@@ -63,11 +63,33 @@ export default function ServerDetailClient({ server }: ServerDetailClientProps) 
   const [isFavoriting, setIsFavoriting] = useState(false);
   const [copied, setCopied] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isOnline, setIsOnline] = useState<boolean | null>(server.is_online ?? null);
+  const [isCheckingStatus, setIsCheckingStatus] = useState(false);
 
   // Only show port if it exists and is not the default (25565)
   const serverIP = !server.port || server.port === 25565
     ? server.ip_address
     : `${server.ip_address}:${server.port}`;
+
+  // Check server status on mount
+  useEffect(() => {
+    const checkServerStatus = async () => {
+      setIsCheckingStatus(true);
+      try {
+        const response = await fetch(`/api/servers/${server.id}/status`);
+        if (response.ok) {
+          const data = await response.json();
+          setIsOnline(data.isOnline);
+        }
+      } catch (error) {
+        console.error('Failed to check server status:', error);
+      } finally {
+        setIsCheckingStatus(false);
+      }
+    };
+
+    checkServerStatus();
+  }, [server.id]);
 
   useEffect(() => {
     if (user) {
@@ -322,18 +344,26 @@ export default function ServerDetailClient({ server }: ServerDetailClientProps) 
                   gap: '6px',
                   padding: '6px 12px',
                   borderRadius: '8px',
-                  background: server.is_online ? 'rgba(34, 197, 94, 0.9)' : 'rgba(239, 68, 68, 0.9)',
+                  background: isCheckingStatus
+                    ? 'rgba(100, 116, 139, 0.9)'
+                    : isOnline
+                      ? 'rgba(34, 197, 94, 0.9)'
+                      : 'rgba(239, 68, 68, 0.9)',
                   fontSize: '0.75rem',
                   fontWeight: 600,
                   color: '#fff',
                 }}>
-                  <span style={{
-                    width: '6px',
-                    height: '6px',
-                    borderRadius: '50%',
-                    background: '#fff',
-                  }} />
-                  {server.is_online ? 'Online' : 'Offline'}
+                  {isCheckingStatus ? (
+                    <Loader2 style={{ width: '12px', height: '12px', animation: 'spin 1s linear infinite' }} />
+                  ) : (
+                    <span style={{
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      background: '#fff',
+                    }} />
+                  )}
+                  {isCheckingStatus ? 'Checking...' : isOnline ? 'Online' : 'Offline'}
                 </span>
               </div>
             </div>
