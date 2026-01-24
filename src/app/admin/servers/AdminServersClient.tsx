@@ -5,8 +5,15 @@ import { Search, Star, Filter } from 'lucide-react';
 import { Server } from '@/types';
 import AdminServerActions from '../AdminServerActions';
 
+interface ServerWithProfile extends Server {
+  profiles?: {
+    username: string | null;
+    email: string | null;
+  };
+}
+
 interface AdminServersClientProps {
-  servers: Server[];
+  servers: ServerWithProfile[];
   statusCounts: {
     all: number;
     approved: number;
