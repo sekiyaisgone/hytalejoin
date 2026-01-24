@@ -76,9 +76,9 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 h-16 bg-[#0a0e14]/90 backdrop-blur-md border-b border-white/10">
-      <div className="w-full h-full flex items-center justify-between px-2">
+      <div className="w-full h-full flex items-center justify-between px-6">
         {/* Left section: Logo + Nav */}
-        <div className="flex items-center">
+        <div className="flex items-center gap-8">
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0">
             <Image
@@ -91,7 +91,7 @@ export default function Header() {
           </Link>
 
           {/* Nav */}
-          <nav className="hidden md:flex items-center gap-8 ml-12">
+          <nav className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -109,7 +109,7 @@ export default function Header() {
         </div>
 
         {/* Right section: Actions */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-4">
           {isAuthLoading ? (
             <div style={{ width: '150px', height: '38px' }} />
           ) : user ? (
