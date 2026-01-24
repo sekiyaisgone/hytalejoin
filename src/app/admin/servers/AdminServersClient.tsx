@@ -25,7 +25,8 @@ interface AdminServersClientProps {
 
 type FilterStatus = 'all' | 'approved' | 'pending' | 'rejected' | 'featured';
 
-export default function AdminServersClient({ servers, statusCounts }: AdminServersClientProps) {
+export default function AdminServersClient({ servers: initialServers, statusCounts }: AdminServersClientProps) {
+  const [servers, setServers] = useState(initialServers);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<FilterStatus>('all');
 
@@ -52,6 +53,18 @@ export default function AdminServersClient({ servers, statusCounts }: AdminServe
 
     return result;
   }, [servers, statusFilter, search]);
+
+  // Handle server update (optimistic UI)
+  const handleServerUpdate = (serverId: string, updates: Partial<Server>) => {
+    setServers(prev => prev.map(s =>
+      s.id === serverId ? { ...s, ...updates } : s
+    ));
+  };
+
+  // Handle server delete (optimistic UI)
+  const handleServerDelete = (serverId: string) => {
+    setServers(prev => prev.filter(s => s.id !== serverId));
+  };
 
   const filterTabs: { key: FilterStatus; label: string; count: number; color: string }[] = [
     { key: 'all', label: 'All', count: statusCounts.all, color: '#5b8def' },
@@ -272,7 +285,12 @@ export default function AdminServersClient({ servers, statusCounts }: AdminServe
               </span>
 
               {/* Actions */}
-              <AdminServerActions server={server} showViewButton={server.status === 'approved'} />
+              <AdminServerActions
+                server={server}
+                showViewButton={server.status === 'approved'}
+                onServerUpdate={handleServerUpdate}
+                onServerDelete={handleServerDelete}
+              />
             </div>
           ))
         ) : (
