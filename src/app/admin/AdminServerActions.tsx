@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, XCircle, Star, Trash2, ExternalLink, Pencil, MoreHorizontal, Loader2 } from 'lucide-react';
+import { CheckCircle, XCircle, Star, Trash2, ExternalLink, Pencil, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Server } from '@/types';
 import ConfirmModal from '@/components/ui/ConfirmModal';
@@ -29,6 +29,12 @@ export default function AdminServerActions({
   const [localStatus, setLocalStatus] = useState(server.status);
   const [localFeatured, setLocalFeatured] = useState(server.is_featured);
   const [isDeleted, setIsDeleted] = useState(false);
+
+  // Sync local state when server prop changes (crucial for status transitions)
+  useEffect(() => {
+    setLocalStatus(server.status);
+    setLocalFeatured(server.is_featured);
+  }, [server.status, server.is_featured, server.id]);
 
   // Loading states
   const [isApproving, setIsApproving] = useState(false);
@@ -59,8 +65,6 @@ export default function AdminServerActions({
 
       toast.success('Server approved!');
       onServerUpdate?.(server.id, { status: 'approved' });
-
-      // Soft refresh without full page reload
       router.refresh();
     } catch (error) {
       // Rollback on error
@@ -122,9 +126,7 @@ export default function AdminServerActions({
 
       toast.success(newFeaturedState ? 'Server featured!' : 'Server unfeatured');
       onServerUpdate?.(server.id, { is_featured: newFeaturedState });
-
-      // Do NOT call router.refresh() here - it causes infinite loops
-      // The optimistic update is sufficient
+      // Don't call router.refresh() - optimistic update is sufficient
     } catch (error) {
       // Rollback on error
       setLocalFeatured(!newFeaturedState);
@@ -155,10 +157,30 @@ export default function AdminServerActions({
     } catch (error) {
       console.error('Delete error:', error);
       toast.error('Failed to delete server');
+      setShowDeleteModal(false);
     } finally {
       setIsDeleting(false);
     }
   }, [server.id, supabase, router, isDeleting, onServerDelete]);
+
+  // Close modal handlers (ensure clean state)
+  const closeDeleteModal = useCallback(() => {
+    if (!isDeleting) {
+      setShowDeleteModal(false);
+    }
+  }, [isDeleting]);
+
+  const closeRejectModal = useCallback(() => {
+    if (!isRejecting) {
+      setShowRejectModal(false);
+    }
+  }, [isRejecting]);
+
+  const closeFeatureModal = useCallback(() => {
+    if (!isFeaturing) {
+      setShowFeatureModal(false);
+    }
+  }, [isFeaturing]);
 
   // Hide if deleted
   if (isDeleted) return null;
@@ -183,7 +205,7 @@ export default function AdminServerActions({
   });
 
   // Text button style for primary actions
-  const actionBtnStyle = (color: string, bgColor: string, hoverBg: string) => ({
+  const actionBtnStyle = (color: string, bgColor: string) => ({
     display: 'inline-flex',
     alignItems: 'center',
     gap: '6px',
@@ -195,7 +217,7 @@ export default function AdminServerActions({
     background: bgColor,
     color: color,
     fontSize: '0.8125rem',
-    fontWeight: 500,
+    fontWeight: 500 as const,
   });
 
   return (
@@ -207,7 +229,7 @@ export default function AdminServerActions({
             <button
               onClick={handleApprove}
               disabled={isApproving || isRejecting}
-              style={actionBtnStyle('#22c55e', 'rgba(34, 197, 94, 0.15)', 'rgba(34, 197, 94, 0.25)')}
+              style={actionBtnStyle('#22c55e', 'rgba(34, 197, 94, 0.15)')}
               title="Approve server"
             >
               {isApproving ? (
@@ -220,7 +242,7 @@ export default function AdminServerActions({
             <button
               onClick={() => setShowRejectModal(true)}
               disabled={isApproving || isRejecting}
-              style={actionBtnStyle('#ef4444', 'rgba(239, 68, 68, 0.15)', 'rgba(239, 68, 68, 0.25)')}
+              style={actionBtnStyle('#ef4444', 'rgba(239, 68, 68, 0.15)')}
               title="Reject server"
             >
               <XCircle style={{ width: '14px', height: '14px' }} />
@@ -236,7 +258,7 @@ export default function AdminServerActions({
               <Link
                 href={`/servers/${server.id}`}
                 style={{
-                  ...actionBtnStyle('#5b8def', 'rgba(91, 141, 239, 0.15)', 'rgba(91, 141, 239, 0.25)'),
+                  ...actionBtnStyle('#5b8def', 'rgba(91, 141, 239, 0.15)'),
                   textDecoration: 'none',
                 }}
                 title="View server page"
@@ -250,8 +272,7 @@ export default function AdminServerActions({
               disabled={isFeaturing}
               style={actionBtnStyle(
                 localFeatured ? '#d4a033' : '#8fa3b8',
-                localFeatured ? 'rgba(212, 160, 51, 0.2)' : 'rgba(255,255,255,0.05)',
-                localFeatured ? 'rgba(212, 160, 51, 0.3)' : 'rgba(255,255,255,0.1)'
+                localFeatured ? 'rgba(212, 160, 51, 0.2)' : 'rgba(255,255,255,0.05)'
               )}
               title={localFeatured ? 'Remove from featured' : 'Feature server'}
             >
@@ -270,7 +291,7 @@ export default function AdminServerActions({
           <button
             onClick={handleApprove}
             disabled={isApproving}
-            style={actionBtnStyle('#22c55e', 'rgba(34, 197, 94, 0.15)', 'rgba(34, 197, 94, 0.25)')}
+            style={actionBtnStyle('#22c55e', 'rgba(34, 197, 94, 0.15)')}
             title="Re-approve server"
           >
             {isApproving ? (
@@ -313,7 +334,7 @@ export default function AdminServerActions({
       {/* Reject Confirmation Modal */}
       <ConfirmModal
         isOpen={showRejectModal}
-        onClose={() => setShowRejectModal(false)}
+        onClose={closeRejectModal}
         onConfirm={handleReject}
         title="Reject Server"
         message={`Are you sure you want to reject "${server.name}"? The owner will be notified.`}
@@ -325,7 +346,7 @@ export default function AdminServerActions({
       {/* Feature Confirmation Modal */}
       <ConfirmModal
         isOpen={showFeatureModal}
-        onClose={() => setShowFeatureModal(false)}
+        onClose={closeFeatureModal}
         onConfirm={handleToggleFeatured}
         title={localFeatured ? 'Remove from Featured' : 'Feature Server'}
         message={
@@ -341,7 +362,7 @@ export default function AdminServerActions({
       {/* Delete Confirmation Modal */}
       <ConfirmModal
         isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
+        onClose={closeDeleteModal}
         onConfirm={handleDelete}
         title="Delete Server"
         message={`Are you sure you want to delete "${server.name}"? This action cannot be undone.`}

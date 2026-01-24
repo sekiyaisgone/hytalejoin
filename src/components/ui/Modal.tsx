@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
@@ -19,11 +19,14 @@ export default function Modal({
   children,
   size = 'md',
 }: ModalProps) {
+  const [mounted, setMounted] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+
   const sizes = {
-    sm: 'max-w-md',
-    md: 'max-w-lg',
-    lg: 'max-w-2xl',
-    xl: 'max-w-4xl',
+    sm: '420px',
+    md: '520px',
+    lg: '680px',
+    xl: '900px',
   };
 
   const handleEscape = useCallback(
@@ -36,9 +39,16 @@ export default function Modal({
   );
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
     if (isOpen) {
+      setIsAnimating(true);
       document.body.style.overflow = 'hidden';
       document.addEventListener('keydown', handleEscape);
+    } else {
+      setIsAnimating(false);
     }
 
     return () => {
@@ -47,67 +57,143 @@ export default function Modal({
     };
   }, [isOpen, handleEscape]);
 
-  if (!isOpen) return null;
+  if (!mounted || !isOpen) return null;
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 50,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+      }}
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? 'modal-title' : undefined}
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'rgba(0, 0, 0, 0.75)',
+          backdropFilter: 'blur(8px)',
+          animation: isAnimating ? 'fadeIn 0.15s ease-out' : undefined,
+        }}
       />
 
       {/* Modal content */}
       <div
-        className={`
-          relative bg-[#15243a] border border-[rgba(255,255,255,0.08)]
-          rounded-xl shadow-2xl w-full ${sizes[size]}
-          animate-fade-in
-        `}
+        style={{
+          position: 'relative',
+          background: 'linear-gradient(180deg, #15243a 0%, #12161c 100%)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          borderRadius: '20px',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+          width: '100%',
+          maxWidth: sizes[size],
+          maxHeight: '90vh',
+          overflow: 'auto',
+          animation: isAnimating ? 'slideIn 0.2s ease-out' : undefined,
+        }}
       >
         {/* Header */}
         {title && (
-          <div className="flex items-center justify-between px-6 py-4 border-b border-[rgba(255,255,255,0.08)]">
-            <h2 id="modal-title" className="text-xl font-semibold text-[#e8f0f8]">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '20px 24px',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+            }}
+          >
+            <h2
+              id="modal-title"
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: 600,
+                color: '#f1f5f9',
+              }}
+            >
               {title}
             </h2>
             <button
               onClick={onClose}
-              className="p-2 rounded-lg text-[#8fa3b8] hover:text-[#e8f0f8] hover:bg-[#1a2f4a] transition-colors"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '36px',
+                height: '36px',
+                borderRadius: '10px',
+                border: 'none',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#8fa3b8',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
               aria-label="Close modal"
             >
-              <X className="w-5 h-5" />
+              <X style={{ width: '18px', height: '18px' }} />
             </button>
           </div>
         )}
 
         {/* Body */}
-        <div className={title ? 'p-6' : 'p-6 pt-4'}>
+        <div style={{ padding: title ? '24px' : '24px' }}>
           {!title && (
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 rounded-lg text-[#8fa3b8] hover:text-[#e8f0f8] hover:bg-[#1a2f4a] transition-colors"
+              style={{
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '36px',
+                height: '36px',
+                borderRadius: '10px',
+                border: 'none',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#8fa3b8',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                zIndex: 1,
+              }}
               aria-label="Close modal"
             >
-              <X className="w-5 h-5" />
+              <X style={{ width: '18px', height: '18px' }} />
             </button>
           )}
           {children}
         </div>
       </div>
+
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: scale(0.95) translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 
-  // Use portal to render modal at document body level
-  if (typeof window !== 'undefined') {
-    return createPortal(modalContent, document.body);
-  }
-
-  return null;
+  return createPortal(modalContent, document.body);
 }
