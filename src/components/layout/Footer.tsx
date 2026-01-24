@@ -22,17 +22,14 @@ export default function Footer() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '48px' }}>
           {/* Brand */}
           <div style={{ gridColumn: 'span 2' }}>
-            <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', textDecoration: 'none' }}>
+            <Link href="/" style={{ display: 'inline-block', marginBottom: '20px' }}>
               <Image
                 src="/logo.png"
                 alt="HytaleJoin"
-                width={40}
-                height={40}
+                width={48}
+                height={48}
                 style={{ objectFit: 'contain' }}
               />
-              <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#f0f4f8' }}>
-                Hytale<span style={{ color: '#d4a033' }}>Join</span>
-              </span>
             </Link>
             <p style={{ color: '#7a8fa6', fontSize: '0.875rem', maxWidth: '400px', marginBottom: '24px', lineHeight: 1.6 }}>
               Discover and join the best Hytale servers. Find communities that match your playstyle

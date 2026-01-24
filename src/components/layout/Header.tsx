@@ -77,23 +77,20 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 h-16 bg-[#0a0e14]/90 backdrop-blur-md border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-6 h-full flex items-center">
+      <div className="w-full px-4 h-full flex items-center">
         {/* Logo - Left */}
-        <Link href="/" className="flex items-center gap-2 shrink-0">
+        <Link href="/" className="flex items-center shrink-0">
           <Image
             src="/logo.png"
             alt="HytaleJoin"
-            width={32}
-            height={32}
+            width={36}
+            height={36}
             className="object-contain"
           />
-          <span className="text-lg font-bold text-white">
-            Hytale<span className="text-[#5b8def]">Join</span>
-          </span>
         </Link>
 
         {/* Nav - After logo */}
-        <nav className="hidden md:flex items-center gap-6 ml-10">
+        <nav className="hidden md:flex items-center gap-6 ml-6">
           {navLinks.map((link) => (
             <Link
               key={link.href}
