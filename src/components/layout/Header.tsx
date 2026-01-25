@@ -76,7 +76,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 h-16 bg-[#0a0e14]/90 backdrop-blur-md border-b border-white/10">
-      <div className="max-w-[1200px] mx-auto w-full h-full px-6 md:px-12">
+      <div className="w-full h-full px-8 md:px-16">
         <div className="flex items-center justify-between h-full">
           {/* Left zone: Logo + Nav */}
           <div className="flex items-center gap-8">
