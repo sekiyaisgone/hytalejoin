@@ -76,9 +76,9 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 h-16 bg-[#0a0e14]/90 backdrop-blur-md border-b border-white/10">
-      <div className="w-full h-full flex items-center justify-between px-8">
+      <div className="w-full h-full flex items-center justify-between px-12">
         {/* Left section: Logo + Nav */}
-        <div className="flex items-center gap-[18px]">
+        <div className="flex items-center gap-8">
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0">
             <Image
@@ -91,12 +91,12 @@ export default function Header() {
           </Link>
 
           {/* Nav */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors py-2 px-[10px] ${
+                className={`text-sm font-medium transition-colors py-2 px-3 ${
                   pathname === link.href
                     ? 'text-white'
                     : 'text-[#7d8590] hover:text-white'
@@ -109,7 +109,7 @@ export default function Header() {
         </div>
 
         {/* Right section: Actions */}
-        <div className="hidden md:flex items-center gap-[14px]">
+        <div className="hidden md:flex items-center gap-4">
           {isAuthLoading ? (
             <div style={{ width: '150px', height: '38px' }} />
           ) : user ? (
@@ -241,7 +241,7 @@ export default function Header() {
               </div>
             </>
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <Link
                 href="/login"
                 style={{
