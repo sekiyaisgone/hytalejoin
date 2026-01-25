@@ -76,217 +76,219 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 h-16 bg-[#0a0e14]/90 backdrop-blur-md border-b border-white/10">
-      <div className="w-full h-full flex items-center justify-between px-14" data-header-inner>
-        {/* Left section: Logo + Nav */}
-        <div className="flex items-center flex-none min-w-fit">
-          {/* Logo */}
-          <Link href="/" className="flex items-center flex-none mr-[28px]" data-header-logo>
-            <Image
-              src="/logo.png"
-              alt="HytaleJoin"
-              width={36}
-              height={36}
-              className="object-contain"
-            />
-          </Link>
+      <div className="max-w-[1400px] mx-auto w-full h-full px-[48px]">
+        <div className="flex items-center justify-between h-full">
+          {/* Left zone: Logo + Nav */}
+          <div className="flex items-center">
+            {/* Logo - fixed box */}
+            <Link href="/" className="w-9 h-9 flex items-center justify-center shrink-0">
+              <Image
+                src="/logo.png"
+                alt="HytaleJoin"
+                width={36}
+                height={36}
+                className="object-contain"
+              />
+            </Link>
 
-          {/* Nav */}
-          <nav className="hidden md:flex items-center flex-none gap-[8px]">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-sm font-medium transition-colors py-2 px-3 ${
-                  pathname === link.href
-                    ? 'text-white'
-                    : 'text-[#7d8590] hover:text-white'
-                }`}
-              >
-                <span data-nav-text={link.label.toLowerCase()}>{link.label}</span>
-              </Link>
-            ))}
-          </nav>
-        </div>
+            {/* Nav - ml-[40px] from logo */}
+            <nav className="hidden md:flex ml-[40px]">
+              <ul className="flex items-center space-x-[32px]">
+                {navLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className={`text-sm font-medium transition-colors py-2 px-3 ${
+                        pathname === link.href
+                          ? 'text-white'
+                          : 'text-[#7d8590] hover:text-white'
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
 
-        {/* Right section: Actions */}
-        <div className="hidden md:flex items-center gap-4">
-          {isAuthLoading ? (
-            <div style={{ width: '150px', height: '38px' }} />
-          ) : user ? (
-            <>
-              <Link
-                href="/servers/new"
-                data-right-item="add-server"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '8px 14px',
-                  fontSize: '0.8125rem',
-                  fontWeight: 500,
-                  color: 'white',
-                  background: 'linear-gradient(135deg, #5b8def 0%, #4a7bd4 100%)',
-                  borderRadius: '10px',
-                  textDecoration: 'none',
-                  transition: 'all 0.2s ease',
-                  boxShadow: '0 2px 8px rgba(91, 141, 239, 0.2)',
-                }}
-              >
-                <Plus style={{ width: '15px', height: '15px' }} />
-                Add Server ✨
-              </Link>
-
-              {/* Profile dropdown */}
-              <div className="relative" data-right-item="avatar">
-                <button
-                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+          {/* Right zone: Actions */}
+          <div className="hidden md:flex items-center space-x-4">
+            {isAuthLoading ? (
+              <div style={{ width: '150px', height: '38px' }} />
+            ) : user ? (
+              <>
+                <Link
+                  href="/servers/new"
                   style={{
-                    display: 'flex',
+                    display: 'inline-flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '2px',
-                    borderRadius: '50%',
-                    background: 'transparent',
-                    border: isProfileOpen ? '2px solid rgba(91, 141, 239, 0.5)' : '2px solid transparent',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease',
+                    gap: '6px',
+                    padding: '8px 14px',
+                    fontSize: '0.8125rem',
+                    fontWeight: 500,
+                    color: 'white',
+                    background: 'linear-gradient(135deg, #5b8def 0%, #4a7bd4 100%)',
+                    borderRadius: '10px',
+                    textDecoration: 'none',
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 2px 8px rgba(91, 141, 239, 0.2)',
                   }}
                 >
-                  <div
+                  <Plus style={{ width: '15px', height: '15px' }} />
+                  Add Server ✨
+                </Link>
+
+                {/* Profile dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setIsProfileOpen(!isProfileOpen)}
                     style={{
-                      width: '34px',
-                      height: '34px',
-                      borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #3d5a80 0%, #293d52 100%)',
-                      border: '1px solid rgba(255,255,255,0.1)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '0.8125rem',
-                      fontWeight: 600,
-                      color: '#c8d4e0',
+                      padding: '2px',
+                      borderRadius: '50%',
+                      background: 'transparent',
+                      border: isProfileOpen ? '2px solid rgba(91, 141, 239, 0.5)' : '2px solid transparent',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
                     }}
                   >
-                    {user.email?.charAt(0).toUpperCase() || 'U'}
-                  </div>
-                </button>
-
-                {isProfileOpen && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={() => setIsProfileOpen(false)}
-                    />
                     <div
                       style={{
-                        position: 'absolute',
-                        right: 0,
-                        marginTop: '8px',
-                        width: '240px',
-                        background: '#12161c',
-                        border: '1px solid rgba(255,255,255,0.08)',
-                        borderRadius: '14px',
-                        boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-                        zIndex: 20,
-                        overflow: 'hidden',
+                        width: '34px',
+                        height: '34px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #3d5a80 0%, #293d52 100%)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '0.8125rem',
+                        fontWeight: 600,
+                        color: '#c8d4e0',
                       }}
                     >
-                      <div style={{ padding: '14px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                        <p style={{ fontSize: '0.75rem', color: '#6b7c8f', marginBottom: '2px' }}>Signed in as</p>
-                        <p style={{ fontSize: '0.875rem', fontWeight: 500, color: '#f0f4f8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {user.email}
-                        </p>
-                      </div>
-
-                      <div style={{ padding: '6px' }}>
-                        <Link
-                          href="/dashboard"
-                          onClick={() => setIsProfileOpen(false)}
-                          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#c8d4e0] hover:bg-white/5 transition-colors"
-                        >
-                          <Server className="w-4 h-4 text-[#6b7c8f]" />
-                          Dashboard
-                        </Link>
-                        <Link
-                          href="/dashboard/settings"
-                          onClick={() => setIsProfileOpen(false)}
-                          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#c8d4e0] hover:bg-white/5 transition-colors"
-                        >
-                          <Settings className="w-4 h-4 text-[#6b7c8f]" />
-                          Settings
-                        </Link>
-                        {isAdmin && (
-                          <Link
-                            href="/admin"
-                            onClick={() => setIsProfileOpen(false)}
-                            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#5b8def] hover:bg-white/5 transition-colors"
-                          >
-                            <Shield className="w-4 h-4" />
-                            Admin Panel
-                          </Link>
-                        )}
-                      </div>
-
-                      <div style={{ padding: '6px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                        <button
-                          onClick={handleSignOut}
-                          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition-colors"
-                        >
-                          <LogOut className="w-4 h-4" />
-                          Sign Out
-                        </button>
-                      </div>
+                      {user.email?.charAt(0).toUpperCase() || 'U'}
                     </div>
-                  </>
-                )}
-              </div>
-            </>
-          ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <Link
-                href="/login"
-                data-right-item="login"
-                style={{
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
-                  color: '#8899aa',
-                  textDecoration: 'none',
-                  padding: '8px 12px',
-                  borderRadius: '10px',
-                  transition: 'color 0.2s'
-                }}
-              >
-                Log In
-              </Link>
-              <Link
-                href="/signup"
-                data-right-item="signup"
-                style={{
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
-                  color: 'white',
-                  textDecoration: 'none',
-                  padding: '8px 16px',
-                  borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #5b8def 0%, #4a7bd4 100%)',
-                  boxShadow: '0 2px 8px rgba(91, 141, 239, 0.25)',
-                  transition: 'transform 0.2s, box-shadow 0.2s'
-                }}
-              >
-                Sign Up 🚀
-              </Link>
-            </div>
-          )}
-        </div>
+                  </button>
 
-        {/* Mobile menu button */}
-        <button
-          className="md:hidden p-2 rounded-lg text-[#8899aa] hover:text-white hover:bg-white/5 transition-colors"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+                  {isProfileOpen && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-10"
+                        onClick={() => setIsProfileOpen(false)}
+                      />
+                      <div
+                        style={{
+                          position: 'absolute',
+                          right: 0,
+                          marginTop: '8px',
+                          width: '240px',
+                          background: '#12161c',
+                          border: '1px solid rgba(255,255,255,0.08)',
+                          borderRadius: '14px',
+                          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                          zIndex: 20,
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <div style={{ padding: '14px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                          <p style={{ fontSize: '0.75rem', color: '#6b7c8f', marginBottom: '2px' }}>Signed in as</p>
+                          <p style={{ fontSize: '0.875rem', fontWeight: 500, color: '#f0f4f8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {user.email}
+                          </p>
+                        </div>
+
+                        <div style={{ padding: '6px' }}>
+                          <Link
+                            href="/dashboard"
+                            onClick={() => setIsProfileOpen(false)}
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#c8d4e0] hover:bg-white/5 transition-colors"
+                          >
+                            <Server className="w-4 h-4 text-[#6b7c8f]" />
+                            Dashboard
+                          </Link>
+                          <Link
+                            href="/dashboard/settings"
+                            onClick={() => setIsProfileOpen(false)}
+                            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#c8d4e0] hover:bg-white/5 transition-colors"
+                          >
+                            <Settings className="w-4 h-4 text-[#6b7c8f]" />
+                            Settings
+                          </Link>
+                          {isAdmin && (
+                            <Link
+                              href="/admin"
+                              onClick={() => setIsProfileOpen(false)}
+                              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#5b8def] hover:bg-white/5 transition-colors"
+                            >
+                              <Shield className="w-4 h-4" />
+                              Admin Panel
+                            </Link>
+                          )}
+                        </div>
+
+                        <div style={{ padding: '6px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                          <button
+                            onClick={handleSignOut}
+                            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                          >
+                            <LogOut className="w-4 h-4" />
+                            Sign Out
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  style={{
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                    color: '#8899aa',
+                    textDecoration: 'none',
+                    padding: '8px 12px',
+                    borderRadius: '10px',
+                    transition: 'color 0.2s'
+                  }}
+                >
+                  Log In
+                </Link>
+                <Link
+                  href="/signup"
+                  style={{
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                    color: 'white',
+                    textDecoration: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '10px',
+                    background: 'linear-gradient(135deg, #5b8def 0%, #4a7bd4 100%)',
+                    boxShadow: '0 2px 8px rgba(91, 141, 239, 0.25)',
+                    transition: 'transform 0.2s, box-shadow 0.2s'
+                  }}
+                >
+                  Sign Up 🚀
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* Mobile menu button */}
+          <button
+            className="md:hidden p-2 rounded-lg text-[#8899aa] hover:text-white hover:bg-white/5 transition-colors"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}
