@@ -78,9 +78,9 @@ export default function Header() {
     <header className="sticky top-0 z-50 h-16 bg-[#0a0e14]/90 backdrop-blur-md border-b border-white/10">
       <div className="w-full h-full flex items-center justify-between px-14" data-header-inner>
         {/* Left section: Logo + Nav */}
-        <div className="flex items-center">
+        <div className="flex items-center flex-none min-w-fit">
           {/* Logo */}
-          <Link href="/" className="flex items-center flex-none mr-[40px]" data-header-logo>
+          <Link href="/" className="flex items-center flex-none mr-[28px]" data-header-logo>
             <Image
               src="/logo.png"
               alt="HytaleJoin"
@@ -91,7 +91,7 @@ export default function Header() {
           </Link>
 
           {/* Nav */}
-          <nav className="hidden md:flex items-center flex-none gap-[32px]">
+          <nav className="hidden md:flex items-center flex-none gap-[8px]">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
