@@ -76,11 +76,11 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 h-16 bg-[#0a0e14]/90 backdrop-blur-md border-b border-white/10">
-      <div className="w-full h-full flex items-center justify-between px-12">
+      <div className="w-full h-full flex items-center justify-between px-14" data-header-inner>
         {/* Left section: Logo + Nav */}
-        <div className="flex items-center gap-8">
+        <div className="flex items-center">
           {/* Logo */}
-          <Link href="/" className="flex items-center shrink-0">
+          <Link href="/" className="flex items-center flex-none mr-[40px]" data-header-logo>
             <Image
               src="/logo.png"
               alt="HytaleJoin"
@@ -91,7 +91,7 @@ export default function Header() {
           </Link>
 
           {/* Nav */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center flex-none gap-[32px]">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -102,7 +102,7 @@ export default function Header() {
                     : 'text-[#7d8590] hover:text-white'
                 }`}
               >
-                {link.label}
+                <span data-nav-text={link.label.toLowerCase()}>{link.label}</span>
               </Link>
             ))}
           </nav>
@@ -116,6 +116,7 @@ export default function Header() {
             <>
               <Link
                 href="/servers/new"
+                data-right-item="add-server"
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -136,7 +137,7 @@ export default function Header() {
               </Link>
 
               {/* Profile dropdown */}
-              <div className="relative">
+              <div className="relative" data-right-item="avatar">
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
                   style={{
@@ -244,6 +245,7 @@ export default function Header() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <Link
                 href="/login"
+                data-right-item="login"
                 style={{
                   fontSize: '0.875rem',
                   fontWeight: 500,
@@ -258,6 +260,7 @@ export default function Header() {
               </Link>
               <Link
                 href="/signup"
+                data-right-item="signup"
                 style={{
                   fontSize: '0.875rem',
                   fontWeight: 500,
