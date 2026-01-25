@@ -76,29 +76,29 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 h-16 bg-[#0a0e14]/90 backdrop-blur-md border-b border-white/10">
-      <div className="max-w-[1400px] mx-auto w-full h-full px-[48px]">
+      <div className="max-w-[1200px] mx-auto w-full h-full px-6 md:px-12">
         <div className="flex items-center justify-between h-full">
           {/* Left zone: Logo + Nav */}
-          <div className="flex items-center">
-            {/* Logo - fixed box */}
-            <Link href="/" className="w-9 h-9 flex items-center justify-center shrink-0">
+          <div className="flex items-center gap-8">
+            {/* Logo */}
+            <Link href="/" className="flex items-center justify-center shrink-0">
               <Image
                 src="/logo.png"
                 alt="HytaleJoin"
-                width={36}
-                height={36}
+                width={32}
+                height={32}
                 className="object-contain"
               />
             </Link>
 
-            {/* Nav - ml-[40px] from logo */}
-            <nav className="hidden md:flex ml-[40px]">
-              <ul className="flex items-center space-x-[32px]">
+            {/* Nav */}
+            <nav className="hidden md:flex">
+              <ul className="flex items-center gap-6">
                 {navLinks.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className={`text-sm font-medium transition-colors py-2 px-3 ${
+                      className={`text-sm font-medium transition-colors ${
                         pathname === link.href
                           ? 'text-white'
                           : 'text-[#7d8590] hover:text-white'
