@@ -218,12 +218,22 @@ Then you can access `/admin` to approve servers.
 ### FK violation "servers_owner_id_fkey"
 This means the profile row doesn't exist for the current user. Run this backfill:
 ```sql
--- Backfill profiles for existing users
-INSERT INTO public.profiles (id, email, username, is_admin, created_at, updated_at)
+-- Backfill profiles for existing users (supports OAuth providers)
+INSERT INTO public.profiles (id, email, username, avatar_url, is_admin, created_at, updated_at)
 SELECT
   id,
   email,
-  COALESCE(raw_user_meta_data->>'username', split_part(email, '@', 1)),
+  COALESCE(
+    raw_user_meta_data->>'username',
+    raw_user_meta_data->>'name',
+    raw_user_meta_data->>'full_name',
+    raw_user_meta_data->>'global_name',
+    split_part(email, '@', 1)
+  ),
+  COALESCE(
+    raw_user_meta_data->>'avatar_url',
+    raw_user_meta_data->>'picture'
+  ),
   FALSE,
   COALESCE(created_at, NOW()),
   NOW()
@@ -253,6 +263,77 @@ This is now included in the migration script automatically.
 - Clear browser cookies
 - Check middleware.ts is using `maybeSingle()` not `single()`
 - Hard refresh (Ctrl+Shift+R)
+
+---
+
+## OAuth Provider Setup (Google & Discord)
+
+HytaleJoin supports signing in with Google and Discord. Follow these steps to enable OAuth.
+
+### Step 1: Enable Providers in Supabase
+
+1. Go to **Supabase Dashboard > Authentication > Providers**
+2. Find **Google** and **Discord** in the list
+3. Toggle each provider to **Enabled**
+
+### Step 2: Set Up Google OAuth
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Navigate to **APIs & Services > Credentials**
+4. Click **Create Credentials > OAuth client ID**
+5. Select **Web application**
+6. Configure the OAuth consent screen if prompted
+7. Add authorized JavaScript origins:
+   - `http://localhost:3000` (development)
+   - `https://yourdomain.com` (production)
+8. Add authorized redirect URIs:
+   - `https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback`
+   - Replace `YOUR_PROJECT_REF` with your Supabase project reference
+9. Copy the **Client ID** and **Client Secret**
+10. In Supabase Dashboard > Authentication > Providers > Google:
+    - Paste the Client ID and Client Secret
+    - Save
+
+### Step 3: Set Up Discord OAuth
+
+1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
+2. Click **New Application** and give it a name
+3. Go to **OAuth2** in the left sidebar
+4. Copy the **Client ID** and **Client Secret**
+5. Add redirect URLs:
+   - `https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback`
+   - Replace `YOUR_PROJECT_REF` with your Supabase project reference
+6. In Supabase Dashboard > Authentication > Providers > Discord:
+   - Paste the Client ID and Client Secret
+   - Save
+
+### Step 4: Configure Redirect URLs
+
+In Supabase Dashboard > Authentication > URL Configuration:
+- **Site URL**: `https://yourdomain.com` (or `http://localhost:3000` for dev)
+- **Redirect URLs**: Add all valid redirect URLs:
+  - `http://localhost:3000/auth/callback`
+  - `https://yourdomain.com/auth/callback`
+
+### OAuth Troubleshooting
+
+#### "Provider not enabled" error
+- Make sure the provider is toggled ON in Supabase Dashboard
+
+#### Redirect mismatch error
+- Ensure the redirect URL in your OAuth app matches exactly:
+  `https://YOUR_PROJECT_REF.supabase.co/auth/v1/callback`
+- Check both Google/Discord developer console AND Supabase settings
+
+#### User created but no profile
+- The `on_auth_user_created` trigger handles this automatically
+- For OAuth users, username is extracted from their social profile
+- If missing, run the profile backfill SQL from the troubleshooting section above
+
+#### OAuth popup blocked
+- Users may need to allow popups for your site
+- The OAuth flow should work with redirects (not popups)
 
 ---
 

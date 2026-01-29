@@ -43,15 +43,36 @@ CREATE INDEX IF NOT EXISTS idx_profiles_username ON public.profiles(username);
 -- =============================================================================
 
 -- Function to create profile on signup
+-- Handles email/password signups AND OAuth providers (Google, Discord)
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
+DECLARE
+  v_username TEXT;
+  v_avatar_url TEXT;
 BEGIN
+  -- Extract username from various OAuth providers or fallback to email prefix
+  -- Priority: username (email signup) > name (Google) > full_name (Discord) > global_name (Discord) > email prefix
+  v_username := COALESCE(
+    NEW.raw_user_meta_data->>'username',
+    NEW.raw_user_meta_data->>'name',
+    NEW.raw_user_meta_data->>'full_name',
+    NEW.raw_user_meta_data->>'global_name',
+    split_part(NEW.email, '@', 1)
+  );
+
+  -- Extract avatar URL from various OAuth providers
+  -- Google uses 'picture', Discord uses 'avatar_url'
+  v_avatar_url := COALESCE(
+    NEW.raw_user_meta_data->>'avatar_url',
+    NEW.raw_user_meta_data->>'picture'
+  );
+
   INSERT INTO public.profiles (id, email, username, avatar_url, is_admin, created_at, updated_at)
   VALUES (
     NEW.id,
     NEW.email,
-    COALESCE(NEW.raw_user_meta_data->>'username', split_part(NEW.email, '@', 1)),
-    NEW.raw_user_meta_data->>'avatar_url',
+    v_username,
+    v_avatar_url,
     FALSE,
     NOW(),
     NOW()
@@ -59,6 +80,7 @@ BEGIN
   ON CONFLICT (id) DO UPDATE SET
     email = EXCLUDED.email,
     username = COALESCE(EXCLUDED.username, profiles.username),
+    avatar_url = COALESCE(EXCLUDED.avatar_url, profiles.avatar_url),
     updated_at = NOW();
   RETURN NEW;
 END;
@@ -74,11 +96,22 @@ CREATE TRIGGER on_auth_user_created
 -- 2b. BACKFILL PROFILES FOR EXISTING USERS
 -- =============================================================================
 -- This ensures users who existed before this migration get a profile row
-INSERT INTO public.profiles (id, email, username, is_admin, created_at, updated_at)
+-- Uses same logic as trigger to handle OAuth providers (Google, Discord)
+INSERT INTO public.profiles (id, email, username, avatar_url, is_admin, created_at, updated_at)
 SELECT
   id,
   email,
-  COALESCE(raw_user_meta_data->>'username', split_part(email, '@', 1)),
+  COALESCE(
+    raw_user_meta_data->>'username',
+    raw_user_meta_data->>'name',
+    raw_user_meta_data->>'full_name',
+    raw_user_meta_data->>'global_name',
+    split_part(email, '@', 1)
+  ),
+  COALESCE(
+    raw_user_meta_data->>'avatar_url',
+    raw_user_meta_data->>'picture'
+  ),
   FALSE,
   COALESCE(created_at, NOW()),
   NOW()
